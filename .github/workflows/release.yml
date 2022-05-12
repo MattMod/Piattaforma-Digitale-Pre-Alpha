@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: 'Type of run to be performed'
+        required: true
+        type: choice
+        options: 
+        - dryrun
+        - run
+      environment:
+        type: environment
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+
+  // eseguito sempre
+  dry-release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Release dry-run
+      run: |
+        echo "Release dry-run"
+
+  fe-frontend:
+    needs: ['dry-release']
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "awesome step"
+  
+  ms-ente:
+    needs: ['dry-release']
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "awesome step"
+  
+  ms-open-data:
+    needs: ['dry-release']
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "awesome step"
+  
+  ms-programma-progetto:
+    needs: ['dry-release']
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "awesome step"
+
+  ms-questionario-cittadino:
+    needs: ['dry-release']
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "awesome step"
+
+  ms-utente:
+    needs: ['dry-release']
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "awesome step"
+
+  // eseguito quando release-type è run --> da capire se serve un dry-run. in caso affermativo capire l'impatto sugli altri job 
+  release:
+    needs: ['dry-release','fe-frontend','ms-ente',' ms-open-data',' ms-programma-progetto','ms-questionario-cittadino','ms-utente']
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "awesome step"
+
