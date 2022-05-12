@@ -14,7 +14,6 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-
   # eseguito sempre
   dry-release:
     runs-on: ubuntu-latest
@@ -27,8 +26,17 @@ jobs:
     needs: ['dry-release']
     runs-on: ubuntu-latest
     steps:
-    - run: echo "awesome step"
-  
+    - name: Checkout
+      run: echo " "
+    - name: Module build and unit test 
+      run: echo " "    
+    - name: Configure AWS credentials
+      run: echo " "
+    - name: Login to Amazon ECR
+      run: echo " "    
+    - name: Build, tag, and push the image to Amazon ECR
+      run: echo " "
+      
   ms-ente:
     needs: ['dry-release']
     runs-on: ubuntu-latest
