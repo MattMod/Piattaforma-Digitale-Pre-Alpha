@@ -24,6 +24,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    needs: ['dry-release']
     strategy:
       matrix:
         module: ['fe-frontend','ms-ente', 'ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
