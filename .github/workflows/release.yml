@@ -61,7 +61,7 @@ jobs:
 
   # eseguito quando release-type è run --> da capire se serve un dry-run. in caso affermativo capire l'impatto sugli altri job 
   release:
-    needs: ['dry-release','fe-frontend','ms-ente',' ms-open-data',' ms-programma-progetto','ms-questionario-cittadino','ms-utente']
+    needs: ['dry-release','fe-frontend','ms-ente','ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
     runs-on: ubuntu-latest
     steps:
     - run: echo "awesome step"
