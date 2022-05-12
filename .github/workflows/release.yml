@@ -22,55 +22,34 @@ jobs:
       run: |
         echo "Release dry-run"
 
-  fe-frontend:
-    needs: ['dry-release']
+  build:
     runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      run: echo " "
-    - name: Module build and unit test 
-      run: echo " "    
-    - name: Configure AWS credentials
-      run: echo " "
-    - name: Login to Amazon ECR
-      run: echo " "    
-    - name: Build, tag, and push the image to Amazon ECR
-      run: echo " "
-      
-  ms-ente:
-    needs: ['dry-release']
-    runs-on: ubuntu-latest
-    steps:
-    - run: echo "awesome step"
-  
-  ms-open-data:
-    needs: ['dry-release']
-    runs-on: ubuntu-latest
-    steps:
-    - run: echo "awesome step"
-  
-  ms-programma-progetto:
-    needs: ['dry-release']
-    runs-on: ubuntu-latest
-    steps:
-    - run: echo "awesome step"
-
-  ms-questionario-cittadino:
-    needs: ['dry-release']
-    runs-on: ubuntu-latest
-    steps:
-    - run: echo "awesome step"
-
-  ms-utente:
-    needs: ['dry-release']
-    runs-on: ubuntu-latest
-    steps:
-    - run: echo "awesome step"
+      strategy:
+        matrix:
+          module: ['fe-frontend','ms-ente', 'ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
+      steps:
+      - name: Checkout
+        run: echo " "
+      - name: Node build  
+        if: ${{ matrix.module == 'fe-frontend' }}
+        run: echo "node build"  
+      - name: Maven build 
+        if: ${{ matrix.module != 'fe-frontend' }}
+        run: echo " "    
+      - name: Configure AWS credentials
+        run: echo " "
+      - name: Login to Amazon ECR
+        run: echo " "    
+      - name: Build, tag, and push the image to Amazon ECR
+        run: echo " "
 
   # eseguito quando release-type è run --> da capire se serve un dry-run. in caso affermativo capire l'impatto sugli altri job 
   release:
-    needs: ['dry-release','fe-frontend','ms-ente','ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
+    needs: ['dry-release','build']
     runs-on: ubuntu-latest
     steps:
-    - run: echo "awesome step"
+    - name: Release Github
+      run: echo " "
+    - name: Deploy EKS
+      run: echo " "
 
