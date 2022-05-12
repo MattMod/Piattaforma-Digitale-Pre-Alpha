@@ -24,24 +24,24 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          module: ['fe-frontend','ms-ente', 'ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
-      steps:
-      - name: Checkout
-        run: echo " "
-      - name: Node build  
-        if: ${{ matrix.module == 'fe-frontend' }}
-        run: echo "node build"  
-      - name: Maven build 
-        if: ${{ matrix.module != 'fe-frontend' }}
-        run: echo " "    
-      - name: Configure AWS credentials
-        run: echo " "
-      - name: Login to Amazon ECR
-        run: echo " "    
-      - name: Build, tag, and push the image to Amazon ECR
-        run: echo " "
+    strategy:
+      matrix:
+        module: ['fe-frontend','ms-ente', 'ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
+    steps:
+    - name: Checkout
+      run: echo " "
+    - name: Node build  
+      if: ${{ matrix.module == 'fe-frontend' }}
+      run: echo "node build"  
+    - name: Maven build 
+      if: ${{ matrix.module != 'fe-frontend' }}
+      run: echo " "    
+    - name: Configure AWS credentials
+      run: echo " "
+    - name: Login to Amazon ECR
+      run: echo " "    
+    - name: Build, tag, and push the image to Amazon ECR
+      run: echo " "
 
   # eseguito quando release-type è run --> da capire se serve un dry-run. in caso affermativo capire l'impatto sugli altri job 
   release:
