@@ -10,8 +10,6 @@ on:
         options: 
         - dryrun
         - run
-      environment:
-        type: environment
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
