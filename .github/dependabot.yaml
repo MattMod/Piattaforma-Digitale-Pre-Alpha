@@ -1,1 +1,107 @@
+version: 2
 
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome
+
+  - package-ecosystem: "npm"
+    directory: "/fe-frontend"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "npm"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome
+
+  - package-ecosystem: "maven"
+    directory: "/ms-ente"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "maven"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome
+
+  - package-ecosystem: "maven"
+    directory: "/ms-open-data"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "maven"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome
+
+  - package-ecosystem: "maven"
+    directory: "/ms-programma-progetto"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "maven"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome     
+
+  - package-ecosystem: "maven"
+    directory: "/ms-questionario-cittadino"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "maven"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome
+
+  - package-ecosystem: "maven"
+    directory: "/ms-utente"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "maven"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome   
