@@ -29,6 +29,12 @@ jobs:
       matrix:
         module: ['fe-frontend','ms-ente', 'ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
     steps:
+    - name: Setup env
+      run: |
+        echo "install kubectl"
+        echo "install node"
+        echo "install java"
+        echo "install mavem"
     - name: Checkout
       run: echo " "
     - name: Node build  
