@@ -27,7 +27,7 @@ jobs:
     needs: ['dry-release']
     strategy:
       matrix:
-        module: ['fe-frontend','ms-ente', 'ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-utente']
+        module: ['fe-frontend','ms-ente', 'ms-open-data','ms-programma-progetto','ms-questionario-cittadino','ms-gestioneutente']
     steps:
     - name: Setup env
       run: |
