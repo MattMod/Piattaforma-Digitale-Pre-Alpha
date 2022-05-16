@@ -1,0 +1,16 @@
+.card-status-action {
+  border-radius: 10px;
+  box-shadow: 0 0 40px rgba(220, 233, 245, 1);
+  padding: 24px;
+
+  &__status-button {
+    border-radius: 5px;
+    width: 135px;
+    max-height: 24px;
+    margin-top: auto;
+    margin-bottom: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

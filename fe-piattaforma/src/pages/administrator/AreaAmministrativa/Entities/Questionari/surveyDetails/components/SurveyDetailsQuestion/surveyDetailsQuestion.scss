@@ -1,0 +1,29 @@
+.survey-question-details-container {
+  box-shadow: 0px 0px 80px rgba(0, 43, 85, 0.1);
+  padding: 56px 24px 32px;
+
+  &__closed-box {
+    box-shadow: 0px 0px 80px rgba(0, 43, 85, 0.1);
+    padding: 24px;
+  }
+  &__line {
+    height: 2px;
+  }
+  &__expanded-box {
+    background-color: white;
+    padding: 0px 24px 24px;
+    box-shadow: 0px 0px 80px rgba(0, 43, 85, 0.1);
+    -webkit-box-shadow: 0 10px 10px -6px rgb(0 43 85 / 10%);
+  }
+  &__list {
+    list-style: none;
+  }
+  &__list-elem::before{
+    content: "\2022";
+    color: #0066CC;
+    font-weight: bold;
+    display: inline-block; 
+    width: 1em;
+    margin-left: -1em;
+  }
+}

@@ -1,0 +1,29 @@
+.modal-wrapper {
+  pointer-events: none;
+  z-index: $z-index-modal;
+}
+
+.modal-header-container {
+  display: flex;
+  justify-content: center;
+  padding: 27px 29.3px;
+  position: relative;
+
+  h5 {
+    color: #0066cc;
+    font-weight: 600;
+  }
+  svg {
+    position: absolute;
+    right: 29.3px;
+  }
+
+  .modal-content {
+    max-height: 705px;
+    margin-top: 85px;
+
+    .modal-body {
+      overflow-y: auto;
+    }
+  }
+}

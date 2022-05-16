@@ -1,0 +1,9 @@
+.menu-details-list {
+  .font-weight-bold.list-item {
+    border-right: 2px solid color('blue-500');
+    z-index: 20;
+  }
+  .font-weight-bold.list-item[data-toggle='collapse'] {
+    border: none;
+  }
+}

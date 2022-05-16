@@ -1,0 +1,10 @@
+# Node artifact files
+node_modules/
+build/
+dist/
+.idea/
+
+# Log files
+*.log
+*.eslintcache
+

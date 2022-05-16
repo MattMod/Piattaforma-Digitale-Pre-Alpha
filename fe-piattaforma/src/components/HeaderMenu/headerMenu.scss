@@ -1,0 +1,33 @@
+.header-menu-container {
+  ul {
+    list-style: none;
+    height: $header-nav-height;
+    width: 100%;
+
+    li {
+      margin-right: 32px;
+      text-transform: capitalize;
+
+      a {
+        text-decoration: none;
+      }
+    }
+  }
+
+  &__tab-bar {
+    height: 2px;
+  }
+
+  .tab-group-container ul li h6 {
+    margin: 16px, 0;
+  }
+}
+
+.shadow {
+  box-shadow: inset 0px 0px 40px 0px #000000;
+  position: relative;
+}
+
+.header-menu-container ul .navbar-dropdown {
+  height: auto;
+}

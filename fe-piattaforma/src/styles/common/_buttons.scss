@@ -1,0 +1,56 @@
+.btn-primary {
+  background-color: #0073e6;
+  border-color: #0073e6;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #0059b3;
+  border-color: #0059b3;
+}
+
+.btn-secondary,
+.btn.btn-tertiary,
+.btn-tertiary {
+  color: #0073e5;
+  border: 2px solid #0073e5;
+  background: #ffffff;
+}
+.btn-secondary:hover,
+.btn.btn-tertiary:hover,
+.btn-tertiary:hover {
+  color: #0059b2;
+  border: 2px solid #0073e5;
+  background: #ffffff;
+}
+
+.btn-secondary.disabled,
+.btn-secondary:disabled,
+.btn-tertiary.disabled,
+.btn-tertiary:disabled {
+  color: #bfc2c9;
+  background-color: #ffffff;
+  border-color: #e6e9f2;
+  pointer-events: none;
+}
+
+.btn-xs {
+  min-width: 186px;
+  height: 48px;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.btn-sm {
+  min-width: 242px;
+  height: 56px;
+  padding: 14px;
+  font-size: 18px;
+}
+
+.btn-lg {
+  min-width: 242px;
+  height: 72px;
+  padding: 14px;
+  font-size: 18px;
+}
