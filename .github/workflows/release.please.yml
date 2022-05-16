@@ -1,0 +1,70 @@
+name: Release please
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: 'Type of run to be performed'
+        required: true
+        type: choice
+        options: 
+        - dryrun
+        - run
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      issues: write  
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SEMANTICRELEASE }}
+          persist-credentials: 'true'
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+       
+      # semantic-release: it comes pre-installed in GitHub actions by default
+      - name: Install semantic-release extra plugins
+        run: |
+              npm install --save-dev \
+                semantic-release \
+                @semantic-release/commit-analyzer \
+                @semantic-release/changelog \
+                @semantic-release/git \
+                @semantic-release/release-notes-generator \
+                @semantic-release/exec \
+                conventional-changelog-conventionalcommits
+      - name: Create .VERSION file
+        run: echo "There are no relevant changes, so no new version is released" > .VERSION 
+      
+      - name: Dry-Run
+        if: ${{ github.event.inputs.release-type == 'dryrun' }}
+        env:
+          # ad-hoc token (PAT) in order to work with a protected branch          GITHUB_TOKEN: ${{ secrets.SEMANTICRELEASE }}
+        run: |
+          npx semantic-release --dry-run --no-ci
+
+      - name: Release
+        if: ${{ github.event.inputs.release-type == 'run' }}
+        env:
+          # ad-hoc token (PAT) in order to work with a protected branch
+          GITHUB_TOKEN: ${{ secrets.SEMANTICRELEASE }}
+        run: |
+          npx semantic-release
+      
+      - name: Version
+        id: version
+        run: |
+          nextversion=$(cat .VERSION)
+          echo "::set-output name=nextversion::$nextversion"
+          echo "Next version: $nextversion"
