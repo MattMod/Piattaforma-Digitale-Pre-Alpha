@@ -17,7 +17,7 @@ updates:
       timezone: Europe/Rome
 
   - package-ecosystem: "npm"
-    directory: "/fe-frontend"
+    directory: "/fe-piattaforma"
     commit-message:
       prefix: "fix: "
       prefix-development: "chore"
@@ -92,7 +92,22 @@ updates:
       timezone: Europe/Rome
 
   - package-ecosystem: "maven"
-    directory: "/ms-utente"
+    directory: "/ms-gestione-utente"
+    commit-message:
+      prefix: "fix: "
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "maven"
+      - "dependabot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: Europe/Rome
+    
+  - package-ecosystem: "maven"
+    directory: "/lib-repdgt-shared"
     commit-message:
       prefix: "fix: "
       prefix-development: "chore"
