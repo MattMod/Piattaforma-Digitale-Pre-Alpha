@@ -49,7 +49,5 @@ jobs:
       - name: Docker
         run: |
           docker build \
-            --build-arg nome-app=ms-utente \ 
-            --build-arg versione=test \
             --file Dockerfile \
             --tag my-image-name:$(date +%s)
