@@ -21,10 +21,12 @@ jobs:
         run: |
           cd ./fe-piattaforma
           echo "do something"
+          ls -al
 
 
       - name: Install dependencies
         run: |
+          ls -al
           npm install
 
       - name: Build
