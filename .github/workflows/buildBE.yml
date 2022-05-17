@@ -5,7 +5,7 @@ on:
 #  push:
 
 jobs:
-  buildFE:
+  buildBE:
     name: Back-End Build
     runs-on: ubuntu-latest
     defaults:
@@ -48,4 +48,4 @@ jobs:
       
       - name: Docker
         run: |
-          docker build --build-arg nome-app=ms-utente --build-arg versione=test --file Dockerfile
+          docker . build --build-arg nome-app=ms-utente --build-arg versione=test --file Dockerfile --tag my-image-name:$(date +%s)
