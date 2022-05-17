@@ -44,4 +44,4 @@ jobs:
 
       - name: Dir
         run: |
-          ls -al
+          ls -alR ./target
