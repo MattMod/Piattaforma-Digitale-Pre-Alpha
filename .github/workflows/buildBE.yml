@@ -1,0 +1,43 @@
+name: Build BE
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  buildFE:
+    name: Front-End Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ github.workspace }}/ms-gestione-utente
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+        
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt-openj9'
+
+      - name: Modify POM File
+        run: |
+          echo "do something"
+
+      - name: Install Lib
+        run: |
+          cd ${{ github.workspace }}/lib-repdgt-shared
+          mvn versions:set -DnewVersion=test
+          mvn install
+
+      - name: Set New ms-Version
+        run: |
+          mvn versions:set -DnewVersion=test
+
+      - name: Build
+        run: |
+          mvn package -Dmaven.test.skip=true mvn package -DDB_PASSWORD=Accenture1234! -DDB_URL=jdbc:mysql://mysql-8-dev-rds.ceqxasyhnnq8.eu-central-1.rds.amazonaws.com/repdig01_dev_schema -DDB_USERNAME=be
