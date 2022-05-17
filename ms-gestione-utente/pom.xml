@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>it.pa.repdgt</groupId>
 			<artifactId>repdgt-shared</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>LATEST</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
