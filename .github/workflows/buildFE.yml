@@ -2,7 +2,7 @@ name: Build FE
 
 on:
   workflow_dispatch:
-  push:
+#  push:
 
 jobs:
   buildFE:

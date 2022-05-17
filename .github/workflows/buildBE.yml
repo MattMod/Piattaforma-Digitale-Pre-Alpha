@@ -2,11 +2,11 @@ name: Build BE
 
 on:
   workflow_dispatch:
-  push:
+#  push:
 
 jobs:
   buildFE:
-    name: Front-End Build
+    name: Back-End Build
     runs-on: ubuntu-latest
     defaults:
       run:
