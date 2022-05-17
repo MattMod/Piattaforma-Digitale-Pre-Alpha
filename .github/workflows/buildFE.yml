@@ -32,8 +32,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install husky -D
-          npm run prepare
           npm install
 
       - name: Build
