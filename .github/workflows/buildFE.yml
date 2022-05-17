@@ -30,14 +30,15 @@ jobs:
         run: |
           echo "do something"
 
-      - name: Install dependencies
-        run: |
-          npm install
+      #- name: Install dependencies
+      #  run: |
+      #    npm install
 
-      - name: Build
-        run: |
-          npm run build
+      #- name: Build
+      #  run: |
+      #    npm run build
           
       - name: Build Docker Image
         run: | 
-          docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+          docker build . --target build --file Dockerfile --tag my-image-name:$(date +%s)
+          ls -al
