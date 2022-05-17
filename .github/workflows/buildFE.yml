@@ -8,6 +8,11 @@ jobs:
   buildFE:
     name: Front-End Build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ github.workspace }}/fe-piattaforma
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -20,20 +25,16 @@ jobs:
 
       - name: Change work directory
         run: |
-          cd ${{ github.workspace }}/fe-piattaforma
 
       - name: Modify Env File
         run: |
-          cd ${{ github.workspace }}/fe-piattaforma
           echo "do something"
 
       - name: Install dependencies
         run: |
-          cd ${{ github.workspace }}/fe-piattaforma
           npm run prepare
           npm install
 
       - name: Build
         run: |
-          cd ${{ github.workspace }}/fe-piattaforma
           npm run build
