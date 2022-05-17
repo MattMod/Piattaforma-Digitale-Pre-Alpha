@@ -31,7 +31,7 @@ jobs:
       - name: Install Lib
         run: |
           cd ${{ github.workspace }}/lib-repdgt-shared
-          // mvn versions:set -DnewVersion=test
+          # mvn versions:set -DnewVersion=test
           mvn install
 
       - name: Set New ms-Version
