@@ -37,6 +37,10 @@ jobs:
       - name: Set New ms-Version
         run: |
           mvn versions:set -DnewVersion=test
+          
+      - name: pom.xml
+        run: |
+          cat pom.xml
 
       - name: Build
         run: |
