@@ -45,3 +45,7 @@ jobs:
       - name: Dir
         run: |
           ls -alR ./target
+      
+      - name: Docker
+        run: |
+          docker build --build-arg nome-app=ms-utente --build-arg versione=test --file Dockerfile
