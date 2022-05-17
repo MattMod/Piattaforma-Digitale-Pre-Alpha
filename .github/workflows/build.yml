@@ -19,9 +19,14 @@ jobs:
 
       - name: Modify Env File
         run: |
+          cd ./fe-piattaforma
           echo "do something"
-      
+
+
+      - name: Install dependencies
+        run: |
+          npm install
+
       - name: Build
         run: |
-          cd ./fe-piattaforma
           npm run build
