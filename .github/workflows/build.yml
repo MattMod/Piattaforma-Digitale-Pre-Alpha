@@ -2,6 +2,7 @@ name: Build FE
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   buildFE:
@@ -25,12 +26,11 @@ jobs:
         run: |
           cd ${{ github.workspace }}/fe-piattaforma
           echo "do something"
-          pwd ; ls -al
 
       - name: Install dependencies
         run: |
           cd ${{ github.workspace }}/fe-piattaforma
-          pwd ; ls -al
+          npm run prepare
           npm install
 
       - name: Build
