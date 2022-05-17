@@ -1,0 +1,21 @@
+{
+  "data": {
+    "list": [
+      {
+        "id": "project1",
+        "name": "Progetto 1",
+        "status": "ATTIVO"
+      },
+      {
+        "id": "project2",
+        "name": "Progetto 2",
+        "status": "BOZZA"
+      },
+      {
+        "id": "project3",
+        "name": "Progetto 3",
+        "status": "NON_ATTIVO"
+      }
+    ]
+  }
+}

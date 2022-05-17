@@ -1,0 +1,21 @@
+{
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "name": "Programma 1",
+        "status": "ATTIVO"
+      },
+      {
+        "id": 2,
+        "name": "Programma 2",
+        "status": "BOZZA"
+      },
+      {
+        "id": 3,
+        "name": "Programma 3",
+        "status": "BOZZA"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "data": {
+    "list": [
+      {
+        "id": 1,
+        "name": "Questionario 1",
+        "type": "Tipo 1",
+        "status": "ATTIVO"
+      },
+      {
+        "id": 2,
+        "name": "Questionario 2",
+        "type": "Tipo 2",
+        "status": "ATTIVO"
+      },
+      {
+        "id": 3,
+        "name": "Questionario 1",
+        "type": "Tipo 3",
+        "status": "ATTIVO"
+      }
+    ]
+  }
+}

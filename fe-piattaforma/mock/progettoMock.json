@@ -1,0 +1,18 @@
+{
+  "data": {
+    "info": {
+      "projectId": "321321",
+      "projectName": "Via roma 1",
+      "shortName": "Sede 1",
+      "description": "Facilitazione"
+    },
+    "del": [
+      { "name": "Simone Viola", "status": "Active", "id": "1" },
+      { "name": "Simone Viola", "status": "Active", "id": "1" }
+    ],
+    "ref": [
+      { "name": "Simone Blu", "status": "Active", "id": "1" },
+      { "name": "Simone Blu", "status": "Active", "id": "1" }
+    ]
+  }
+}

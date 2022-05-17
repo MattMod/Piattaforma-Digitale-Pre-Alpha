@@ -1,0 +1,14 @@
+{
+  "survey-type": "Primo accesso",
+  "survey-name": "Questionario prova",
+  "section-1": {
+    "section-title": "anagraphic-section",
+    "section-visibility": "Solo facilitazione",
+    "schema": "{\"type\":\"object\",\"properties\":{\"Nome\":{\"type\":\"string\"},\"Nazionalità\":{\"type\":\"string\"},\"Email\":{\"type\":\"string\"},\"Cognome\":{\"type\":\"string\"},\"Fascia d'età\":{\"type\":\"integer\"},\"Telefono\":{\"type\":\"integer\"},\"Codice Fiscale\":{\"type\":\"string\"},\"Titolo di studio\":{\"type\":\"string\"},\"Consenso al trattamento dati\":{\"type\":\"string\"},\"N Documento\":{\"type\":\"string\"},\"Occupazione\":{\"type\":\"string\"}},\"required\":[]}"
+  },
+  "section-2": {
+    "section-title": "Sezione 2",
+    "section-visibility": "Solo facilitazione",
+    "schema": "{\"type\":\"object\",\"properties\":{\"Domanda 1\":{\"type\":\"string\"},\"Domanda 2\":{\"type\":\"integer\"},\"Domanda 3\":{\"type\":\"string\",\"enum\":[\"valore 1\",\"valore 2\"]}},\"required\":[\"Domanda 3\"]}"
+  }
+}
