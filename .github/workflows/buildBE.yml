@@ -42,12 +42,9 @@ jobs:
         run: |
           mvn package -Dmaven.test.skip=true -DDB_PASSWORD=Accenture1234! -DDB_URL=jdbc:mysql://mysql-8-dev-rds.ceqxasyhnnq8.eu-central-1.rds.amazonaws.com/repdig01_dev_schema -DDB_USERNAME=be
 
-      - name: Dir
-        run: |
-          ls -alR ./target
-      
       - name: Docker
         run: |
           docker build \
             --file Dockerfile \
-            --tag my-image-name:$(date +%s)
+            --tag my-image-name:$(date +%s) \
+            .
