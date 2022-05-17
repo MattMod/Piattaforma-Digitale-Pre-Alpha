@@ -17,16 +17,18 @@ jobs:
         with:
           node-version: 'lts/*'
 
+      - name: Change work directory
+        run: |
+          cd ${{ github.workspace }}/fe-piattaforma
+
       - name: Modify Env File
         run: |
-          cd ./fe-piattaforma
           echo "do something"
-          ls -al
-
+          pwd ; ls -al
 
       - name: Install dependencies
         run: |
-          ls -al
+          pwd ; ls -al
           npm install
 
       - name: Build
