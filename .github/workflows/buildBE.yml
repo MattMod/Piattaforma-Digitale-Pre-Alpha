@@ -6,6 +6,7 @@ on:
 
 env:
   BOT_USER: "mitd-bot"
+  BOT_MAIL: "mitd-bot@example.com"
 
 jobs:
   buildBE:
@@ -51,7 +52,7 @@ jobs:
         run: |
           git diff
           git config --global user.email "$BOT_MAIL"
-          # git config --global user.name "$BOT_USER"
+          git config --global user.name "$BOT_USER"
           git add -A
           git commit -m "chore: update version" || exit 0
           git push
