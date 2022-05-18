@@ -1,15 +1,7 @@
 name: Release ECR
 
 on:
-  push:
-    branches:
-      - 'fix/**'
-      - 'feat/**'
-  pull_request:
-    branches:
-      - 'main'
-      - 'test'
-      - 'develop'
+  workflow_dispatch:
 
 env:
   BOT_USER: "mitd-bot"
