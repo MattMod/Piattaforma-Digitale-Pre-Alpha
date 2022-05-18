@@ -24,10 +24,6 @@ jobs:
           java-version: '11'
           distribution: 'adopt-openj9'
 
-      - name: Modify POM File
-        run: |
-          echo "do something"
-
       - name: Install Lib
         run: |
           cd ${{ github.workspace }}/lib-repdgt-shared
