@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
 #  push:
 
+env:
+  BOT_USER: "mitd-bot"
+
 jobs:
   buildBE:
     name: Back-End Build
@@ -40,7 +43,15 @@ jobs:
 
       - name: Docker
         run: |
-          docker build \
-            . \
+          docker build . \
             --file Dockerfile \
-            --tag my-image-name:$(date +%s) \
+            --tag my-image-name:$(date +%s) 
+            
+      - name: Push pom.xml updated
+        run: |
+          git diff
+          git config --global user.email "$BOT_MAIL"
+          # git config --global user.name "$BOT_USER"
+          git add -A
+          git commit -m "chore: update version" || exit 0
+          git push
