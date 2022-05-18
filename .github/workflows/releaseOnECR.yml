@@ -2,6 +2,9 @@ name: Release ECR
 
 on:
   workflow_dispatch:
+  
+permissions:
+  contents: write
 
 env:
   BOT_USER: Actions Bot
