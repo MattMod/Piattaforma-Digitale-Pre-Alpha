@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  BOT_USER: "mitd-bot"
-  BOT_MAIL: "mitd-bot@example.com"
+  BOT_USER: "MattMod"
+  BOT_MAIL: "matteo.modugno@accenture.com"
 
 jobs:
   DryRunRelease:
