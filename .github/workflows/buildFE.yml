@@ -46,7 +46,7 @@ jobs:
         run: | 
           docker build . \
             --target build \
-            --file Dockerfile 
+            --file Dockerfile \
             --tag my-image-name:$(date +%s)
             
       - name: Push package.json updated
