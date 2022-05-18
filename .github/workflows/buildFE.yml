@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
 #  push:
 
+env:
+  BOT_USER: "mitd-bot"
+
 jobs:
   buildFE:
     name: Front-End Build
@@ -35,16 +38,22 @@ jobs:
           # flags of the regex
           flags: "gmi"
           # replacement string
-          replacement: '"version": "1.1.0",'
+          replacement: '"version": "1.1.0"'
           # Files to be replaced(regex)
           include: "package.json"
-      
-      - run: cat package.json | grep version
           
       - name: Build Docker Image
         run: | 
-          docker build \
+          docker build . \
             --target build \
             --file Dockerfile 
             --tag my-image-name:$(date +%s)
-        
+            
+      - name: Push package.json updated
+        run: |
+          git diff
+          git config --global user.email "$BOT_MAIL"
+          # git config --global user.name "$BOT_USER"
+          git add -A
+          git commit -m "chore: update version" || exit 0
+          git push
