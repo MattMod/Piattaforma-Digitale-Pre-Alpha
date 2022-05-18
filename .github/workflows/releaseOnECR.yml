@@ -245,7 +245,7 @@ jobs:
           echo "Deploy"
 
   RepoUpdate:
-    needs: [DryRunRelease, buildFE, buildBE]
+    needs: [DryRunRelease, buildFE, buildBE, Deploy]
     name: Repo Update
     runs-on: ubuntu-latest
     defaults:
@@ -275,16 +275,16 @@ jobs:
         run: |
           cd ${{ github.workspace }}/lib-repdgt-shared
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-          cd ${{ github.workspace }}/ms-ente
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-          cd ${{ github.workspace }}/ms-open-data
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-          cd ${{ github.workspace }}/ms-programma-progetto
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-          cd ${{ github.workspace }}/ms-questionario-cittadino
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           cd ${{ github.workspace }}/ms-gestione-utente
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          cd ${{ github.workspace }}/ms-ente
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          cd ${{ github.workspace }}/ms-open-data
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          cd ${{ github.workspace }}/ms-programma-progetto
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          cd ${{ github.workspace }}/ms-questionario-cittadino
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
 
       - name: Push files updated
         run: |
