@@ -40,10 +40,22 @@ jobs:
         with:
           ref: main
           lfs: 'true'
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Modify Env File
         run: |
@@ -65,20 +77,18 @@ jobs:
         run: |
           npm install
       
-      - name: Build Front-End
+      - name: Build Front-End & Build Image
+        id: build
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: test-repo01
+          IMAGE_TAG: fe-piattaforma-${{needs.DryRunRelease.outputs.version}}
         run: |
           npm run build
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+          docker build . \
+            --target builder \
+            --file Dockerfile \
+            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Build & Push Image to Amazon ECR
         id: push-ecr
@@ -87,10 +97,6 @@ jobs:
           ECR_REPOSITORY: test-repo01
           IMAGE_TAG: fe-piattaforma-${{needs.DryRunRelease.outputs.version}}
         run: |
-          docker build . \
-            --target builder \
-            --file Dockerfile \
-            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   buildBE:
@@ -240,6 +246,17 @@ jobs:
         with:
           version: 'latest' # default is latest stable
         id: install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Deploy
         run: |
