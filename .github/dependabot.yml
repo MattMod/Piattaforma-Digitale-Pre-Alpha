@@ -5,7 +5,6 @@ updates:
     directory: "/"
     commit-message:
       prefix: "chore: "
-      prefix-development: "chore"
       include: "scope"
     labels:
       - "github-actions"
@@ -105,7 +104,7 @@ updates:
       day: "monday"
       time: "07:00"
       timezone: Europe/Rome
-    
+
   - package-ecosystem: "maven"
     directory: "/lib-repdgt-shared"
     commit-message:
