@@ -85,13 +85,13 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: test-repo01
-          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+          IMAGE_TAG: fe-piattaforma-${{needs.DryRunRelease.outputs.version}}
         run: |
           docker build . \
             --target builder \
             --file Dockerfile \
-            --tag $ECR_REGISTRY/$ECR_REPOSITORY/fe-piattaforma:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY/fe-piattaforma:$IMAGE_TAG
+            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   buildBE:
     needs: DryRunRelease
@@ -213,7 +213,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: test-repo01
-          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+          IMAGE_TAG: ms-gestione-utente-${{needs.DryRunRelease.outputs.version}}
         run: |
           # set version
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
@@ -222,9 +222,9 @@ jobs:
           # docker build
           docker build . \
             --file Dockerfile \
-            --tag $ECR_REGISTRY/$ECR_REPOSITORY/ms-gestione-utente:$IMAGE_TAG
+            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           # docker push
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY/ms-gestione-utente:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   Deploy:
     needs: [DryRunRelease, buildFE, buildBE]
