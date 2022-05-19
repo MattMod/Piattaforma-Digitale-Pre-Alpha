@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     commit-message:
-      prefix: "fix: "
+      prefix: "chore: "
       prefix-development: "chore"
       include: "scope"
     labels:
