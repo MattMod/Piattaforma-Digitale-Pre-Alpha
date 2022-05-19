@@ -25,7 +25,7 @@ jobs:
     - name: Evaluate Release version
       id: version
       run: |
-        echo "::set-output name=VERSION::$(echo 1.1.0)"
+        echo "::set-output name=VERSION::$(echo 1.2.0)"
 
   buildFE:
     needs: DryRunRelease
@@ -77,7 +77,7 @@ jobs:
         run: |
           npm install
       
-      - name: Build Front-End & Build Image
+      - name: Build & Push Image to Amazon ECR
         id: build
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -89,15 +89,7 @@ jobs:
             --target builder \
             --file Dockerfile \
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Build & Push Image to Amazon ECR
-        id: push-ecr
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: test-repo01
-          IMAGE_TAG: fe-piattaforma-${{needs.DryRunRelease.outputs.version}}
-        run: |
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG          
 
   buildBE:
     needs: DryRunRelease
