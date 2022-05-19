@@ -88,7 +88,7 @@ jobs:
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
 #          docker build . \
-#            --target build \
+#            --target builder \
 #            --file Dockerfile \
 #            --tag $ECR_REGISTRY/$ECR_REPOSITORY/fe-piattaforma:$IMAGE_TAG
 #          docker push $ECR_REGISTRY/$ECR_REPOSITORY/fe-piattaforma:$IMAGE_TAG

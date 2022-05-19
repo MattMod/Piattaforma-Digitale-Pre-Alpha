@@ -48,7 +48,7 @@ jobs:
       - name: Build Docker Image
         run: | 
           docker build . \
-            --target build \
+            --target builder \
             --file Dockerfile \
             --tag my-image-name:$(date +%s)
             
