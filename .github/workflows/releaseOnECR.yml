@@ -25,7 +25,7 @@ jobs:
     - name: Evaluate Release version
       id: version
       run: |
-        echo "::set-output name=VERSION::$(echo 1.0.0)"
+        echo "::set-output name=VERSION::$(echo 1.1.0)"
 
   buildFE:
     needs: DryRunRelease
