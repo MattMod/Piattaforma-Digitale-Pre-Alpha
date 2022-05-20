@@ -105,8 +105,8 @@ jobs:
         id: build
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: test-repo01
-          IMAGE_TAG: fe-piattaforma-${{needs.DryRunRelease.outputs.version}}
+          ECR_REPOSITORY: fe-piattaforma
+          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
           npm run build
           docker build . \
@@ -154,7 +154,7 @@ jobs:
 #        working-directory: ${{ github.workspace }}/ms-ente
 #        env:
 #          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: test-repo01
+#          ECR_REPOSITORY: ms-ente
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
 #          # set version
@@ -174,7 +174,7 @@ jobs:
 #        working-directory: ${{ github.workspace }}/ms-open-data
 #        env:
 #          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: test-repo01
+#          ECR_REPOSITORY: ms-open-data
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
 #          # set version
@@ -194,7 +194,7 @@ jobs:
 #        working-directory: ${{ github.workspace }}/ms-programma-progetto
 #        env:
 #          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: test-repo01
+#          ECR_REPOSITORY: ms-programma-progetto
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
 #          # set version
@@ -214,7 +214,7 @@ jobs:
 #        working-directory: ${{ github.workspace }}/ms-questionario-cittadino
 #        env:
 #          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: test-repo01
+#          ECR_REPOSITORY: ms-questionario-cittadino
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
 #          # set version
@@ -234,8 +234,8 @@ jobs:
         working-directory: ${{ github.workspace }}/ms-gestione-utente
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: test-repo01
-          IMAGE_TAG: ms-gestione-utente-${{needs.DryRunRelease.outputs.version}}
+          ECR_REPOSITORY: ms-gestione-utente
+          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
           # set version
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
