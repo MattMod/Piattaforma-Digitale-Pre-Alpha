@@ -1,1 +1,25 @@
-# placeholder
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-gestione-utente
+  labels:
+    app: test-gestione-utente
+spec:
+  selector:
+    matchLabels:
+        app: test-gestione-utente
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: test-gestione-utente
+    spec:
+      containers:
+        - name: test-gestione-utente
+          image: 848729353763.dkr.ecr.eu-central-1.amazonaws.com/test-repo01:fe-piattaforma-1.2.0
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          imagePullPolicy: Always
