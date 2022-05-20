@@ -368,4 +368,4 @@ jobs:
         run: |
           nextversion=$(cat .VERSION)
           echo "::set-output name=VERSION::$nextversion"
-          echo "Release: $nextversion"
+          echo "### Release $nextversion created!" >> $GITHUB_STEP_SUMMARY
