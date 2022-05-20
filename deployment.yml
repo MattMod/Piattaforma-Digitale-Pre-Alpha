@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: underwater-app
+  labels:
+    app: octopus-underwater-app
+spec:
+  selector:
+    matchLabels:
+        app: octopus-underwater-app
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: octopus-underwater-app
+    spec:
+      containers:
+        - name: fe-piattaforma-app
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          imagePullPolicy: Always
+        - name: ms-gestione-utente-app
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          imagePullPolicy: Always
+#        - name: ms-ente-app
+#          image: nginx:1.14.2
+#          ports:
+#            - containerPort: 80
+#              protocol: TCP
+#          imagePullPolicy: Always
+#        - name: ms-open-data-app
+#          image: nginx:1.14.2
+#          ports:
+#            - containerPort: 80
+#              protocol: TCP
+#          imagePullPolicy: Always
+#        - name: ms-programma-progetto-app
+#          image: nginx:1.14.2
+#          ports:
+#            - containerPort: 80
+#              protocol: TCP
+#          imagePullPolicy: Always
+#        - name: ms-questionario-cittadino-app
+#          image: nginx:1.14.2
+#          ports:
+#            - containerPort: 80
+#              protocol: TCP
+#          imagePullPolicy: Always

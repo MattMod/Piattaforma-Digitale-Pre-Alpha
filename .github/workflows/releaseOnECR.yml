@@ -260,7 +260,7 @@ jobs:
 
       - uses: azure/setup-kubectl@v2.1
         with:
-          version: 'latest' # default is latest stable
+          version: '1.23.6' # default is latest stable
         id: install
 
       - name: Configure AWS credentials
@@ -269,14 +269,65 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
+          role-to-assume: arn:aws:iam::848729353763:role/k8sGitRole
+          role-session-name: GitHub Actions
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Deploy
+      - name: Setup deployment.yaml
         run: |
-          echo "Deploy"
+          aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
+          kubectl apply -f ${{ github.workspace }}/deployment.yaml --namespace test
+
+      - name: Deploy fe-piattaforma
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: fe-piattaforma
+          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+        run: |
+          kubectl set image deployment.v1.apps/underwater-app fe-piattaforma-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy ms-gestione-utente
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ms-gestione-utente
+          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+        run: |
+          kubectl set image deployment.v1.apps/underwater-app ms-gestione-utente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+#      - name: Deploy ms-ente
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-ente
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          kubectl set image deployment.v1.apps/underwater-app ms-ente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+#      - name: Deploy ms-open-data
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-open-data
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          kubectl set image deployment.v1.apps/underwater-app ms-open-data-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+#      - name: Deploy ms-programma-progetto
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-programma-progetto
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          kubectl set image deployment.v1.apps/underwater-app ms-programma-progetto-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+#      - name: Deploy ms-questionario-cittadino
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-questionario-cittadino
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          kubectl set image deployment.v1.apps/underwater-app ms-questionario-cittadino-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   RepoUpdate:
     needs: [DryRunRelease, buildFE, buildBE, Deploy]
