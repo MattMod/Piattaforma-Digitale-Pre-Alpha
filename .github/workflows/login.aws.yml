@@ -1,11 +1,10 @@
-
-name: k8s via action
+name: Login AWS
 
 on:
   workflow_dispatch:
 
 jobs:
-  k8s-action:
+  login-aws:
     runs-on: ubuntu-latest
 
     steps:
