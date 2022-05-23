@@ -287,6 +287,7 @@ jobs:
       - name: Setup deployment.yaml
         run: |
           aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
+          cat /home/runner/.kube/config
           kubectl apply -f ${{ github.workspace }}/deployment.yml --namespace test
 
       - name: Deploy fe-piattaforma
@@ -296,6 +297,7 @@ jobs:
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
           kubectl set image deployment.apps/underwater-app fe-piattaforma-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
+          kubectl rollout status deployment fe-piattaforma-app
 
       - name: Deploy ms-gestione-utente
         env:
@@ -304,7 +306,7 @@ jobs:
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
           kubectl set image deployment.apps/underwater-app ms-gestione-utente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
-
+          
 #      - name: Deploy ms-ente
 #        env:
 #          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
