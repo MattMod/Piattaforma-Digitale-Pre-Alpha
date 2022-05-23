@@ -287,7 +287,7 @@ jobs:
       - name: Setup deployment.yaml
         run: |
           aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
-          kubectl apply -f ${{ github.workspace }}/deployment.yaml --namespace test
+          kubectl apply -f ${{ github.workspace }}/deployment.yml --namespace test
 
       - name: Deploy fe-piattaforma
         env:
