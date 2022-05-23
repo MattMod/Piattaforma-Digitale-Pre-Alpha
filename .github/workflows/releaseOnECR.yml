@@ -49,6 +49,9 @@ jobs:
           nextversion=$(cat .VERSION)
           echo "::set-output name=VERSION::$nextversion"
           echo "Next version: $nextversion"
+      - name: Check change
+        run: |
+          echo "se non ci sono variazioni alla versione...non si deve andare avanti"
 
 
   buildFE:
