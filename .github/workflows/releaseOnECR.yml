@@ -390,6 +390,7 @@ jobs:
           git push
 
   Release:
+    needs: [RepoUpdate]
     name: Release
     runs-on: ubuntu-latest
     steps:
