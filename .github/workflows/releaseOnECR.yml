@@ -295,7 +295,7 @@ jobs:
           ECR_REPOSITORY: fe-piattaforma
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
-          kubectl set image deployment.apps/underwater-app fe-piattaforma-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          kubectl set image deployment.apps/underwater-app fe-piattaforma-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
 
       - name: Deploy ms-gestione-utente
         env:
@@ -303,7 +303,7 @@ jobs:
           ECR_REPOSITORY: ms-gestione-utente
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
-          kubectl set image deployment.apps/underwater-app ms-gestione-utente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          kubectl set image deployment.apps/underwater-app ms-gestione-utente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
 
 #      - name: Deploy ms-ente
 #        env:
@@ -311,7 +311,7 @@ jobs:
 #          ECR_REPOSITORY: ms-ente
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
-#          kubectl set image deployment.apps/underwater-app ms-ente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          kubectl set image deployment.apps/underwater-app ms-ente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
 #
 #      - name: Deploy ms-open-data
 #        env:
@@ -319,7 +319,7 @@ jobs:
 #          ECR_REPOSITORY: ms-open-data
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
-#          kubectl set image deployment.apps/underwater-app ms-open-data-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          kubectl set image deployment.apps/underwater-app ms-open-data-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
 #
 #      - name: Deploy ms-programma-progetto
 #        env:
@@ -327,7 +327,7 @@ jobs:
 #          ECR_REPOSITORY: ms-programma-progetto
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
-#          kubectl set image deployment.apps/underwater-app ms-programma-progetto-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          kubectl set image deployment.apps/underwater-app ms-programma-progetto-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
 #
 #      - name: Deploy ms-questionario-cittadino
 #        env:
@@ -335,7 +335,7 @@ jobs:
 #          ECR_REPOSITORY: ms-questionario-cittadino
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
-#          kubectl set image deployment.apps/underwater-app ms-questionario-cittadino-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          kubectl set image deployment.apps/underwater-app ms-questionario-cittadino-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
 
   RepoUpdate:
     needs: [DryRunRelease, buildFE, buildBE, Deploy]
