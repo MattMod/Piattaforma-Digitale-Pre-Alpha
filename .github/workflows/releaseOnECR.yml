@@ -260,7 +260,7 @@ jobs:
 
       - uses: azure/setup-kubectl@v2.1
         with:
-          version: '1.23.6' # default is latest stable
+          version: 'v1.23.6' # default is latest stable
         id: install
 
       - name: Configure AWS credentials
@@ -270,7 +270,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
           role-to-assume: arn:aws:iam::848729353763:role/k8sGitRole
-          role-session-name: GitHub Actions
+          role-session-name: Git
+          role-duration-seconds: 3600
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -382,7 +383,7 @@ jobs:
           git push
 
   Release:
-    name: Dry-Run Release
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.0.2
