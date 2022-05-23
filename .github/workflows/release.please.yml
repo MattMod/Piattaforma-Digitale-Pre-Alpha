@@ -1,4 +1,4 @@
-name: Release ECR
+name: Release, please!
 
 on:
   workflow_dispatch:
@@ -17,10 +17,8 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
-          ref: main
-          lfs: 'true'
           fetch-depth: 0
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
@@ -49,10 +47,12 @@ jobs:
           nextversion=$(cat .VERSION)
           echo "::set-output name=VERSION::$nextversion"
           echo "Next version: $nextversion"
-      - name: Check change
+      - name: Check changes
         run: |
-          echo "se non ci sono variazioni alla versione...non si deve andare avanti"
-
+          if [ $(wc -c .VERSION) -gt 5]; then
+            echo "se non ci sono variazioni alla versione...non si deve andare avanti"
+            exit 1
+          fi
 
   buildFE:
     needs: DryRunRelease
@@ -151,86 +151,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           mvn install
 
-#      - name: ms-ente Build & Push Image to Amazon ECR
-#        id: ms-ente
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-ente
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-ente
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -Dmaven.test.skip=true -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY/ms-ente:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY/ms-ente:$IMAGE_TAG
-#
-#      - name: ms-open-data Build & Push Image to Amazon ECR
-#        id: ms-open-data
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-open-data
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-open-data
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -Dmaven.test.skip=true -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY/ms-open-data:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY/ms-open-data:$IMAGE_TAG
-#
-#      - name: ms-programma-progetto Build & Push Image to Amazon ECR
-#        id: ms-programma-progetto
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-programma-progetto
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-programma-progetto
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -Dmaven.test.skip=true -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY/ms-programma-progetto:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY/ms-programma-progetto:$IMAGE_TAG
-#
-#      - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
-#        id: ms-questionario-cittadino
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-questionario-cittadino
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-questionario-cittadino
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -Dmaven.test.skip=true -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY/ms-questionario-cittadino:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY/ms-questionario-cittadino:$IMAGE_TAG
-
       - name: ms-gestione-utente Build & Push Image to Amazon ECR
         id: ms-gestione-utente
         if: ${{ success() }}
@@ -309,38 +229,6 @@ jobs:
         run: |
           kubectl set image deployment.apps/underwater-app ms-gestione-utente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
           
-#      - name: Deploy ms-ente
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-ente
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          kubectl set image deployment.apps/underwater-app ms-ente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
-#
-#      - name: Deploy ms-open-data
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-open-data
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          kubectl set image deployment.apps/underwater-app ms-open-data-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
-#
-#      - name: Deploy ms-programma-progetto
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-programma-progetto
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          kubectl set image deployment.apps/underwater-app ms-programma-progetto-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
-#
-#      - name: Deploy ms-questionario-cittadino
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-questionario-cittadino
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          kubectl set image deployment.apps/underwater-app ms-questionario-cittadino-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
-
   RepoUpdate:
     needs: [DryRunRelease, buildFE, buildBE, Deploy]
     name: Repo Update
@@ -374,14 +262,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           cd ${{ github.workspace }}/ms-gestione-utente
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-ente
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-open-data
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-programma-progetto
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-questionario-cittadino
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
 
       - name: Push files updated
         run: |
