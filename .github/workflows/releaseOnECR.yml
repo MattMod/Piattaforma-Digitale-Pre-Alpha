@@ -416,7 +416,6 @@ jobs:
       - name: Create .VERSION file
         run: echo "There are no relevant changes, so no new version is released" > .VERSION 
       - name: Release
-        if: ${{ github.event.inputs.release-type == 'run' }}
         env:
           # ad-hoc token (PAT) in order to permit the push on a protected branch
           # without protected branches can be use secrets.GITHUB_TOKEN
