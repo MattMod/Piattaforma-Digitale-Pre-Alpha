@@ -300,7 +300,6 @@ jobs:
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
           kubectl set image deployment.apps/underwater-app fe-piattaforma-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
-          kubectl rollout status deployment fe-piattaforma-app
 
       - name: Deploy ms-gestione-utente
         env:
