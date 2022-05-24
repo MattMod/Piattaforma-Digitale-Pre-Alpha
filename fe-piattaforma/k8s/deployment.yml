@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fe-piattaforma
+  name: fe-piattaforma-deployment
   labels:
     app: fe-piattaforma
 spec:
