@@ -208,18 +208,22 @@ jobs:
           role-duration-seconds: 3600
 
       - name: Setup deployment.yaml
-        run: |
-          aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
-          cat /home/runner/.kube/config
-          kubectl apply -f ${{ github.workspace }}/deployment.yml --namespace test
-
-      - name: Deploy fe-piattaforma
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: fe-piattaforma
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
-          kubectl set image deployment.apps/underwater-app fe-piattaforma-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
+          aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
+          
+          cd ./k8s
+          export ECR_REPOSITORY=${{ secret.ECR_REGISTRY }}/${{ secret.ECR_REPOSITORY }}
+          export IMAGE_TAG=${{ secret.SHORT_SHA }}
+          export EKS_NAMESPACE=${{ secret.SHORT_SHA }}
+          envsubst < deployment.tpl.yml > deployment.yml
+
+      - name: Deploy fe-piattaforma
+        run: |
+          kubectl apply -f ${{ github.workspace }}/k8s/deployment.yml
 
       - name: Deploy ms-gestione-utente
         env:
@@ -229,6 +233,25 @@ jobs:
         run: |
           kubectl set image deployment.apps/underwater-app ms-gestione-utente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
           
+  check-deploy:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: FE
+        continue-on-error: true
+        run: | 
+          if ! kubectl rollout status deployment myapp; then
+            exit 1
+          fi
+
+      - name: Rollback!!!!
+        if: steps.hello.outputs.status == 'failure' || steps.world.outputs.status == 'failure'
+        run: |
+            kubectl rollout undo deployment repubblica-digitale-deployment
+            kubectl rollout status deployment repubblica-digitale-deployment
+
+
   RepoUpdate:
     needs: [DryRunRelease, buildFE, buildBE, Deploy]
     name: Repo Update
