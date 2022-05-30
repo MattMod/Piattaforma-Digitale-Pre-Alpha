@@ -207,49 +207,74 @@ jobs:
           role-session-name: Git
           role-duration-seconds: 3600
 
-      - name: Setup deployment.yaml
+      - name: Setup Namespace
+        run: |
+          aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
+          export EKS_NAMESPACE=test
+          cd ${{ github.workspace }}
+          envsubst < deployment.yml
+          unset EKS_NAMESPACE
+
+      - name: Setup 'fe-piattaforma' deployment.tmp.yaml
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: fe-piattaforma
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
-          aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
-          
-          cd ./k8s
-          export ECR_REPOSITORY=${{ secret.ECR_REGISTRY }}/${{ secret.ECR_REPOSITORY }}
-          export IMAGE_TAG=${{ secret.SHORT_SHA }}
-          export EKS_NAMESPACE=${{ secret.SHORT_SHA }}
-          envsubst < deployment.tpl.yml > deployment.yml
+          cd ${{ github.workspace }}/fe-piattaforma/k8s
+          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+          export IMAGE_TAG=$IMAGE_TAG
+          envsubst < deployment.tmp.yml
+          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
-      - name: Deploy fe-piattaforma
-        run: |
-          kubectl apply -f ${{ github.workspace }}/k8s/deployment.yml
-
-      - name: Deploy ms-gestione-utente
+      - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-gestione-utente
           IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
         run: |
-          kubectl set image deployment.apps/underwater-app ms-gestione-utente-app=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --namespace test
+          cd ${{ github.workspace }}/ms-gestione-utente/k8s
+          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+          export IMAGE_TAG=$IMAGE_TAG
+          envsubst < deployment.tmp.yml
+          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+
+      - name: Deploy 
+        run: |
+          cd ${{ github.workspace }}
+          echo "===DEPLOYMENT FILE==="
+          cat deployment.yml
+          echo "====================="
+          kubectl apply -f deployment.yml
           
   check-deploy:
     needs: [deploy]
     runs-on: ubuntu-latest
 
     steps:
-      - name: FE
+      - name: fe-piattaforma
+        id: fe-piattaforma
         continue-on-error: true
         run: | 
-          if ! kubectl rollout status deployment myapp; then
+          if ! kubectl rollout status fe-piattaforma-deployment; then
             exit 1
           fi
 
-      - name: Rollback!!!!
-        if: steps.hello.outputs.status == 'failure' || steps.world.outputs.status == 'failure'
+      - name: ms-gestione-utente
+        id: ms-gestione-utente
+        continue-on-error: true
+        run: | 
+          if ! kubectl rollout status ms-gestione-utente-deployment; then
+            exit 1
+          fi
+
+      - name: Rollback
+        if: steps.fe-piattaforma.outcome != 'success' || steps.ms-gestione-utente.outcome != 'success'
         run: |
-            kubectl rollout undo deployment repubblica-digitale-deployment
-            kubectl rollout status deployment repubblica-digitale-deployment
+            kubectl rollout undo deployment fe-piattaforma-deployment
+            kubectl rollout status deployment fe-piattaforma-deployment
+            kubectl rollout undo deployment ms-gestione-utente-deployment
+            kubectl rollout status deployment ms-gestione-utente-deployment
 
 
   RepoUpdate:

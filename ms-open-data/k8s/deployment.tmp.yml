@@ -1,30 +1,26 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fe-piattaforma-deployment
+  name: ms-open-data-deployment
   labels:
-    app: fe-piattaforma
+    app: ms-open-data
 spec:
   selector:
     matchLabels:
-        app: fe-piattaforma
+        app: ms-open-data
   replicas: 1
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: fe-piattaforma
+        app: ms-open-data
     spec:
       containers:
-        - name: fe-piattaforma
+        - name: ms-open-data
           image: ${ECR_REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 80
               protocol: TCP
           imagePullPolicy: Always
----
-apiVersion: v1
-kind: Namespace
-metadata:
-    name: ${EKS_NAMESPACE}
