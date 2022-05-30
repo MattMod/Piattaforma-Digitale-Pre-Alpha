@@ -248,7 +248,7 @@ jobs:
           kubectl apply -f deployment.yml
           
   check-deploy:
-    needs: [deploy]
+    needs: [Deploy]
     runs-on: ubuntu-latest
 
     steps:
@@ -278,7 +278,7 @@ jobs:
 
 
   RepoUpdate:
-    needs: [DryRunRelease, buildFE, buildBE, Deploy]
+    needs: [DryRunRelease, buildFE, buildBE, Deploy, check-deploy]
     name: Repo Update
     runs-on: ubuntu-latest
     defaults:
