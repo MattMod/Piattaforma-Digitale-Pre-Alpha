@@ -207,13 +207,9 @@ jobs:
           role-session-name: Git
           role-duration-seconds: 3600
 
-      - name: Setup Namespace
+      - name: Setup Kubeconfig
         run: |
           aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
-          export EKS_NAMESPACE=test
-          cd ${{ github.workspace }}
-          envsubst < deployment.yml
-          unset EKS_NAMESPACE
 
       - name: Setup 'fe-piattaforma' deployment.tmp.yaml
         env:
@@ -245,7 +241,7 @@ jobs:
           echo "===DEPLOYMENT FILE==="
           cat deployment.yml
           echo "====================="
-          kubectl apply -f deployment.yml
+          kubectl apply -f deployment.yml --namespace=test
           
   check-deploy:
     needs: [Deploy]
