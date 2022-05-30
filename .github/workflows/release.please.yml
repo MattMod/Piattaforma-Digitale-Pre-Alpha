@@ -243,12 +243,7 @@ jobs:
           echo "====================="
           kubectl apply -f deployment.yml --namespace=test
           
-  check-deploy:
-    needs: [Deploy]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: fe-piattaforma
+      - name: Check fe-piattaforma Deploy
         id: fe-piattaforma
         continue-on-error: true
         run: | 
@@ -256,7 +251,7 @@ jobs:
             exit 1
           fi
 
-      - name: ms-gestione-utente
+      - name: Check ms-gestione-utente Deploy
         id: ms-gestione-utente
         continue-on-error: true
         run: | 
@@ -270,11 +265,10 @@ jobs:
             kubectl rollout undo deployment.apps/fe-piattaforma-deployment
             kubectl rollout status deployment.apps/fe-piattaforma-deployment
             kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
-            kubectl rollout status deployment.apps/ms-gestione-utente-deployment
-
+            kubectl rollout status deployment.apps/ms-gestione-utente-deployment     
 
   RepoUpdate:
-    needs: [DryRunRelease, buildFE, buildBE, Deploy, check-deploy]
+    needs: [DryRunRelease, buildFE, buildBE, Deploy]
     name: Repo Update
     runs-on: ubuntu-latest
     defaults:
