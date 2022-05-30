@@ -252,7 +252,7 @@ jobs:
         id: fe-piattaforma
         continue-on-error: true
         run: | 
-          if ! kubectl rollout status fe-piattaforma-deployment; then
+          if ! kubectl rollout status deployment.apps/fe-piattaforma-deployment; then
             exit 1
           fi
 
@@ -260,17 +260,17 @@ jobs:
         id: ms-gestione-utente
         continue-on-error: true
         run: | 
-          if ! kubectl rollout status ms-gestione-utente-deployment; then
+          if ! kubectl rollout status deployment.apps/ms-gestione-utente-deployment; then
             exit 1
           fi
 
       - name: Rollback
         if: steps.fe-piattaforma.outcome != 'success' || steps.ms-gestione-utente.outcome != 'success'
         run: |
-            kubectl rollout undo deployment fe-piattaforma-deployment
-            kubectl rollout status deployment fe-piattaforma-deployment
-            kubectl rollout undo deployment ms-gestione-utente-deployment
-            kubectl rollout status deployment ms-gestione-utente-deployment
+            kubectl rollout undo deployment.apps/fe-piattaforma-deployment
+            kubectl rollout status deployment.apps/fe-piattaforma-deployment
+            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
+            kubectl rollout status deployment.apps/ms-gestione-utente-deployment
 
 
   RepoUpdate:
