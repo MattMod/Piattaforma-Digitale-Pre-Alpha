@@ -32,8 +32,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/ms-ente"
     commit-message:
-      prefix: "fix: "
-      prefix-development: "chore"
+      prefix: "chore"
       include: "scope"
     labels:
       - "maven"
@@ -47,8 +46,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/ms-open-data"
     commit-message:
-      prefix: "fix: "
-      prefix-development: "chore"
+      prefix: "chore"
       include: "scope"
     labels:
       - "maven"
@@ -62,8 +60,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/ms-programma-progetto"
     commit-message:
-      prefix: "fix: "
-      prefix-development: "chore"
+      prefix: "chore"
       include: "scope"
     labels:
       - "maven"
@@ -77,8 +74,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/ms-questionario-cittadino"
     commit-message:
-      prefix: "fix: "
-      prefix-development: "chore"
+      prefix: "chore"
       include: "scope"
     labels:
       - "maven"
@@ -92,8 +88,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/ms-gestione-utente"
     commit-message:
-      prefix: "fix: "
-      prefix-development: "chore"
+      prefix: "chore"
       include: "scope"
     labels:
       - "maven"
@@ -107,8 +102,7 @@ updates:
   - package-ecosystem: "maven"
     directory: "/lib-repdgt-shared"
     commit-message:
-      prefix: "fix: "
-      prefix-development: "chore"
+      prefix: "chore"
       include: "scope"
     labels:
       - "maven"
