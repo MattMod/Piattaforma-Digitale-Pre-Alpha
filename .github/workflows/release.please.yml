@@ -202,6 +202,19 @@ jobs:
         with:
           ref: main
           lfs: 'true'
+      
+      - name: Check Input Version
+        if: ${{ github.event.inputs.version != '' }}
+        id: checkver
+        run: |
+          version="${{ github.event.inputs.version }}"
+          ref=$(git show-ref --tags)
+          if [ grep -q "refs/tags/$version" <<< "$ref" ]; then
+            echo "Version $version exists. Input accepted."
+          else
+            echo "Version $version doesn't exist. INVALID INPUT."
+            exit 1
+          fi
 
       - uses: azure/setup-kubectl@v2.1
         with:
@@ -228,19 +241,6 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-session-name: Git
           role-duration-seconds: 3600
-
-      - name: Check Input Version
-        if: ${{ github.event.inputs.version != '' }}
-        id: checkver
-        run: |
-          version="${{ github.event.inputs.version }}"
-          ref=$(git show-ref --tags)
-          if [ grep -q "refs/tags/$version" <<< "$ref" ]; then
-            echo "Version $version exists. Input accepted."
-          else
-            echo "Version $version doesn't exist. INVALID INPUT."
-            exit 1
-          fi
 
       - name: Setup Kubeconfig
         run: |
