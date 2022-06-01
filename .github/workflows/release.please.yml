@@ -207,6 +207,7 @@ jobs:
         if: ${{ github.event.inputs.version != '' }}
         id: checkver
         run: |
+          set -x
           version="${{ github.event.inputs.version }}"
           echo "==> Version: $version"
           if [ $(git tag -l "$version" | wc -l) -gt 0 ]; then
@@ -215,6 +216,7 @@ jobs:
             echo "Version $version doesn't exist. INVALID INPUT."
             exit 1
           fi
+          set +x
 
       - uses: azure/setup-kubectl@v2.1
         with:
