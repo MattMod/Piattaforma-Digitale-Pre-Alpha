@@ -7,7 +7,7 @@ on:
         description: 'Existing Version to release (*Blank to create a new one)'
         required: false
         default: '1.0.0'
-  
+
 permissions:
   contents: write
 
@@ -25,21 +25,13 @@ jobs:
       - name: Check Input Version
         if: ${{ github.event.inputs.version != '' }}
         id: checkver
-        run: |
-          version="${{ github.event.inputs.version }}"
-          ref=$(git show-ref --tags)
-          if [ grep -q "refs/tags/$version" <<< "$ref" ]; then
-            echo "Version $version exists. Input accepted."
-          else
-            echo "Version $version doesn't exist. INVALID INPUT."
-            exit 1
-          fi
+        run: echo "check"
       - name: check
         id: check
         run: |
           if [ "${{ github.event.inputs.version }}" = "" ]; then
             echo "::set-output name=CHECK::RE-RELEASE"
-          else 
+          else
             echo "::set-output name=CHECK::NEW-RELEASE"
           fi
 
@@ -72,19 +64,19 @@ jobs:
     needs: DryRunRelease
     name: BE Build
     runs-on: ubuntu-latest
-    steps:      
+    steps:
       - run: echo "Hello BE"
 
   Deploy:
     needs: [Check, DryRunRelease, buildFE, buildBE]
-    if: always() 
+    if: always()
     name: Deploy
     runs-on: ubuntu-latest
     outputs:
       IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
     steps:
       - run: echo "deploy"
-  
+
   RepoUpdate:
     needs: [DryRunRelease, Deploy]
     name: Repo Update
