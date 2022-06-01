@@ -74,7 +74,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}/fe-piattaforma
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -135,7 +135,7 @@ jobs:
     name: BE Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -198,7 +198,7 @@ jobs:
     outputs:
       IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           fetch-depth: '0'
@@ -323,7 +323,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}/fe-piattaforma
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -364,7 +364,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.SEMANTICRELEASE }}
           persist-credentials: 'true'

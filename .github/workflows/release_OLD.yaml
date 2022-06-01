@@ -17,7 +17,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -58,7 +58,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}/fe-piattaforma
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -116,7 +116,7 @@ jobs:
     name: Back-End Build
     runs-on: ubuntu-latest
     steps:      
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -247,7 +247,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -337,7 +337,7 @@ jobs:
         shell: bash
         working-directory: ${{ github.workspace }}/fe-piattaforma
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           ref: main
           lfs: 'true'
@@ -384,7 +384,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.SEMANTICRELEASE }}
           persist-credentials: 'true'
