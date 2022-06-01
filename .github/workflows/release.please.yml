@@ -192,6 +192,9 @@ jobs:
       (needs.buildBE.result == 'success' || needs.buildBE.result == 'skipped')
     name: Deploy
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     outputs:
       IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
     steps:
