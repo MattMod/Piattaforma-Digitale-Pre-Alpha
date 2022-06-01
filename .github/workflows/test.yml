@@ -1,0 +1,104 @@
+name: Test, please!
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Existing Version to release (*Blank to create a new one)'
+        required: false
+        default: '1.0.0'
+  
+permissions:
+  contents: write
+
+env:
+  BOT_USER: Actions Bot
+  BOT_MAIL: <>
+
+jobs:
+  Check:
+    name: Check
+    runs-on: ubuntu-latest
+    outputs:
+      activity: ${{ steps.check.outputs.CHECK }}
+    steps:
+      - name: Check Input Version
+        if: ${{ github.event.inputs.version != '' }}
+        id: checkver
+        run: |
+          version="${{ github.event.inputs.version }}"
+          ref=$(git show-ref --tags)
+          if [ grep -q "refs/tags/$version" <<< "$ref" ]; then
+            echo "Version $version exists. Input accepted."
+          else
+            echo "Version $version doesn't exist. INVALID INPUT."
+            exit 1
+          fi
+      - name: check
+        id: check
+        run: |
+          if [ "${{ github.event.inputs.version }}" = "" ]; then
+            echo "::set-output name=CHECK::RE-RELEASE"
+          else 
+            echo "::set-output name=CHECK::NEW-RELEASE"
+          fi
+
+  DryRunRelease:
+    name: Dry-Run Release
+    runs-on: ubuntu-latest
+    needs: [Check]
+    if: ${{ needs.Check.outputs.check == 'NEW-RELEASE' }}
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+    steps:
+      - name: Version
+        id: version
+        run: |
+          nextversion="6.6.6"
+          echo "::set-output name=VERSION::$nextversion"
+          echo "Next version: $nextversion"
+
+  buildFE:
+    needs: DryRunRelease
+    name: FE Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - run: echo "Hello FE"
+
+  buildBE:
+    needs: DryRunRelease
+    name: BE Build
+    runs-on: ubuntu-latest
+    steps:      
+      - run: echo "Hello BE"
+
+  Deploy:
+    needs: [Check, DryRunRelease, buildFE, buildBE]
+    if: always() 
+    name: Deploy
+    runs-on: ubuntu-latest
+    outputs:
+      IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+    steps:
+      - run: echo "deploy"
+  
+  RepoUpdate:
+    needs: [DryRunRelease, Deploy]
+    name: Repo Update
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ github.workspace }}/fe-piattaforma
+    steps:
+      - run: echo "update"
+
+  Release:
+    needs: [RepoUpdate]
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "semantic release"
