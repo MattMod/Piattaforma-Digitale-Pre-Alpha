@@ -6,7 +6,7 @@ on:
       version:
         description: 'Existing Version to release (*Blank to create a new one)'
         required: false
-  
+
 permissions:
   contents: write
 
@@ -114,7 +114,7 @@ jobs:
       - name: Install FE dependencies
         run: |
           npm install
-      
+
       - name: Build & Push Image to Amazon ECR
         id: build
         env:
@@ -127,14 +127,14 @@ jobs:
             --target builder \
             --file Dockerfile \
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG          
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   buildBE:
     if: ${{ github.event.inputs.version == '' }}
     needs: DryRunRelease
     name: BE Build
     runs-on: ubuntu-latest
-    steps:      
+    steps:
       - uses: actions/checkout@v3.0.2
         with:
           ref: main
@@ -202,16 +202,14 @@ jobs:
         with:
           ref: main
           lfs: 'true'
-      
+
       - name: Check Input Version
         if: ${{ github.event.inputs.version != '' }}
         id: checkver
         run: |
           version="${{ github.event.inputs.version }}"
           echo "==> Version: $version"
-          reftag=$(git tag -l "*")
-          echo "==> REF: $reftag"
-          if [ $(git tag -l "$version" | grep -c "$version") -gt 0 ]; then
+          if [ $(git tag -l "$version" | wc -l) -gt 0 ]; then
             echo "Version $version exists. Input accepted."
           else
             echo "Version $version doesn't exist. INVALID INPUT."
@@ -233,7 +231,7 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        
+
       - name: Configure AWS credentials for K8S
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -255,7 +253,7 @@ jobs:
             echo "::set-output name=IMAGETAG::$(echo ${{needs.DryRunRelease.outputs.version}} )"
           else
             echo "::set-output name=IMAGETAG::$(echo ${{ github.event.inputs.version }} )"
-          fi            
+          fi
 
       - name: Setup 'fe-piattaforma' deployment.tmp.yaml
         env:
@@ -281,18 +279,18 @@ jobs:
           envsubst < deployment.tmp.yml
           cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
-      - name: Deploy 
+      - name: Deploy
         run: |
           cd ${{ github.workspace }}
           echo "===DEPLOYMENT FILE==="
           cat deployment.yml
           echo "====================="
           kubectl apply -f deployment.yml --namespace=${{ secrets.AWS_NAMESPACE }}
-          
+
 #      - name: Check fe-piattaforma Deploy
 #        id: fe-piattaforma
 #        continue-on-error: true
-#        run: | 
+#        run: |
 #          if ! kubectl rollout status deployment.apps/fe-piattaforma-deployment; then
 #            exit 1
 #          fi
@@ -300,7 +298,7 @@ jobs:
 #      - name: Check ms-gestione-utente Deploy
 #        id: ms-gestione-utente
 #        continue-on-error: true
-#        run: | 
+#        run: |
 #          if ! kubectl rollout status deployment.apps/ms-gestione-utente-deployment; then
 #            exit 1
 #          fi
@@ -311,7 +309,7 @@ jobs:
 #            kubectl rollout undo deployment.apps/fe-piattaforma-deployment
 #            kubectl rollout status deployment.apps/fe-piattaforma-deployment
 #            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
-#            kubectl rollout status deployment.apps/ms-gestione-utente-deployment     
+#            kubectl rollout status deployment.apps/ms-gestione-utente-deployment
 
   RepoUpdate:
     if: ${{ github.event.inputs.version == '' }}
@@ -384,7 +382,7 @@ jobs:
                 @semantic-release/exec \
                 conventional-changelog-conventionalcommits
       - name: Create .VERSION file
-        run: echo "There are no relevant changes, so no new version is released" > .VERSION 
+        run: echo "There are no relevant changes, so no new version is released" > .VERSION
       - name: Release
         env:
           # ad-hoc token (PAT) in order to permit the push on a protected branch
