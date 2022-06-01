@@ -209,9 +209,9 @@ jobs:
         run: |
           version="${{ github.event.inputs.version }}"
           echo "==> Version: $version"
-          ref=$(git show-ref --tags)
-          echo "==> REF: $ref"
-          refrep=${ref//\//\_}
+          reftag=$(git show-ref --tags)
+          echo "==> REF: $reftag"
+          refrep=${reftag//\//\_}
           echo "==> REFREP: $refrep"
           if [ $(echo "$refrep" | grep -c "refs_tags_$version") -gt 0 ]; then
             echo "Version $version exists. Input accepted."
