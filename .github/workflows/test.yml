@@ -23,13 +23,12 @@ jobs:
       CHECK: ${{ steps.check.outputs.CHECK }}
     steps:
       - name: Check Input Version
-        if: ${{ github.event.inputs.version != '' }}
         id: checkver
         run: echo "check"
       - name: check
         id: check
         run: |
-          if [ "${{ github.event.inputs.version }}" = "" ]; then
+          if [ ! -z ${{ github.event.inputs.version }} ]; then
             echo "::set-output name=CHECK::RE-RELEASE"
             echo "🧨 Re-Release of ${{ github.event.inputs.version }} version" >> $GITHUB_STEP_SUMMARY
           else
