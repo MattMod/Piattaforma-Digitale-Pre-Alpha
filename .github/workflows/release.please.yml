@@ -16,7 +16,6 @@ env:
 
 jobs:
   DryRunRelease:
-    if: ${{ github.event.inputs.version == '' }}
     name: Dry-Run Release
     runs-on: ubuntu-latest
     outputs:
@@ -185,7 +184,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   Deploy:
-    needs: [DryRunRelease, buildFE, buildBE]
+    needs: [DryRunRelease]
     name: Deploy
     runs-on: ubuntu-latest
     outputs:
@@ -306,7 +305,7 @@ jobs:
 
   RepoUpdate:
     if: ${{ github.event.inputs.version == '' }}
-    needs: [DryRunRelease, buildFE, buildBE, Deploy]
+    needs: [DryRunRelease, Deploy]
     name: Repo Update
     runs-on: ubuntu-latest
     defaults:
