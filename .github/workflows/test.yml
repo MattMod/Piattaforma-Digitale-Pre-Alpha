@@ -28,7 +28,7 @@ jobs:
       - name: check
         id: check
         run: |
-          if [ ! -z ${{ github.event.inputs.version }} ]; then
+          if [ ${{ github.event.inputs.version }} = "1.0.0" ]; then
             echo "::set-output name=CHECK::RE-RELEASE"
             echo "🧨 Re-Release of ${{ github.event.inputs.version }} version" >> $GITHUB_STEP_SUMMARY
           else
