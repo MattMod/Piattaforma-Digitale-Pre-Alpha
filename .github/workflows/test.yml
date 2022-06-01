@@ -50,6 +50,7 @@ jobs:
           nextversion="6.6.6"
           echo "::set-output name=VERSION::$nextversion"
           echo "Next version: $nextversion"
+      - run: echo "✅ Dry-Run next release $nextversion" >> $GITHUB_STEP_SUMMARY
 
   buildFE:
     needs: DryRunRelease
@@ -60,6 +61,7 @@ jobs:
         shell: bash
     steps:
       - run: echo "Hello FE"
+      - run: echo "✅ Build & Push FE" >> $GITHUB_STEP_SUMMARY
 
   buildBE:
     needs: DryRunRelease
@@ -67,6 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Hello BE"
+      - run: echo "✅ Build & Push BE" >> $GITHUB_STEP_SUMMARY
 
   Deploy:
     needs: [Check, DryRunRelease, buildFE, buildBE]
@@ -77,6 +80,7 @@ jobs:
       IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
     steps:
       - run: echo "deploy"
+      - run: echo "✅ Deploy" >> $GITHUB_STEP_SUMMARY
 
   RepoUpdate:
     needs: [DryRunRelease, Deploy]
@@ -87,6 +91,7 @@ jobs:
         shell: bash
     steps:
       - run: echo "update"
+      - run: echo "✅ Repo Update" >> $GITHUB_STEP_SUMMARY
 
   Release:
     needs: [RepoUpdate]
@@ -94,3 +99,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "semantic release"
+      - run: echo "✅ Sematic Release" >> $GITHUB_STEP_SUMMARY
