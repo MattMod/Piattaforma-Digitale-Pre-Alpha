@@ -208,8 +208,12 @@ jobs:
         id: checkver
         run: |
           version="${{ github.event.inputs.version }}"
+          echo "==> Version: $version"
           ref=$(git show-ref --tags)
-          if [ grep -q "refs/tags/$version" <<< "$ref" ]; then
+          echo "==> REF: $ref"
+          refrep=${ref//\//\_}
+          echo "==> REFREP: $refrep"
+          if [ $(echo "$refrep" | grep -c "refs_tags_$version") -gt 0 ]; then
             echo "Version $version exists. Input accepted."
           else
             echo "Version $version doesn't exist. INVALID INPUT."
