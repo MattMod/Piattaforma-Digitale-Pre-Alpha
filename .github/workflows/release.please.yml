@@ -184,7 +184,12 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   Deploy:
-    needs: [DryRunRelease]
+    needs: [DryRunRelease, buildFE, buildBE]
+    if: |
+      always() &&
+      needs.DryRunRelease.result == 'success' &&
+      (needs.buildFE.result == 'success' || needs.buildFE.result == 'skipped') &&
+      (needs.buildBE.result == 'success' || needs.buildBE.result == 'skipped')
     name: Deploy
     runs-on: ubuntu-latest
     outputs:
