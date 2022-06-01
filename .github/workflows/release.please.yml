@@ -2,6 +2,10 @@ name: Release, please!
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Existing Version to release (*Blank to create a new one)'
+        required: false
   
 permissions:
   contents: write
@@ -12,6 +16,7 @@ env:
 
 jobs:
   DryRunRelease:
+    if: ${{ github.event.inputs.version == '' }}
     name: Dry-Run Release
     runs-on: ubuntu-latest
     outputs:
@@ -20,10 +25,12 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
+
       - name: Install semantic-release extra plugins
         run: |
               npm install --save-dev \
@@ -34,19 +41,23 @@ jobs:
                 @semantic-release/release-notes-generator \
                 @semantic-release/exec \
                 conventional-changelog-conventionalcommits
+
       - name: Create .VERSION file
-        run: echo "There are no relevant changes, so no new version is released" > .VERSION 
+        run: echo "There are no relevant changes, so no new version is released" > .VERSION
+
       - name: Dry-Run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npx semantic-release --dry-run --no-ci
+
       - name: Version
         id: version
         run: |
           nextversion=$(cat .VERSION)
           echo "::set-output name=VERSION::$nextversion"
           echo "Next version: $nextversion"
+
       - name: Check changes
         run: |
           if [ $(wc -c .VERSION) -gt 5]; then
@@ -55,6 +66,7 @@ jobs:
           fi
 
   buildFE:
+    if: ${{ github.event.inputs.version == '' }}
     needs: DryRunRelease
     name: FE Build
     runs-on: ubuntu-latest
@@ -78,7 +90,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -119,6 +131,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG          
 
   buildBE:
+    if: ${{ github.event.inputs.version == '' }}
     needs: DryRunRelease
     name: BE Build
     runs-on: ubuntu-latest
@@ -138,7 +151,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -163,7 +176,7 @@ jobs:
           # set version
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           # build
-          mvn package -Dmaven.test.skip=true -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }}
+          mvn package -Dmaven.test.skip=true -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }}
           # docker build
           docker build . \
             --file Dockerfile \
@@ -175,6 +188,8 @@ jobs:
     needs: [DryRunRelease, buildFE, buildBE]
     name: Deploy
     runs-on: ubuntu-latest
+    outputs:
+      IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
     steps:
       - uses: actions/checkout@v3.0.2
         with:
@@ -191,7 +206,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -202,20 +217,42 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
-          role-to-assume: arn:aws:iam::848729353763:role/k8sGitRole
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           role-session-name: Git
           role-duration-seconds: 3600
 
+      - name: Check Input Version
+        if: ${{ github.event.inputs.version != '' }}
+        id: checkver
+        run: |
+          version="${{ github.event.inputs.version }}"
+          ref=$(git show-ref --tags)
+          if [ grep -q "refs/tags/$version" <<< "$ref" ]; then
+            echo "Version $version exists. Input accepted."
+          else
+            echo "Version $version doesn't exist. INVALID INPUT."
+            exit 1
+          fi
+
       - name: Setup Kubeconfig
         run: |
-          aws eks update-kubeconfig --region eu-central-1 --name eks-mitd-dev
+          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.AWS_CLUSTER }}
+
+      - name: Setup Image TAG
+        id: imagetag
+        run: |
+          if [ ${{ github.event.inputs.version }} = '' ]; then
+            echo "::set-output name=IMAGETAG::$(echo ${{needs.DryRunRelease.outputs.version}} )"
+          else
+            echo "::set-output name=IMAGETAG::$(echo ${{ github.event.inputs.version }} )"
+          fi            
 
       - name: Setup 'fe-piattaforma' deployment.tmp.yaml
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: fe-piattaforma
-          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
         run: |
           cd ${{ github.workspace }}/fe-piattaforma/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
@@ -227,7 +264,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-gestione-utente
-          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
         run: |
           cd ${{ github.workspace }}/ms-gestione-utente/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
@@ -241,33 +278,34 @@ jobs:
           echo "===DEPLOYMENT FILE==="
           cat deployment.yml
           echo "====================="
-          kubectl apply -f deployment.yml --namespace=test
+          kubectl apply -f deployment.yml --namespace=${{ secrets.AWS_NAMESPACE }}
           
-      - name: Check fe-piattaforma Deploy
-        id: fe-piattaforma
-        continue-on-error: true
-        run: | 
-          if ! kubectl rollout status deployment.apps/fe-piattaforma-deployment; then
-            exit 1
-          fi
-
-      - name: Check ms-gestione-utente Deploy
-        id: ms-gestione-utente
-        continue-on-error: true
-        run: | 
-          if ! kubectl rollout status deployment.apps/ms-gestione-utente-deployment; then
-            exit 1
-          fi
-
-      - name: Rollback
-        if: steps.fe-piattaforma.outcome != 'success' || steps.ms-gestione-utente.outcome != 'success'
-        run: |
-            kubectl rollout undo deployment.apps/fe-piattaforma-deployment
-            kubectl rollout status deployment.apps/fe-piattaforma-deployment
-            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
-            kubectl rollout status deployment.apps/ms-gestione-utente-deployment     
+#      - name: Check fe-piattaforma Deploy
+#        id: fe-piattaforma
+#        continue-on-error: true
+#        run: | 
+#          if ! kubectl rollout status deployment.apps/fe-piattaforma-deployment; then
+#            exit 1
+#          fi
+#
+#      - name: Check ms-gestione-utente Deploy
+#        id: ms-gestione-utente
+#        continue-on-error: true
+#        run: | 
+#          if ! kubectl rollout status deployment.apps/ms-gestione-utente-deployment; then
+#            exit 1
+#          fi
+#
+#      - name: Rollback
+#        if: steps.fe-piattaforma.outcome != 'success' || steps.ms-gestione-utente.outcome != 'success'
+#        run: |
+#            kubectl rollout undo deployment.apps/fe-piattaforma-deployment
+#            kubectl rollout status deployment.apps/fe-piattaforma-deployment
+#            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
+#            kubectl rollout status deployment.apps/ms-gestione-utente-deployment     
 
   RepoUpdate:
+    if: ${{ github.event.inputs.version == '' }}
     needs: [DryRunRelease, buildFE, buildBE, Deploy]
     name: Repo Update
     runs-on: ubuntu-latest
@@ -312,6 +350,7 @@ jobs:
           git push
 
   Release:
+    if: ${{ github.event.inputs.version == '' }}
     needs: [RepoUpdate]
     name: Release
     runs-on: ubuntu-latest
