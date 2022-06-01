@@ -31,8 +31,10 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.version }}" = "" ]; then
             echo "::set-output name=CHECK::RE-RELEASE"
+            echo "🧨 Re-Release of ${{ github.event.inputs.version }} version" >> $GITHUB_STEP_SUMMARY
           else
             echo "::set-output name=CHECK::NEW-RELEASE"
+            echo "🎉 New-Release " >> $GITHUB_STEP_SUMMARY
           fi
 
   DryRunRelease:
