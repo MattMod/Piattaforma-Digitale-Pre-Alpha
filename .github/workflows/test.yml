@@ -84,7 +84,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ github.workspace }}/fe-piattaforma
     steps:
       - run: echo "update"
 
