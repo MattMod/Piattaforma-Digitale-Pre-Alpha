@@ -97,7 +97,7 @@ jobs:
 
       - name: Modify Env File
         run: |
-          echo "do something"
+          sed -i "s/{{_REACT_APP_BE_BASE_URL_}}/${{ secrets.REACT_APP_BE_BASE_URL }}/g" .env
 
       - name: File Regex Replace
         uses: mingjun97/file-regex-replace@v1
@@ -139,6 +139,7 @@ jobs:
         with:
           ref: main
           lfs: 'true'
+
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -163,6 +164,26 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           mvn install
 
+#      - name: ms-ente Build & Push Image to Amazon ECR
+#        id: ms-ente
+#        if: ${{ success() }}
+#        working-directory: ${{ github.workspace }}/ms-ente
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-ente
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          # set version
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          # build
+#          mvn package -Dmaven.test.skip=true -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }}
+#          # docker build
+#          docker build . \
+#            --file Dockerfile \
+#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          # docker push
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
       - name: ms-gestione-utente Build & Push Image to Amazon ECR
         id: ms-gestione-utente
         if: ${{ success() }}
@@ -182,6 +203,66 @@ jobs:
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           # docker push
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+#      - name: ms-open-data Build & Push Image to Amazon ECR
+#        id: ms-open-data
+#        if: ${{ success() }}
+#        working-directory: ${{ github.workspace }}/ms-open-data
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-open-data
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          # set version
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          # build
+#          mvn package -Dmaven.test.skip=true -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }}
+#          # docker build
+#          docker build . \
+#            --file Dockerfile \
+#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          # docker push
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+#      - name: ms-programma-progetto Build & Push Image to Amazon ECR
+#        id: ms-programma-progetto
+#        if: ${{ success() }}
+#        working-directory: ${{ github.workspace }}/ms-programma-progetto
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-programma-progetto
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          # set version
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          # build
+#          mvn package -Dmaven.test.skip=true -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }}
+#          # docker build
+#          docker build . \
+#            --file Dockerfile \
+#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          # docker push
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+#      - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
+#        id: ms-questionario-cittadino
+#        if: ${{ success() }}
+#        working-directory: ${{ github.workspace }}/ms-questionario-cittadino
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-questionario-cittadino
+#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+#        run: |
+#          # set version
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          # build
+#          mvn package -Dmaven.test.skip=true -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }}
+#          # docker build
+#          docker build . \
+#            --file Dockerfile \
+#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#          # docker push
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   Deploy:
     needs: [DryRunRelease, buildFE, buildBE]
@@ -269,6 +350,18 @@ jobs:
           envsubst < deployment.tmp.yml
           cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
+#      - name: Setup 'ms-ente' deployment.tmp.yaml
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-ente
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-ente/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          envsubst < deployment.tmp.yml
+#          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+
       - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -281,6 +374,42 @@ jobs:
           envsubst < deployment.tmp.yml
           cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
+#      - name: Setup 'ms-open-data' deployment.tmp.yaml
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-open-data
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-open-data/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          envsubst < deployment.tmp.yml
+#          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-programma-progetto' deployment.tmp.yaml
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-programma-progetto
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-programma-progetto/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          envsubst < deployment.tmp.yml
+#          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-questionario-cittadino' deployment.tmp.yaml
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-questionario-cittadino
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-questionario-cittadino/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          envsubst < deployment.tmp.yml
+#          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+
       - name: Deploy
         run: |
           cd ${{ github.workspace }}
@@ -289,29 +418,29 @@ jobs:
           echo "====================="
           kubectl apply -f deployment.yml --namespace=${{ secrets.AWS_NAMESPACE }}
 
-#      - name: Check fe-piattaforma Deploy
-#        id: fe-piattaforma
-#        continue-on-error: true
-#        run: |
-#          if ! kubectl rollout status deployment.apps/fe-piattaforma-deployment; then
-#            exit 1
-#          fi
-#
-#      - name: Check ms-gestione-utente Deploy
-#        id: ms-gestione-utente
-#        continue-on-error: true
-#        run: |
-#          if ! kubectl rollout status deployment.apps/ms-gestione-utente-deployment; then
-#            exit 1
-#          fi
-#
-#      - name: Rollback
-#        if: steps.fe-piattaforma.outcome != 'success' || steps.ms-gestione-utente.outcome != 'success'
-#        run: |
-#            kubectl rollout undo deployment.apps/fe-piattaforma-deployment
-#            kubectl rollout status deployment.apps/fe-piattaforma-deployment
-#            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
-#            kubectl rollout status deployment.apps/ms-gestione-utente-deployment
+##      - name: Check fe-piattaforma Deploy
+##        id: fe-piattaforma
+##        continue-on-error: true
+##        run: |
+##          if ! kubectl rollout status deployment.apps/fe-piattaforma-deployment; then
+##            exit 1
+##          fi
+##
+##      - name: Check ms-gestione-utente Deploy
+##        id: ms-gestione-utente
+##        continue-on-error: true
+##        run: |
+##          if ! kubectl rollout status deployment.apps/ms-gestione-utente-deployment; then
+##            exit 1
+##          fi
+##
+##      - name: Rollback
+##        if: steps.fe-piattaforma.outcome != 'success' || steps.ms-gestione-utente.outcome != 'success'
+##        run: |
+##            kubectl rollout undo deployment.apps/fe-piattaforma-deployment
+##            kubectl rollout status deployment.apps/fe-piattaforma-deployment
+##            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
+##            kubectl rollout status deployment.apps/ms-gestione-utente-deployment
 
   RepoUpdate:
     if: ${{ github.event.inputs.version == '' }}
