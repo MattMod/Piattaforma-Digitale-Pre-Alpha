@@ -1,5 +1,13 @@
 # Monitoraggio.RepubblicaDigitale.Gov.it
 
+## [1.0.1](https://github.com/MattMod/Piattaforma-Digitale-Pre-Alpha/compare/1.0.0...1.0.1) (2022-06-07)
+
+
+### Bug Fixes
+
+* delete release.please.yml ([e3d21ed](https://github.com/MattMod/Piattaforma-Digitale-Pre-Alpha/commit/e3d21ed441e00699c49268091bcc5f46a162e6c6))
+* delete login.aws.yml ([6f5722e](https://github.com/MattMod/Piattaforma-Digitale-Pre-Alpha/commit/6f5722e82d5bd6ab940a7f0842cf395700cfad8f))
+
 ## 1.0.0 (2022-05-23)
 
 
