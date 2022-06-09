@@ -31,6 +31,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+        
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'adopt-openj9'
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
@@ -38,8 +49,19 @@ jobs:
         languages: ${{ matrix.language }}
         # queries: security-extended,security-and-quality
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+    - name: FE-Build
+      run: |
+        cd ${{ github.workspace }}/fe-piattaforma
+        npm install
+        npm run build
+        
+    - name: BE-Build
+      if: ${{ success() }}
+      run: |
+        cd ${{ github.workspace }}/lib-repdgt-shared
+        mvn install
+        cd ${{ github.workspace }}/ms-gestione-utente
+        mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }}
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
