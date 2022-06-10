@@ -9,11 +9,6 @@ module.exports = {
       'prerelease': true
     },
     {
-      'name': 'develop',
-      'channel': 'channel-${name}',
-      'prerelease': true
-    },
-    {
       'name': 'test',
       'channel': 'channel-${name}',
       'prerelease': true
