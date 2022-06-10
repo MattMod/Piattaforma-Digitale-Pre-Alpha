@@ -9,7 +9,12 @@ module.exports = {
       'prerelease': true
     },
     {
-      'name': 'test', 
+      'name': 'develop',
+      'channel': 'channel-${name}',
+      'prerelease': true
+    },
+    {
+      'name': 'test',
       'channel': 'channel-${name}',
       'prerelease': true
     },
@@ -22,12 +27,13 @@ module.exports = {
     ],
     ['@semantic-release/release-notes-generator', {
         'writerOpts': {
-          'commitsSort': ['perf', 'feat', 'fix'],
+          'commitsSort': ['subject', 'scope'],
         }
       }
     ],
     ['@semantic-release/exec', {
         'verifyReleaseCmd': 'echo ${nextRelease.version} > .VERSION',
+        'generateNotesCmd': 'echo "${nextRelease.notes}" > .NOTES',
       }
     ],
     ['@semantic-release/changelog', {
