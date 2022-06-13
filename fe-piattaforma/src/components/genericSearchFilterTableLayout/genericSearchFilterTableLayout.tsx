@@ -2,12 +2,16 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { DropdownFilterI, FilterI } from '../DropdownFilter/dropdownFilter';
 import { DropdownFilter, SearchBar } from '../index';
 import { Button, Chip, ChipLabel, Icon } from 'design-react-kit';
-import { cleanEntityFilters } from '../../redux/features/areaAmministrativa/areaAmministrativaSlice';
+import { cleanEntityFilters, resetFiltersState } from '../../redux/features/administrativeArea/administrativeAreaSlice';
 import { useDispatch } from 'react-redux';
 //import Sidebar, { SidebarI } from './sidebar';
 import clsx from 'clsx';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAppSelector } from '../../redux/hooks';
+import { selectDevice } from '../../redux/features/app/appSlice';
+import ButtonsBar, { ButtonInButtonsBar } from '../ButtonsBar/buttonsBar';
+import Sticky from 'react-sticky-el';
 
 export interface SearchInformationI {
   onHandleSearch?: (searchValue: string) => void;
@@ -17,24 +21,19 @@ export interface SearchInformationI {
   isClearable: boolean;
 }
 
-interface GenericSearchI {
-  text: string;
-  icon: string;
-  onClick: () => void;
-}
-
 interface GenericSearchFilterTableLayoutI {
   dropdowns?: DropdownFilterI[];
   searchInformation: SearchInformationI;
   Sidebar?: ReactElement;
   showButtons?: boolean;
   filtersList?: any;
-  genericSearch?: GenericSearchI;
-  rolesLayout?: boolean;
   cta?: () => void;
   ctaHref?: string;
   textCta?: string;
   iconCta?: string;
+  ctaPrintText?: string;
+  ctaPrint?: () => void;
+  buttonsList?: ButtonInButtonsBar[];
 }
 
 const GenericSearchFilterTableLayout: React.FC<
@@ -45,16 +44,21 @@ const GenericSearchFilterTableLayout: React.FC<
   Sidebar,
   showButtons = true,
   filtersList,
-  genericSearch,
-  rolesLayout = false,
   children,
   cta,
   ctaHref,
   textCta,
   iconCta,
+  ctaPrintText,
+  ctaPrint,
+  buttonsList,
 }) => {
   const dispatch = useDispatch();
   const [showChips, setShowChips] = useState<boolean>(false);
+
+  useEffect(() => {
+    dispatch(resetFiltersState());
+  },[]);
 
   const getLabelsChips = (filter: any, i: number, filterKey: string) => {
     if (filter?.value) {
@@ -68,7 +72,7 @@ const GenericSearchFilterTableLayout: React.FC<
               dispatch(cleanEntityFilters({ filterKey, value: filter.value }));
             }}
           >
-            <Icon icon='it-close' />
+            <Icon icon='it-close' aria-label='Chiudi chip' />
           </Button>
         </Chip>
       );
@@ -85,7 +89,7 @@ const GenericSearchFilterTableLayout: React.FC<
                   dispatch(cleanEntityFilters({ filterKey, value: f.value }));
                 }}
               >
-                <Icon icon='it-close' />
+                <Icon icon='it-close' aria-label='Chiudi chip' />
               </Button>
             </Chip>
           ))}
@@ -103,30 +107,14 @@ const GenericSearchFilterTableLayout: React.FC<
 
   const { t } = useTranslation();
 
+  const device = useAppSelector(selectDevice);
   return (
     <>
-      <div className={genericSearch ? 'd-flex justify-content-end' : ''}>
-        {genericSearch && (
-          <Button
-            onClick={genericSearch.onClick}
-            className='primary-color-b1 d-flex flex-row justify-content-center align-items-center'
-          >
-            <span className='mr-4'>{genericSearch.text}</span>
-            <div className='header-container__icon-container primary-bg-b1'>
-              <Icon icon={genericSearch.icon} color='white' size='sm' />
-            </div>
-          </Button>
-        )}
-      </div>
-      <div className='d-flex justify-content-between align-items-center mt-2 mb-3'>
+      <div className='d-flex justify-content-between align-items-center mt-2 mb-3 flex-wrap flex-lg-nowrap'>
         {searchInformation?.onHandleSearch && (
-          <div className='flex-grow-1'>
+          <div className={clsx('flex-grow-1', 'col-12', cta && 'col-md-9')}>
             <div
-              className={clsx(
-                genericSearch && 'w-75',
-                rolesLayout &&
-                  'd-flex flex-row justify-content-between align-items-end'
-              )}
+              className={clsx(!cta && 'w-100', 'col-9')}
               data-testid='create-new-element'
             >
               <SearchBar
@@ -135,62 +123,93 @@ const GenericSearchFilterTableLayout: React.FC<
                 placeholder={searchInformation.placeholder}
                 isClearable={searchInformation.isClearable}
                 title={searchInformation.title}
-                className={clsx(rolesLayout && 'w-75')}
+                id='search-filter-table-layout'
               />
-              {rolesLayout && (
-                <Button
-                  color='primary'
-                  size='xs'
-                  className='mb-5'
-                  onClick={() => console.log('open create new role')}
-                >
-                  <Icon
-                    color='orange'
-                    icon='it-plus'
-                    className='mr-2'
-                    size='sm'
-                  />
-                  {t('Aggiungi ruolo')}
-                </Button>
-              )}
             </div>
           </div>
         )}
-        <div className='cta-container ml-auto'>
-          {cta ? (
+
+        <div
+          className={clsx(
+            'cta-container',
+            'ml-auto',
+            'col-12',
+            'col-md-3',
+            'pb-4'
+          )}
+        >
+          {cta && !device.mediaIsPhone ? (
             <Button
               color='primary'
               icon
               className='page-title__cta'
               onClick={cta}
+              data-testid='create-new-entity'
             >
               {iconCta ? (
-                <Icon color='white' icon={iconCta} className='mr-2' />
+                <Icon
+                  color='white'
+                  icon={iconCta}
+                  className='mr-2'
+                  aria-label='Aggiungi'
+                />
               ) : null}
-              {textCta}
+              <span className='text-nowrap'>{textCta}</span>
             </Button>
           ) : ctaHref ? (
             <NavLink color='primary' className='page-title__cta' to={ctaHref}>
               {iconCta ? (
-                <Icon color='white' icon={iconCta} className='mr-2' />
+                <Icon
+                  color='white'
+                  icon={iconCta}
+                  className='mr-2'
+                  aria-label='Aggiungi'
+                />
               ) : null}
               {textCta}
             </NavLink>
           ) : null}
+          {ctaPrint && (
+            <Button
+              color='primary'
+              icon
+              outline
+              className='page-title__cta mt-3'
+              onClick={ctaPrint}
+            >
+              <Icon
+                color='primary'
+                icon='it-print'
+                className='mr-2'
+                aria-label='Stampa questionario'
+              />
+              <span className='text-nowrap'>{ctaPrintText}</span>
+            </Button>
+          )}
         </div>
       </div>
-
-      {dropdowns?.length && (
-        <div className='d-flex flex-row pt-5'>
-          {dropdowns.map((dropdown, index) => (
-            <DropdownFilter
-              key={index}
-              filterName={dropdown.filterName || ''}
-              {...dropdown}
-            />
-          ))}
-        </div>
-      )}
+      <div className='d-flex justify-content-between w-100'>
+        {dropdowns?.length && (
+          <div
+            className={`d-flex flex-row flex-wrap pt-lg-3 pt-0 ${
+              buttonsList?.length && 'w-50'
+            }`}
+          >
+            {dropdowns.map((dropdown, index) => (
+              <DropdownFilter
+                key={index}
+                filterName={dropdown.filterName || ''}
+                {...dropdown}
+              />
+            ))}
+          </div>
+        )}
+        {buttonsList?.length && (
+          <div className={`d-flex flex-row flex-wrap pt-lg-3 pt-0 w-50}`}>
+            <ButtonsBar buttons={buttonsList} />
+          </div>
+        )}
+      </div>
       <div
         className={
           showChips && showButtons
@@ -201,9 +220,20 @@ const GenericSearchFilterTableLayout: React.FC<
         }
       >
         {showChips ? (
-          <div className='d-flex flex-row mt-4 mb-4'>
+          <div
+            className={clsx(
+              'd-flex',
+              'flex-row',
+              'mt-4',
+              'mb-4',
+              'flex-wrap',
+              'align-items-center'
+            )}
+          >
             {Object.keys(filtersList).map((filterKey, index) => (
-              <>{getLabelsChips(filtersList[filterKey], index, filterKey)}</>
+              <div key={index} className={clsx(device.mediaIsPhone && 'pb-3')}>
+                {getLabelsChips(filtersList[filterKey], index, filterKey)}
+              </div>
             ))}
           </div>
         ) : null}
@@ -213,12 +243,27 @@ const GenericSearchFilterTableLayout: React.FC<
               onClick={() => {
                 console.log('download');
               }}
-              className='primary-color-b1 d-flex flex-row justify-content-center align-items-center'
+              className={clsx(
+                'primary-color-b1',
+                'd-flex',
+                'flex-row',
+                'justify-content-center',
+                'align-items-center',
+                'px-0',
+                'px-lg-4'
+              )}
             >
               <div>
-                <Icon icon='it-download' color='primary' size='sm' />
+                <Icon
+                  icon='it-download'
+                  color='primary'
+                  size='sm'
+                  aria-label='Scarica lista'
+                />
               </div>
-              <span className='ml-4'>{t('download_list')}</span>
+              {!device.mediaIsPhone && (
+                <span className='ml-4'>{t('download_list')}</span>
+              )}
             </Button>
           </div>
         ) : null}
@@ -230,6 +275,22 @@ const GenericSearchFilterTableLayout: React.FC<
         </div>
       ) : (
         <div>{children}</div>
+      )}
+      {device.mediaIsPhone && cta && (
+        <Sticky mode='bottom'>
+          <ButtonsBar
+            buttons={[
+              {
+                size: 'xs',
+                color: 'primary',
+                iconForButton: iconCta || '',
+                text: textCta || '',
+                onClick: cta,
+                className: 'align-self-end',
+              },
+            ]}
+          />
+        </Sticky>
       )}
     </>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon, Table as TableKit, Button } from 'design-react-kit';
 import clsx from 'clsx';
 import { TableI } from '../table';
-import { TableActionViewTypes } from '../../../utils/common';
+import { CRUDActionTypes } from '../../../utils/common';
 
 const TableDesktop: React.FC<TableI> = (props) => {
   const {
@@ -18,7 +18,11 @@ const TableDesktop: React.FC<TableI> = (props) => {
   } = props;
 
   return (
-    <TableKit className={clsx('table-container', className)} id={id}>
+    <TableKit
+      className={clsx('table-container', className)}
+      id={id}
+      tabIndex={-1}
+    >
       {heading?.length ? (
         <thead>
           <tr className='lightgrey-bg-c1 neutral-2-color-b4'>
@@ -57,7 +61,7 @@ const TableDesktop: React.FC<TableI> = (props) => {
               className='primary-color-a6 '
             >
               {heading.map((th, j) => (
-                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/click-events-have-key-events
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/click-services-have-key-services
                 <td
                   key={`td-${i}-${j}`}
                   onClick={() => onCellClick(th.field, td)}
@@ -68,58 +72,99 @@ const TableDesktop: React.FC<TableI> = (props) => {
               ))}
               {onActionClick ? (
                 <td>
-                  <div className='d-flex justify-content-end align-content-center mt-1'>
-                    {onActionClick[TableActionViewTypes.CREATE] ? (
+                  <div
+                    className={clsx(
+                      'd-flex',
+                      'justify-content-end',
+                      'align-content-center',
+                      'mt-1'
+                    )}
+                  >
+                    {onActionClick[CRUDActionTypes.INFO] ? (
                       <Button
-                        onClick={() =>
-                          onActionClick[TableActionViewTypes.CREATE](td)
-                        }
+                        onClick={() => onActionClick[CRUDActionTypes.INFO](td)}
                         className='mr-2 p-0'
+                        aria-label='Informazioni'
                       >
-                        <Icon icon='it-plus-circle' color='primary' size='sm' />
+                        <Icon
+                          icon='it-info-circle'
+                          color='primary'
+                          size='sm'
+                          aria-label='Informazioni'
+                        />
                       </Button>
                     ) : null}
-                    {onActionClick[TableActionViewTypes.EDIT] ? (
+                    {onActionClick[CRUDActionTypes.CREATE] ? (
                       <Button
                         onClick={() =>
-                          onActionClick[TableActionViewTypes.EDIT](td)
+                          onActionClick[CRUDActionTypes.CREATE](td)
                         }
                         className='mr-2 p-0'
+                        aria-label='Aggiungi nuovo'
                       >
-                        <Icon icon='it-pencil' color='primary' size='sm' />
+                        <Icon
+                          icon='it-plus-circle'
+                          color='primary'
+                          size='sm'
+                          aria-label='Aggiungi nuovo'
+                        />
                       </Button>
                     ) : null}
-                    {onActionClick[TableActionViewTypes.DELETE] ? (
+                    {onActionClick[CRUDActionTypes.EDIT] ? (
+                      <Button
+                        onClick={() => onActionClick[CRUDActionTypes.EDIT](td)}
+                        className='mr-2 p-0'
+                        aria-label='Modifica riga'
+                      >
+                        <Icon
+                          icon='it-pencil'
+                          color='primary'
+                          size='sm'
+                          aria-label='Modifica riga'
+                        />
+                      </Button>
+                    ) : null}
+                    {onActionClick[CRUDActionTypes.DELETE] ? (
                       <Button
                         onClick={() =>
-                          onActionClick[TableActionViewTypes.DELETE](td)
+                          onActionClick[CRUDActionTypes.DELETE](td)
                         }
                         className='mr-2 p-0'
+                        aria-label='Elimina elemento riga'
                       >
-                        <Icon icon='it-delete' color='primary' size='sm' />
+                        <Icon
+                          icon='it-delete'
+                          color='primary'
+                          size='sm'
+                          aria-label='Elimina elemento riga'
+                        />
                       </Button>
                     ) : null}
-                    {onActionClick[TableActionViewTypes.CLONE] ? (
+                    {onActionClick[CRUDActionTypes.CLONE] ? (
                       <Button
-                        onClick={() =>
-                          onActionClick[TableActionViewTypes.CLONE](td)
-                        }
+                        onClick={() => onActionClick[CRUDActionTypes.CLONE](td)}
                         className='mr-2 p-0'
                       >
-                        <Icon icon='it-copy' color='primary' size='sm' />
+                        <Icon
+                          icon='it-copy'
+                          color='primary'
+                          size='sm'
+                          aria-label='Copia elemento riga'
+                        />
                       </Button>
                     ) : null}
-                    {onActionClick[TableActionViewTypes.VIEW] ? (
+                    {onActionClick[CRUDActionTypes.VIEW] ? (
                       <Button
-                        onClick={() =>
-                          onActionClick[TableActionViewTypes.VIEW](td)
-                        }
+                        onClick={() => onActionClick[CRUDActionTypes.VIEW](td)}
                         className='p-0'
+                        aria-label='Pulsante selezione riga'
                       >
                         <Icon
                           icon='it-chevron-right'
                           color='primary'
                           size='sm'
+                          aria-label='Vedi dettaglio elemento riga'
+                          focusable={false}
                         />
                       </Button>
                     ) : null}

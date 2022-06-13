@@ -3,18 +3,18 @@
     "list": [
       {
         "id": "project1",
-        "name": "Progetto 1",
-        "status": "ATTIVO"
+        "nome": "Progetto 1",
+        "stato": "ATTIVO"
       },
       {
         "id": "project2",
-        "name": "Progetto 2",
-        "status": "BOZZA"
+        "nome": "Progetto 2",
+        "stato": "BOZZA"
       },
       {
         "id": "project3",
-        "name": "Progetto 3",
-        "status": "NON_ATTIVO"
+        "nome": "Progetto 3",
+        "stato": "NON_ATTIVO"
       }
     ]
   }

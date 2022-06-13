@@ -20,7 +20,7 @@
 .btn.btn-tertiary:hover,
 .btn-tertiary:hover {
   color: #0059b2;
-  border: 2px solid #0073e5;
+  border: rem(2px) solid #0073e5;
   background: #ffffff;
 }
 
@@ -35,22 +35,36 @@
 }
 
 .btn-xs {
-  min-width: 186px;
-  height: 48px;
-  padding: 12px;
-  font-size: 16px;
+  width: calc(50% - rem(10px));
+  padding: rem(12px);
+  font-size: rem(16px);
+
+  @media (min-width: 768px) {
+    width: unset;
+    min-width: rem(186px);
+    height: rem(48px);
+  }
 }
 
 .btn-sm {
-  min-width: 242px;
-  height: 56px;
-  padding: 14px;
-  font-size: 18px;
+  min-width: rem(242px);
+  height: rem(56px);
+  padding: rem(14px);
+  font-size: rem(18px);
 }
 
 .btn-lg {
-  min-width: 242px;
-  height: 72px;
-  padding: 14px;
-  font-size: 18px;
+  min-width: rem(242px);
+  height: rem(72px);
+  padding: rem(14px);
+  font-size: rem(18px);
+}
+
+.cta-button {
+  width: calc(50% - 1.25rem);
+
+  @media screen and (max-width: 576px) {
+    width: rem(150px);
+    height: rem(48px);
+  }
 }

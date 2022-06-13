@@ -13,8 +13,8 @@ import it.pa.repdgt.shared.entity.PermessoEntity;
 public interface PermessoRepository extends JpaRepository<PermessoEntity, Long> {
 	
 	@Query(value = "SELECT * "
-			+ "FROM PERMESSO p "
-			+ "INNER JOIN GRUPPO_X_PERMESSO  gp "
+			+ "FROM permesso p "
+			+ "INNER JOIN gruppo_x_permesso  gp "
 			+ "ON p.ID = gp.PERMESSO_ID "
 			+ "WHERE gp.GRUPPO_CODICE = :codiceGruppo", nativeQuery = true)		
 	List<PermessoEntity> findPermessiByGruppo(@Param(value = "codiceGruppo") String codiceRuolo);

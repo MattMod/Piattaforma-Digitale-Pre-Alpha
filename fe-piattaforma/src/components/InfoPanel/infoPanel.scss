@@ -8,30 +8,18 @@
 
   &__list-container {
     display: grid;
-    row-gap: 12px;
+    column-gap: rem(12px);
     /* grid-template-rows: repeat(3, 1fr); */
-    grid-auto-flow: column;
-    height: 100%;
-
-    div {
-      position: relative;
-    }
+    grid-auto-flow: row;
 
     p {
-      margin-left: 10px;
+      margin-left: 8px;
       margin-bottom: 0;
     }
 
-    > div::before {
-      content: '';
-      height: 5px;
+    .icon {
       width: 5px;
-      border-radius: 100%;
-      background-color: color('blue-500');
-      position: absolute;
-      left: 0;
-      top: 50%;
-      margin-right: 10px;
+      height: 5px;
     }
   }
 }

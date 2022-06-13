@@ -14,6 +14,7 @@ export const RegexpType = {
   MOBILE_PHONE: 'mobile_phone',
   TELEPHONE: 'telephone',
   DATE: 'date',
+  BOOLEAN: 'booleanInput',
 };
 
 const RegexpRule = {
@@ -25,7 +26,7 @@ const RegexpRule = {
   [RegexpType.ADDRESS]:
     /^[a-zA-Z0-9_\/.,Ã¨Ã©Ã²Ã Ã¬Ã¹'](?:[a-zA-Z0-9_\/.,'\sÃ¨Ã©Ã²Ã Ã¬Ã¹\-]+)?$/gi,
   [RegexpType.ALPHA_NUMERIC]: /^[a-z A-Z 0-9_.-]*$/gi,
-  [RegexpType.ALPHA_NUMERIC_INPUT]: /^[a-z A-Z 0-9_.-{}:,"]*$/gi,
+  [RegexpType.ALPHA_NUMERIC_INPUT]: /^[a-z A-Z 0-9 àèìòù _.-{}:,"()]*$/gi,
   [RegexpType.FISCAL_CODE]:
     /^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$/i,
   [RegexpType.POSTAL_CODE]: /^[0-9]{5}$/gm,
@@ -47,12 +48,17 @@ export const validator = (
   const isRequired = requiredObj || required;
   if (isRequired && touched) {
     if (data) {
-      if (regex === RegexpType.DATE && Date.parse(data.toString()))
+      if (regex === RegexpType.BOOLEAN) {
+        return typeof data === 'boolean';
+      } else if (regex === RegexpType.DATE && Date.parse(data.toString()))
         return !!new Date(data.toString()).valueOf();
       return new RegExp(RegexpRule[regex]).test(data.toString());
     }
     return false;
   } else if (data) {
+    if (regex === RegexpType.BOOLEAN) {
+      return typeof data === 'boolean';
+    }
     if (regex === RegexpType.DATE && Date.parse(data.toString()))
       return !!new Date(data.toString()).valueOf();
     return new RegExp(RegexpRule[regex]).test(data.toString());

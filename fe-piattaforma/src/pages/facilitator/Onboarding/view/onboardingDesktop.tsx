@@ -22,10 +22,10 @@ const OnboardingDesktop: React.FC<OnboardingI> = (props) => {
         Compila i dati del tuo profilo e completa la registrazione
       </h1>
       <div className='col-12  mt-4'>
-        <h6 className='complementary-1-color-b8 font-weight-normal'>
+        <p className='h6 complementary-1-color-b8 font-weight-normal'>
           Per completare il tuo profilo da facilitatore abbiamo bisogno di
           alcuni tuoi dati. <br /> Completa i campi obbligatori per procedere.
-        </h6>
+        </p>
         <div className='d-flex flex-row mt-5 pb-4 align-items-center pt-3 '>
           <div
             onMouseDown={addProfilePicture}
@@ -39,7 +39,13 @@ const OnboardingDesktop: React.FC<OnboardingI> = (props) => {
               className='onboarding__img-profile mr-2'
             />
             <div className='onboarding__icon-container primary-bg position-absolute rounded-circle'>
-              <Icon size='lg' icon='it-camera' padding color='white' />
+              <Icon
+                size='lg'
+                icon='it-camera'
+                padding
+                color='white'
+                aria-label='Foto'
+              />
             </div>
           </div>
           <div>
@@ -111,9 +117,9 @@ const OnboardingDesktop: React.FC<OnboardingI> = (props) => {
             />
             <Select
               {...form?.citizenship}
+              wrapperClassName='col-12 col-md-6'
               label='Cittadinanza'
               placeholder='Seleziona cittadinanza'
-              className='col-12 col-md-6'
               options={optionsSelect}
               onInputChange={onInputChange}
               value={form?.citizenship.value?.toString()}

@@ -60,7 +60,7 @@ public class ApplicationExceptionHandler {
 	}
 
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(value = { UtenteException.class, RuoloException.class, Exception.class })
+	@ExceptionHandler(value = { UtenteException.class, RuoloException.class, UtenteXRuoloException.class, Exception.class })
 	public Map<String, String> handleException(Exception exc) {
 		log.error("{}", exc);
 		Map<String, String> errori = new HashMap<>();

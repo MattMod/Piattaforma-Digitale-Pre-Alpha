@@ -12,31 +12,35 @@ import {
   LinkListItem,
 } from 'design-react-kit';
 import Logo from '/public/assets/img/logo.png';
-import LogoSmall from '/public/assets/img/logo-small.png';
+//import LogoSmall from '/public/assets/img/logo-small.png';
 
 import { useTranslation } from 'react-i18next';
 import { HeaderI } from '../header';
 import { logout } from '../../../redux/features/user/userSlice';
 import HeaderMenu from '../../HeaderMenu/headerMenu';
+import { openModal } from '../../../redux/features/modal/modalSlice';
+import SwitchProfileModal from '../../Modals/SwitchProfileModal/switchProfileModal';
 
-const HeaderMobile: React.FC<HeaderI> = ({
+const HeaderDesktop: React.FC<HeaderI> = ({
   isHeaderFull = true,
   dispatch,
   user,
   isLogged,
   notification,
 }) => {
-  const languages = ['ITA', 'ENG'];
+  //const languages = ['ITA', 'ENG'];
 
-  const [open, toggle] = useState(false);
-  const [language, setLanguage] = useState(languages[0]);
+  //const [open, toggle] = useState(false);
+  //const [language, setLanguage] = useState(languages[0]);
   const { t } = useTranslation();
   const [openUser, setOpenUser] = useState<boolean>(false);
 
   const userDropdownOptions = [
-    { optionName: 'Cambia ruolo', action: () => console.log('cambia ruolo') },
+    {
+      optionName: 'Cambia ruolo',
+      action: () => dispatch(openModal({ id: 'switchProfileModal' })),
+    },
     { optionName: 'I tuoi dati', action: () => console.log('i tuoi dati') },
-    { optionName: 'Logout', action: () => dispatch(logout()) },
   ];
 
   const userDropDown = () => (
@@ -62,32 +66,64 @@ const HeaderMobile: React.FC<HeaderI> = ({
               'd-flex',
               'align-items-center',
               'justify-content-center',
-              'mr-3'
+              'mx-3'
             )}
             style={{ height: '38px', width: '38px' }}
           >
-            <Icon className='m-0' icon='it-user' size='sm' />
+            <Icon
+              className='m-0'
+              icon='it-user'
+              size='sm'
+              aria-label='Utente'
+            />
           </div>
-          <div className='d-inline-flex flex-column align-items-start'>
+          <div className='d-flex flex-column align-items-start'>
             <h6 className='m-0 text-sans-serif'>
               {user?.name}&nbsp;{user?.surname}
             </h6>
-            <h6>{user?.role}</h6>
+            <h6 className='font-weight-light text-nowrap'>
+              <em>{user?.role}</em>
+            </h6>
           </div>
         </div>
       </DropdownToggle>
-      <DropdownMenu>
-        <LinkList className='header-container__top__user-dropdown__option w-100'>
+      <DropdownMenu role='menu' tag='ul'>
+        <LinkList>
           {userDropdownOptions.map((item, index) => (
-            <LinkListItem
-              className='d-flex justify-content-between'
-              onClick={item.action}
-              key={index}
-            >
-              {item.optionName}
-              <Icon icon='it-chevron-right' color='primary' size='sm' />
-            </LinkListItem>
+            <li key={index} role='none' className='px-4'>
+              <Button
+                className={clsx(
+                  'primary-color-b1',
+                  'py-2',
+                  'w-100',
+                  'd-flex justify-content-between'
+                )}
+                role='menuitem'
+                onClick={item.action}
+              >
+                {item.optionName}
+              </Button>
+            </li>
           ))}
+          <LinkListItem divider />
+          <LinkListItem onClick={() => dispatch(logout())}>
+            <Button
+              className={clsx(
+                'd-flex',
+                'justify-content-between',
+                'align-items-center',
+                'w-100'
+              )}
+            >
+              <span>Esci</span>
+              <Icon
+                icon='it-external-link'
+                color='primary'
+                size='sm'
+                aria-label='esci'
+              />
+            </Button>
+          </LinkListItem>
         </LinkList>
       </DropdownMenu>
     </Dropdown>
@@ -101,34 +137,67 @@ const HeaderMobile: React.FC<HeaderI> = ({
         className={clsx(
           'header-container__top',
           'd-flex',
-          'align-items-center',
+          'justify-content-end',
           isLogged ? 'text.white primary-bg-b2' : ''
         )}
       >
-        <div className='container d-flex align-items-center my-0'>
-          <div className='mr-auto'>
+        <div
+          className={clsx(
+            'container',
+            'd-flex',
+            'align-items-center',
+            'justify-content-end',
+            'my-0'
+          )}
+        >
+          {/* <div className='mr-auto'>
             {isHeaderFull ? (
-              <h6 className='m-0'>Repubblica Digitale</h6>
+              <p className='h6 m-0'>Repubblica Digitale</p>
             ) : (
-              <img src={LogoSmall} alt='logo' />
+              <a href='/'>
+                <img src={LogoSmall} alt='logo' />
+              </a>
             )}
-          </div>
+          </div> */}
           <div
             className={clsx(
               'mr-2',
-              'px-4',
+              'px-3',
               'border-left',
               'border-right',
               'd-inline-flex',
+              'flex-row',
               'align-items-center',
               'primary-bg-b2',
               'header-panel-btn'
             )}
           >
-            <Icon icon='it-settings' size='sm' color='white' />
-            <h6 className='m-0 ml-2'> {t('profiling')} </h6>
+            <a
+              href='/gestione-ruoli'
+              className='text-decoration-none text-white'
+            >
+              <div className='d-flex flew-row'>
+                <Icon
+                  icon='it-settings'
+                  size='sm'
+                  color='white'
+                  aria-label='Gestione profili'
+                />
+                <h6
+                  className={clsx(
+                    'm-0',
+                    'ml-2',
+                    'font-weight-light',
+                    'text-nowrap'
+                  )}
+                >
+                  {' '}
+                  {t('role_management')}{' '}
+                </h6>
+              </div>
+            </a>
           </div>
-          <div>
+          {/* <div>
             <Dropdown
               className={clsx(
                 'mr-3',
@@ -156,37 +225,60 @@ const HeaderMobile: React.FC<HeaderI> = ({
                   size='sm'
                   className='color-white ml-2'
                   color='white'
+                  aria-label='Apri'
                 />
               </DropdownToggle>
-              <DropdownMenu>
-                <LinkList>
-                  {languages.map((lang, i) => (
-                    <LinkListItem onClick={() => setLanguage(lang)} key={i}>
+              <DropdownMenu role='menu' tag='ul'>
+                {languages.map((lang, i) => (
+                  <li key={i} role='none' className='px-4'>
+                    <Button
+                      className={clsx(
+                        'primary-color-b1',
+                        'px-0',
+                        'py-2',
+                        'w-100',
+                        'd-flex justify-content-start'
+                      )}
+                      role='menuitem'
+                      onClick={() => setLanguage(lang)}
+                    >
                       {lang}
-                    </LinkListItem>
-                  ))}
-                </LinkList>
+                    </Button>
+                  </li>
+                ))}
               </DropdownMenu>
             </Dropdown>
-          </div>
+          </div> */}
 
-          {isLogged ? (
-            <>
-              {userDropDown()}
+          {
+            isLogged ? (
+              <>
+                {userDropDown()}
 
-              <div className='mx-4'>
-                <Icon color='white' icon='it-inbox' size='sm' />
-                {notification?.length ? (
-                  <Badge>{notification.length}</Badge>
-                ) : null}
-              </div>
-            </>
-          ) : (
-            <div className='d-inline-flex align-items-center px-4'>
-              <h6 className='m-0'>ITA</h6>
-              <Icon color='white' icon='it-expand' size='sm' />
-            </div>
-          )}
+                <div className='mx-4'>
+                  <Icon
+                    color='white'
+                    icon='it-inbox'
+                    size='sm'
+                    aria-label='Menu utente'
+                    focusable={false}
+                  />
+                  {notification?.length ? (
+                    <Badge>{notification.length}</Badge>
+                  ) : null}
+                </div>
+              </>
+            ) : null
+            // <div className='d-inline-flex align-items-center px-4'>
+            //   <h6 className='m-0'>ITA</h6>
+            //   <Icon
+            //     color='white'
+            //     icon='it-expand'
+            //     size='sm'
+            //     aria-label='Selezione lingua'
+            //   />
+            // </div>
+          }
         </div>
       </div>
       {isHeaderFull && (
@@ -247,9 +339,16 @@ const HeaderMobile: React.FC<HeaderI> = ({
                     'ml-5'
                   )}
                 >
-                  <span className='mr-2'>Cerca</span>
+                  <span className='mr-2 text-white font-weight-light'>
+                    Cerca
+                  </span>
                   <div className='header-container__icon-container bg-white ml-2'>
-                    <Icon icon='it-search' color='primary' size='sm' />
+                    <Icon
+                      icon='it-search'
+                      color='primary'
+                      size='sm'
+                      aria-label='Cerca'
+                    />
                   </div>
                 </Button>
               </div>
@@ -262,8 +361,18 @@ const HeaderMobile: React.FC<HeaderI> = ({
           <HeaderMenu isHeaderFull={isHeaderFull} />
         </div>
       ) : null}
+      <SwitchProfileModal
+        profiles={[
+          { name: 'Delegato ente partner', programName: 'Programma 1' },
+          {
+            name: 'Referente ente gestore di progetto',
+            programName: 'Programma 2',
+          },
+        ]}
+        currentProfile='Delegato ente partner'
+      />
     </header>
   );
 };
 
-export default memo(HeaderMobile);
+export default memo(HeaderDesktop);

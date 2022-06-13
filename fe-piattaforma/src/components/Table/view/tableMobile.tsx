@@ -1,5 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import AccordionRow, { AccordionRowI } from '../../AccordionRow/accordionRow';
+import { TableRowI } from '../table';
+import { CRUDActionsI, CRUDActionTypes } from '../../../utils/common';
 
-const TableMobile = () => <div>Sono Mobile</div>;
+interface MobileTableI {
+  onActionClick?: CRUDActionsI;
+  values?: TableRowI[];
+}
+
+const TableMobile: React.FC<MobileTableI> = ({
+  onActionClick,
+  values = [],
+}) => {
+  const [valuesForMobile, setValuesForMobile] = useState<AccordionRowI[]>();
+
+  useEffect(() => {
+    if (values && values.length) {
+      const temp = values.map(({ name, label, status, ...rest }) => ({
+        title: name || label,
+        status,
+        clickViewAction: onActionClick?.[CRUDActionTypes.VIEW],
+        innerInfo: { ...rest },
+      }));
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      setValuesForMobile([...temp]);
+    }
+  }, [values]);
+
+  return (
+    <div>
+      {valuesForMobile?.map((item, index: number) => (
+        <AccordionRow {...item} key={index} />
+      ))}
+    </div>
+  );
+};
 
 export default TableMobile;

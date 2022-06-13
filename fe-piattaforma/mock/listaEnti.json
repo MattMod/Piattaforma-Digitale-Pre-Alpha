@@ -3,24 +3,21 @@
     "list": [
       {
         "id": 1,
-        "name": "Ente 1",
-        "ref": "Referente 1",
-        "type": "Tipologia 1",
-        "status": "ATTIVO"
+        "nome": "Ente 1",
+        "tipologia": "Tipologia 1",
+        "profilo": "3 profili assegnati"
       },
       {
         "id": 2,
-        "name": "Ente 2",
-        "ref": "Referente 2",
-        "type": "Tipologia 2",
-        "status": "ATTIVO"
+        "nome": "Ente 2",
+        "tipologia": "Tipologia 2",
+        "profilo": "Ente gestore di progetto"
       },
       {
         "id": 3,
-        "name": "Ente 3",
-        "ref": "Referente 3",
-        "type": "Tipologia 3",
-        "status": "ATTIVO"
+        "nome": "Ente 3",
+        "tipologia": "Tipologia 3",
+        "profilo": "3 profili assegnati"
       }
     ]
   }

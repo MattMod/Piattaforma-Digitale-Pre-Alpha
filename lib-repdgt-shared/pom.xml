@@ -5,7 +5,7 @@
 
 	<groupId>it.pa.repdgt</groupId>
 	<artifactId>repdgt-shared</artifactId>
-	<version>1.0.1</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>repdgt-shared</name>
@@ -17,12 +17,31 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<spring.boot.version>2.5.4</spring.boot.version>
+		<spring.boot.version>2.7.0</spring.boot.version>
 		<javax-persistence.version>2.2</javax-persistence.version>
-		<lombok.version>1.18.20</lombok.version>
+		<lombok.version>1.18.24</lombok.version>
+		<aws-java-sdk-bom.version>2.17.201</aws-java-sdk-bom.version>
 	</properties>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>software.amazon.awssdk</groupId>
+				<artifactId>bom</artifactId>
+				<version>${aws-java-sdk-bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
@@ -48,6 +67,20 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>pinpoint</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>io.jsonwebtoken</groupId>
+		    <artifactId>jjwt</artifactId>
+		    <version>RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.29</version>
 		</dependency>
 	</dependencies>
 </project>

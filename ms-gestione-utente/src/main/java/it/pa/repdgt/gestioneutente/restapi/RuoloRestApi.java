@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.pa.repdgt.gestioneutente.bean.SchedaRuoloBean;
 import it.pa.repdgt.gestioneutente.mapper.RuoloMapper;
-import it.pa.repdgt.gestioneutente.request.NuovoRuoloRequest;
+import it.pa.repdgt.gestioneutente.request.RuoloRequest;
 import it.pa.repdgt.gestioneutente.resource.RuoloLightResource;
 import it.pa.repdgt.gestioneutente.service.RuoloService;
 import it.pa.repdgt.gestioneutente.service.UtenteService;
@@ -63,7 +64,7 @@ public class RuoloRestApi {
 	
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public void creaNuovoRuolo(@RequestBody @Valid NuovoRuoloRequest nuovoRuoloRequest) {
+	public void creaNuovoRuolo(@RequestBody @Valid RuoloRequest nuovoRuoloRequest) {
 		this.ruoloService.creaNuovoRuolo(nuovoRuoloRequest);
 	}
 	
@@ -73,16 +74,26 @@ public class RuoloRestApi {
 		return this.ruoloMapper.toLightResourceFrom(utente.getRuoli());
 	}
 	
+	// TOUCH POINT - 8.1.4 - Scheda ruolo
+	// TOUCH POINT - 8.2.1 - Scheda ruolo
+	@GetMapping(path = "/{codiceRuolo}")
+	@ResponseStatus(value = HttpStatus.OK)
+	public SchedaRuoloBean getSchedaRuolo(@PathVariable(value = "codiceRuolo") String codiceRuolo) {
+		return this.ruoloService.getSchedaRuoloByCodiceRuolo(codiceRuolo);
+	}
+	
+	// TOUCH POINT - 8.1.2 - update ruolo
+	// TOUCH POINT - 8.2.2 - update ruolo
 	@PutMapping(path = "/{codiceRuolo}")
 	@ResponseStatus(value = HttpStatus.OK)
 	public void aggiornaRuolo(@PathVariable(value = "codiceRuolo") String codiceRuolo,
-			@RequestBody @Valid NuovoRuoloRequest ruoloRequest) {
-		this.ruoloService.aggiornaRuolo(codiceRuolo, ruoloRequest);
+			@RequestBody @Valid RuoloRequest aggiornaRuoloRequest) {
+		this.ruoloService.aggiornaRuoloNonPredefinito(codiceRuolo, aggiornaRuoloRequest);
 	}
 	
 	@DeleteMapping(path = "/{codiceRuolo}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void cancellazioneLogicaRuolo(@PathVariable(value = "codiceRuolo") String codiceRuolo) {
-		this.ruoloService.cancellazioneLogicaRuolo(codiceRuolo);
+	public void cancellazioneRuolo(@PathVariable(value = "codiceRuolo") String codiceRuolo) {
+		this.ruoloService.cancellazioneRuolo(codiceRuolo);
 	}
 }

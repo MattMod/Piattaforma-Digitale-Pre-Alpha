@@ -7,10 +7,10 @@ import Survey from './facilitator/Survey/survey';
 import Documents from './facilitator/Documents/documents';
 
 // administrator
-import AreaAmministrativa from './administrator/AreaAmministrativa/areaAmministrativa';
+import AdministrativeArea from './administrator/AdministrativeArea/administrativeArea';
 
 export {
-  AreaAmministrativa,
+  AdministrativeArea,
   Auth,
   HomeFacilitator,
   Playground,

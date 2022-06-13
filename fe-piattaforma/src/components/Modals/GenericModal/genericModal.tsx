@@ -5,6 +5,9 @@ import withModalState from '../../../hoc/withModalState';
 import { ModalPayloadI } from '../../../redux/features/modal/modalSlice';
 import SearchBar from '../../SearchBar/searchBar';
 import clsx from 'clsx';
+import './genericModal.scss';
+import { useAppSelector } from '../../../redux/hooks';
+import { selectDevice } from '../../../redux/features/app/appSlice';
 
 const genericId = 'genericModal';
 
@@ -14,7 +17,7 @@ interface CallToAction {
   onClick?: () => void;
 }
 
-interface GenericModalI {
+export interface GenericModalI {
   description?: string;
   footer?: ReactChild;
   id?: string;
@@ -22,11 +25,16 @@ interface GenericModalI {
   payload?: ModalPayloadI | undefined;
   primaryCTA?: CallToAction;
   secondaryCTA?: CallToAction;
+  tertiaryCTA?: CallToAction | null;
   title?: string | undefined;
   centerButtons?: boolean;
   hasSearch?: boolean;
   searchPlaceholder?: string;
   noSpaceAfterTitle?: boolean;
+  noPaddingPrimary?: boolean;
+  noPaddingSecondary?: boolean;
+  withIcon?: boolean;
+  icon?: string;
 }
 
 const GenericModal: React.FC<GenericModalI> = (props) => {
@@ -39,14 +47,19 @@ const GenericModal: React.FC<GenericModalI> = (props) => {
     payload,
     primaryCTA,
     secondaryCTA,
+    tertiaryCTA,
     title,
     centerButtons,
     hasSearch,
     searchPlaceholder = 'Search',
     noSpaceAfterTitle = false,
+    noPaddingPrimary = false,
+    noPaddingSecondary = false,
+    withIcon = false,
+    icon = '',
   } = props;
 
-  const handleAction = (action: 'primary' | 'secondary') => {
+  const handleAction = (action: 'primary' | 'secondary' | 'tertiary') => {
     switch (action) {
       case 'primary': {
         if (primaryCTA?.onClick) primaryCTA.onClick();
@@ -57,50 +70,105 @@ const GenericModal: React.FC<GenericModalI> = (props) => {
         if (onClose) onClose();
         break;
       }
+      case 'tertiary': {
+        if (tertiaryCTA?.onClick) {
+          tertiaryCTA.onClick();
+          return;
+        }
+        if (onClose) onClose();
+        break;
+      }
     }
   };
 
+  const device = useAppSelector(selectDevice);
+
   return (
     <Modal id={id} {...props}>
+      <div className='d-flex flex-column justify-content-around align-items-center mt-5'>
+        {withIcon && (
+          <div className='icon-container p-4 d-flex align-items-center'>
+            <Icon
+              icon={icon}
+              style={{ width: '50px', height: '80px' }}
+              className='my-0 mx-3 pl-1'
+            />
+          </div>
+        )}
+      </div>
       <div
         className={clsx(
           'modal-header-container',
           !noSpaceAfterTitle && 'mb-4',
-          noSpaceAfterTitle && 'pb-0 mb-0'
+          noSpaceAfterTitle && 'pb-0 mb-0',
+          withIcon ? 'mt-1 pt-1' : 'mt-4 pt-3'
         )}
       >
-        <h5>{title || payload?.title}</h5>
-        <Icon
-          onClick={onClose}
-          icon='it-close-big'
-          style={{ fill: '#0073E5', marginLeft: '212px', cursor: 'pointer' }}
-        />
+        <p
+          className={clsx(
+            'h5',
+            'font-weight-semibold',
+            'primary-color',
+            'my-auto'
+          )}
+        >
+          {title || payload?.title}
+        </p>
       </div>
-      <ModalBody>
+      <ModalBody className='h-50 p-0'>
         {hasSearch && (
-          <SearchBar
-            autocomplete={false}
-            onSubmit={() => console.log('ricerca modale')}
-            placeholder={searchPlaceholder}
-            isClearable
-          />
+          //
+          <div className='row mx-5'>
+            <div className='col-12'>
+              <SearchBar
+                autocomplete={false}
+                onSubmit={() => console.log('ricerca modale')}
+                placeholder={searchPlaceholder}
+                isClearable
+                id='search-generic-modal'
+              />
+            </div>
+          </div>
         )}
         {description || payload?.description}
         {children}
       </ModalBody>
       <ModalFooter
-        className={centerButtons ? 'd-flex justify-content-center' : ''}
+        className={
+          centerButtons
+            ? 'd-flex justify-content-center'
+            : device.mediaIsPhone
+            ? 'd-flex flex-row justify-content-center'
+            : ''
+        }
       >
         {footer || primaryCTA || secondaryCTA ? (
           <>
             {footer}
+            {tertiaryCTA ? (
+              <Button
+                {...tertiaryCTA}
+                color='secondary'
+                className={clsx(
+                  device.mediaIsPhone ? 'cta-button' : 'mr-2 cta-button',
+                  device.mediaIsPhone && noPaddingSecondary && 'pt-0'
+                )}
+                onClick={() => handleAction('tertiary')}
+                size='xs'
+              >
+                {tertiaryCTA.label}
+              </Button>
+            ) : null}
             {secondaryCTA ? (
               <Button
                 {...secondaryCTA}
-                size='sm'
                 color='secondary'
-                className='mr-2'
+                className={clsx(
+                  device.mediaIsPhone ? 'cta-button' : 'mr-2 cta-button',
+                  device.mediaIsPhone && noPaddingSecondary && 'pt-0'
+                )}
                 onClick={() => handleAction('secondary')}
+                size='xs'
               >
                 {secondaryCTA.label}
               </Button>
@@ -108,10 +176,13 @@ const GenericModal: React.FC<GenericModalI> = (props) => {
             {primaryCTA ? (
               <Button
                 {...primaryCTA}
-                size='sm'
-                className='ml-2'
+                className={clsx(
+                  device.mediaIsPhone ? 'cta-button' : 'cta-button',
+                  device.mediaIsPhone && noPaddingPrimary && 'pt-0'
+                )}
                 color='primary'
                 onClick={() => handleAction('primary')}
+                size='xs'
               >
                 {primaryCTA.label}
               </Button>

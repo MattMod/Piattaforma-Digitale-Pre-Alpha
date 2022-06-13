@@ -1,41 +1,77 @@
-import { Card, CardBody } from 'design-react-kit';
+import { Card, CardBody, Icon } from 'design-react-kit';
+import ColoredListBullets from '/public/assets/img/blue-list-bullets.png';
 import React from 'react';
+import clsx from 'clsx';
+import { useAppSelector } from '../../redux/hooks';
+import { selectDevice } from '../../redux/features/app/appSlice';
+
 interface InfoPanelI {
   title?: string;
   list: string[];
   onlyList?: boolean;
-  rowsNo?: number;
+  colsNo?: number;
 }
 
 const InfoPanel: React.FC<InfoPanelI> = (props) => {
-  const { title, list = [], onlyList = false, rowsNo } = props;
-  const rowStyle = rowsNo ? `repeat(${rowsNo}, 1fr)` : 'repeat(3, 1fr)';
+  const { title, list = [], onlyList = false, colsNo } = props;
+  const device = useAppSelector(selectDevice);
+  const colStyle = device.mediaIsPhone
+    ? `1fr`
+    : colsNo && !device.mediaIsPhone
+    ? `repeat(${colsNo}, 1fr)`
+    : 'repeat(3,1fr)';
 
   return (
-    <div className='info-panel'>
+    <div className='info-panel pt-2'>
       {onlyList ? (
         <div
-          className='info-panel__list-container'
-          style={{ gridTemplateRows: `${rowStyle}` }}
+          className={clsx(
+            'info-panel__list-container',
+            device.mediaIsPhone && 'pl-4'
+          )}
+          style={{ gridTemplateColumns: `${colStyle}` }}
         >
           {list.map((item, index) => (
-            <div key={index}>
+            <div
+              key={index}
+              className={clsx(
+                'd-flex',
+                'flex-row',
+                'align-items-center',
+                'mt-1',
+                'pr-2'
+              )}
+            >
+              <Icon icon={ColoredListBullets} />
               <p>{item}</p>
             </div>
           ))}
         </div>
       ) : (
         <>
-          {title ? <h6 className='info-panel__title'>{title}</h6> : null}
+          {title ? <p className='h6 info-panel__title'>{title}</p> : null}
 
-          <Card spacing className='card-bg'>
-            <CardBody>
+          <Card spacing className='card-bg pr-2'>
+            <CardBody className='pl-1 pr-2'>
               <div
-                className='info-panel__list-container'
-                style={{ gridTemplateRows: `${rowStyle}` }}
+                className={clsx(
+                  'info-panel__list-container',
+                  device.mediaIsPhone && 'pl-4'
+                )}
+                style={{ gridTemplateColumns: `${colStyle}` }}
               >
                 {list.map((item, index) => (
-                  <div key={index}>
+                  <div
+                    key={index}
+                    className={clsx(
+                      'd-flex',
+                      'flex-row',
+                      'align-items-center',
+                      'mt-1',
+                      device.mediaIsPhone && 'mb-3'
+                    )}
+                  >
+                    <Icon icon={ColoredListBullets} />
                     <p>{item}</p>
                   </div>
                 ))}

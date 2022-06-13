@@ -39,3 +39,7 @@
     border-color: 'neutral-1-bg-a1';
   }
 }
+
+.nav-tabs .nav-link:focus {
+  border-bottom: 4px solid #0066cc;
+}

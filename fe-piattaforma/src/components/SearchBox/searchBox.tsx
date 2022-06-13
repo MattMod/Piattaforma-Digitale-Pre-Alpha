@@ -22,7 +22,7 @@ const SearchBox: React.FC<SearchBoxI> = (props) => {
     <div className='searchbox d-inline-flex align-items-center'>
       <Input onChange={(v) => handleChange(v)} placeholder='Cerca' />
       <Button color='primary' onClick={handleClick}>
-        <Icon color='white' icon='it-search' size='sm' />
+        <Icon color='white' icon='it-search' size='sm' aria-label='Cerca' />
       </Button>
     </div>
   );

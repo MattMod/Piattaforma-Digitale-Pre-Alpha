@@ -8,7 +8,6 @@ import { useDispatch } from 'react-redux';
 import { selectDevice } from '../../redux/features/app/appSlice';
 import HeaderMobile from './view/headerMobile';
 import HeaderDesktop from './view/headerDesktop';
-import { BreadcrumbI } from '../Breadcrumb/breadCrumb';
 
 export interface HeaderI {
   isHeaderFull?: boolean | undefined;
@@ -20,11 +19,10 @@ export interface HeaderI {
 
 export interface HeaderProp {
   isHeaderFull?: boolean;
-  breadcrumbArray: BreadcrumbI[] | undefined;
 }
 
 const Header: React.FC<HeaderProp> = (props) => {
-  const { isHeaderFull, breadcrumbArray } = props;
+  const { isHeaderFull } = props;
 
   const isLogged = useAppSelector((state) => state.user.isLogged);
   const user = useAppSelector(selectUser);
@@ -40,10 +38,9 @@ const Header: React.FC<HeaderProp> = (props) => {
     user,
     dispatch,
     isHeaderFull,
-    breadcrumbArray,
   };
 
-  if (device?.mediaIsPhone) {
+  if (!device?.mediaIsDesktop) {
     return <HeaderMobile {...componentProps} />;
   }
   return <HeaderDesktop {...componentProps} />;

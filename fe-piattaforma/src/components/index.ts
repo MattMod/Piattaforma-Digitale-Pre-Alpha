@@ -10,12 +10,12 @@ import HamburgerMenu from './HamburgerMenu/hamburgerMenu';
 import Header from './Header/header';
 import HeaderMenu from './HeaderMenu/headerMenu';
 import Input from './Form/input';
-import MenuDetails from './MenuDetails/menuDetails';
 import Paginator from './Paginator/paginator';
 import Rating from './Rating/rating';
 import SearchBar from './SearchBar/searchBar';
 import SearchBox from './SearchBox/searchBox';
 import Select from './Form/select';
+import SelectMultiple from './Form/selectMultiple';
 import Stepper from './Stepper/stepper';
 import TabGroup from './TabGroup/tabGroup';
 import Table from './Table/table';
@@ -23,9 +23,18 @@ import InfoPanel from './InfoPanel/infoPanel';
 import SideSelection from './SideSelection/sideSelection';
 import ButtonsBar from './ButtonsBar/buttonsBar';
 import Breadcrumb from './Breadcrumb/breadCrumb';
+import Loader from './Loader/loader';
+import LocationIndex from './LocationIndex/locationIndex';
+import ProgressBar from './ProgressBar/progressBar';
+import NavLink from './NavLink/navLink';
+import SearchBarOptions from './SearchBarOptions/searchBarOptions';
+import InfoCard from './InfoCard/infoCard';
+import EmptySection from './EmptySection/emptySection';
+import DetailsRow from './DetailsRow/detailsRow';
 
 export {
   Accordion,
+
   Card,
   CardCommunity,
   CardProfile,
@@ -37,12 +46,12 @@ export {
   Header,
   HeaderMenu,
   Input,
-  MenuDetails,
   Paginator,
   Rating,
   SearchBar,
   SearchBox,
   Select,
+  SelectMultiple,
   Stepper,
   TabGroup,
   Table,
@@ -50,4 +59,12 @@ export {
   SideSelection,
   ButtonsBar,
   Breadcrumb,
+  Loader,
+  LocationIndex,
+  ProgressBar,
+  NavLink,
+  SearchBarOptions,
+  InfoCard,
+  EmptySection,
+  DetailsRow,
 };

@@ -21,28 +21,32 @@ const TabGroup: React.FC<TabGroupI> = (props) => {
 
   return (
     <div className='tab-group-container container'>
-      <ul className='d-flex align-items-center justify-content-around m-0'>
+      <ul
+        className='d-flex align-items-center justify-content-around m-0 mb-3 border-bottom border-primary'
+        role='menu'
+      >
         {arrayTabs?.length &&
           arrayTabs.map((li) => (
-            <li key={li.id}>
-              <h6>
-                <div className='d-flex justify-content-center'>
-                  {li.path ? (
-                    <NavLink to={li.path} className='primary-color-b1 py-2'>
-                      {li.label}
-                    </NavLink>
-                  ) : (
-                    <Button
-                      onClick={() =>
-                        setActiveTab ? setActiveTab(li.id) : null
-                      }
-                      className='primary-color-b1'
-                    >
-                      {li.label}
-                    </Button>
-                  )}
-                </div>
-              </h6>
+            <li key={li.id} role='none'>
+              <div className='d-flex justify-content-center'>
+                {li.path ? (
+                  <NavLink
+                    to={li.path}
+                    className='primary-color-b1 py-2'
+                    role='menuitem'
+                  >
+                    {li.label}
+                  </NavLink>
+                ) : (
+                  <Button
+                    onClick={() => (setActiveTab ? setActiveTab(li.id) : null)}
+                    className='primary-color-b1'
+                    role='menuitem'
+                  >
+                    {li.label}
+                  </Button>
+                )}
+              </div>
               <div
                 className={clsx(
                   activeTab === li.id &&

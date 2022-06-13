@@ -1,11 +1,16 @@
+import clsx from 'clsx';
 import React, { memo } from 'react';
 import { Card } from '../../../../../components';
+import { selectDevice } from '../../../../../redux/features/app/appSlice';
+import { useAppSelector } from '../../../../../redux/hooks';
 
 const BachecaDigitaleWidget = () => {
+  const device = useAppSelector(selectDevice);
+
   return (
     <div className='bacheca-digitale-widget py-5'>
       <h2 className='h3 text-primary mb-3'>Bacheca Digitale</h2>
-      <div className='d-flex'>
+      <div className='d-flex flex-lg-row flex-column'>
         <div className='' style={{ maxWidth: '376px' }}>
           <Card
             category='Richiesta'
@@ -17,7 +22,11 @@ const BachecaDigitaleWidget = () => {
           />
         </div>
         <div className='d-flex flex-wrap'>
-          <div className='d-flex'>
+          <div
+            className={clsx(
+              device.mediaIsPhone ? 'd-flex flex-column' : 'd-flex'
+            )}
+          >
             <Card
               category='Annuncio'
               cta='Rispondi'

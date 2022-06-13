@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableActionsI } from '../../utils/common';
+import { CRUDActionsI } from '../../utils/common';
 import { useAppSelector } from '../../redux/hooks';
 import { selectDevice } from '../../redux/features/app/appSlice';
 import TableDesktop from './view/tableDesktop';
@@ -19,7 +19,7 @@ export interface TableI {
   className?: string;
   heading?: TableHeadingI[];
   id?: string;
-  onActionClick?: TableActionsI;
+  onActionClick?: CRUDActionsI;
   onCellClick?: (field: string, row: TableRowI) => void;
   onRowClick?: (row: TableRowI) => void;
   values?: TableRowI[];
@@ -30,10 +30,8 @@ export interface TableI {
 const Table: React.FC<TableI> = (props) => {
   const device = useAppSelector(selectDevice);
 
-  console.log('table', props);
-
   if (device?.mediaIsPhone) {
-    return <TableMobile />;
+    return <TableMobile {...props} />;
   }
 
   return <TableDesktop {...props} />;

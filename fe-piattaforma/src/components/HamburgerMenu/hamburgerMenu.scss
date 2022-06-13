@@ -1,12 +1,13 @@
 .hamburger_nav {
   left: 0;
   max-width: 35px;
+  position: relative;
 
   .hamburger_nav:hover {
     border: 2px solid white;
   }
 
-  li:hover {
+  li:hover:not(.manage-profile-container, .sublist-container) {
     background-color: rgba(0, 102, 204, 0.06);
     border-left: solid 5px #0066cc;
   }
@@ -20,15 +21,26 @@
     height: 100%;
   }
 
+  .button-close-ham {
+    position: absolute;
+    right: -61px;
+  }
+
   .close_nav {
     cursor: pointer;
-    background-color: #0066cc;
+    background-color: white;
     transition: all 0.5s;
   }
 
-  .close_nav:hover {
-    background-color: red;
-    transform: scale(120%);
+  .nav-divider {
+    height: 0.5px;
+    width: 65px;
+    margin-left: 40px;
+    margin-top: 32px;
+  }
+
+  .manage-profile {
+    padding-left: 40px;
   }
 
   .menuNav {
@@ -57,8 +69,10 @@
     font-weight: bold;
   }
 
-  .menuNav li:first-child {
-    margin-top: 7rem;
+  .anchor-button {
+    padding-left: 40px;
+    font-weight: 700;
+    font-size: 1rem;
   }
 }
 

@@ -85,10 +85,7 @@ const filterOptions = async (inputValue: string) => {
 const Survey = () => {
   return (
     <div>
-      <PageTitle
-        breadcrumb={arrayBreadcrumb} // TODO da rendere dinamico
-        {...PageTitleMock}
-      />
+      <PageTitle breadcrumb={arrayBreadcrumb} {...PageTitleMock} />
       <Container>
         <SearchBar
           filterOptions={filterOptions}
@@ -96,6 +93,7 @@ const Survey = () => {
           placeholder='Cerca nel sito'
           isClearable
           title='Cerca fra i topic'
+          id='search-survey'
         />
         <div className='d-flex flex-row'>
           <Col md={3}>

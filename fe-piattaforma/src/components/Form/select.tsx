@@ -24,6 +24,7 @@ export interface SelectI
   required?: boolean;
   value?: string | number | undefined;
   wrapperClassName?: string;
+  withLabel?: boolean;
 }
 
 const Select: React.FC<SelectI> = (props) => {
@@ -35,6 +36,7 @@ const Select: React.FC<SelectI> = (props) => {
     options = [],
     value = '',
     wrapperClassName,
+    withLabel = true,
   } = props;
   const [selectedOption, setSelectedOption] = useState<OptionType>();
 
@@ -83,7 +85,14 @@ const Select: React.FC<SelectI> = (props) => {
         wrapperClassName
       )}
     >
-      {label ? <label htmlFor='selectExampleClassic'>{label}</label> : null}
+      {withLabel ? (
+        <label
+          id={`${(label || 'label select').replace(/\s/g, '-')}`}
+          className='text-decoration-none'
+        >
+          {label}
+        </label>
+      ) : null}
       <SelectKit
         {...BaseProps}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -93,6 +102,7 @@ const Select: React.FC<SelectI> = (props) => {
         value={selectedOption}
         color='primary'
         classNamePrefix='bootstrap-select'
+        aria-labelledby={`${(label || 'label select').replace(/\s/g, '-')}`}
       />
     </div>
   );

@@ -29,11 +29,11 @@ const SideSelection: React.FC<SideSelectionI> = (props) => {
 
   return (
     <aside className='side-selection'>
-      <h2 className='h5 primary-color-b1'>{title}</h2>
+      {title && <h2 className='h5 primary-color-b1'>{title}</h2>}
       <div className='mt-4 side-selection__content'>
         {(filterOptions || []).map((option, i) => (
           <div key={'option-' + i}>
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+            {/* eslint-disable-next-line jsx-a11y/click-services-have-key-services */}
             <div
               className={clsx(
                 'py-2',

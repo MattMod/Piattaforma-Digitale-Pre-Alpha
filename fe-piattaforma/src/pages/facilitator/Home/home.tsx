@@ -39,6 +39,7 @@ const DashboardPropsMock = {
   icon: 'it-user',
   title: 'Cittadini incontrati',
   value: 64,
+  ariaLabel: 'cittadino',
 };
 const DashboardMock = [
   DashboardPropsMock,
@@ -59,7 +60,15 @@ const Home: React.FC = () => {
       {community?.length ? (
         <section aria-label='Community' className='lightgrey-bg-c1'>
           <Container>
-            <CardsWrapper title='Community'>
+            <CardsWrapper
+              title='Community'
+              wrapperClassName={clsx(
+                'flex-lg-row',
+                'flex-column',
+                'community__cards-wrapper',
+                'justify-content-around'
+              )}
+            >
               {community.map((communityElement, i) => (
                 <CardCommunity
                   // TODO update key with a unique value
@@ -80,7 +89,14 @@ const Home: React.FC = () => {
         <Container>
           <CardsWrapper
             title='Dashboard'
-            wrapperClassName={clsx(dashboard?.length && 'd-flex')}
+            wrapperClassName={clsx(
+              dashboard?.length && 'd-flex',
+              'flex-column',
+              'flex-lg-row',
+              'align-items-center',
+              'gx-3',
+              'dashboard__cards-wrapper'
+            )}
           >
             {dashboard?.length ? (
               <>

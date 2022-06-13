@@ -4,13 +4,11 @@ import {
   DropdownMenu,
   DropdownToggle,
   Icon,
-  LinkList,
-  LinkListItem,
   UncontrolledDropdown,
 } from 'design-react-kit';
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface MenuItem {
   label: string;
@@ -25,6 +23,11 @@ interface SubRoutes {
 }
 
 const MenuMock = [
+  {
+    label: 'Home',
+    path: '/',
+    id: 'tab-home',
+  },
   {
     label: 'Area amministrativa',
     path: '/area-amministrativa',
@@ -43,12 +46,16 @@ const MenuMock = [
         path: '/area-amministrativa/enti',
       },
       {
-        label: 'Utenti',
+        label: 'Users',
         path: '/area-amministrativa/utenti',
       },
       {
         label: 'Questionari',
         path: '/area-amministrativa/questionari',
+      },
+      {
+        label: 'Servizi',
+        path: '/area-amministrativa/servizi',
       },
     ],
   },
@@ -90,33 +97,89 @@ const HeaderMenu: React.FC<HeaderMenuI> = (props) => {
       MenuMock[0].id
   );
   const { t } = useTranslation();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownEventsOpen, setDropdownEventsOpen] = useState(false);
+  const navigate = useNavigate();
+  // const currentRef = useRef();
+
+  const manageKeyEvent = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case ' ': {
+        e.preventDefault();
+        //console.log(e, e.target);
+
+        // onLinkClick();
+        // navigate('area-cittadini');
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', manageKeyEvent);
+    return () => {
+      document.removeEventListener('keydown', manageKeyEvent);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const navDropDown: React.FC<MenuItem> = (li) => {
+    const toggle = (dropdown: string) => {
+      dropdown.toLowerCase() !== 'area cittadini'
+        ? setDropdownOpen((prevState) => !prevState)
+        : setDropdownEventsOpen((prevState) => !prevState);
+    };
+    const onLinkClick = () => {
+      setActiveTab(li.id);
+      toggle(li.label);
+    };
+
     return (
       <>
-        <UncontrolledDropdown inNavbar>
+        <UncontrolledDropdown
+          inNavbar
+          isOpen={
+            li.label.toLowerCase() === 'area cittadini'
+              ? dropdownEventsOpen
+              : dropdownOpen
+          }
+          toggle={() => toggle(li.label)}
+        >
           <DropdownToggle
             nav
             caret
-            className='text-white font-weight-semibold pb-2'
+            className='text-white font-weight-semibold pb-0 mb-1'
+            aria-expanded={
+              li.label.toLowerCase() === 'area cittadini'
+                ? dropdownEventsOpen
+                : dropdownOpen
+            }
           >
-            {li.label} <Icon icon='it-expand' size='sm' color='white' />
+            {li.label}{' '}
+            <Icon icon='it-expand' size='sm' color='white' aria-label='Apri' />
           </DropdownToggle>
-          <DropdownMenu className=''>
-            <LinkList className='navbar-dropdown'>
-              <LinkListItem>
-                {li.subRoutes.map((link: SubRoutes, index) => (
-                  <NavLink
-                    to={link.path}
-                    className='primary-color-b1 py-2'
-                    key={index}
-                    onClick={() => setActiveTab(li.id)}
-                  >
-                    {link.label}
-                  </NavLink>
-                ))}
-              </LinkListItem>
-            </LinkList>
+          <DropdownMenu role='menu' tag='ul'>
+            {li.subRoutes.map((link: SubRoutes, index) => (
+              <li
+                key={index}
+                role='none'
+                className={clsx(
+                  index === 0 ? 'px-4 mb-4 mt-2' : 'px-4 mb-4',
+                  'pb-0'
+                )}
+              >
+                <Link
+                  to={link.path}
+                  className='primary-color-b1 py-2'
+                  role='menuitem'
+                  onClick={() => onLinkClick()}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
           </DropdownMenu>
         </UncontrolledDropdown>
         <div
@@ -139,32 +202,41 @@ const HeaderMenu: React.FC<HeaderMenuI> = (props) => {
         !isHeaderFull && 'd-flex align-items-baseline'
       )}
       aria-label={t('site_navigation_bar')}
+      id='menu'
+      tabIndex={-1}
     >
-      <ul className='d-flex align-items-end mb-0 '>
+      <ul className='d-flex align-items-end mb-0' role='menu'>
         {MenuMock?.length &&
           MenuMock.map((li) => (
-            <li key={li.path} className='position-relative'>
+            <li
+              key={li.path}
+              className={clsx(
+                'position-relative',
+                li.subRoutes && 'mr-2',
+                'text-nowrap'
+              )}
+              role='none'
+            >
               {li.subRoutes ? (
                 navDropDown(li)
               ) : (
                 <>
-                  <h6>
-                    <div>
-                      <Link
-                        to={li.path}
-                        onClick={() => setActiveTab(li.id)}
-                        className='text-white'
-                      >
-                        {li.label}
-                      </Link>
-                    </div>
-                  </h6>
+                  <Link
+                    id={li.id}
+                    to={li.path}
+                    onClick={() => setActiveTab(li.id)}
+                    onKeyDown={(e) => (e.key == ' ' ? navigate(li.path) : '')}
+                    className='h6 text-white mb-2'
+                    role='menuitem'
+                  >
+                    {li.label}
+                  </Link>
                   <div
                     className={clsx(
                       activeTab === li.id &&
-                        'bg-white header-menu-container__tab-bar',
+                        'bg-white header-menu-container__tab-bar mt-1',
                       activeTab !== li.id &&
-                        'bg-transparent header-menu-container__tab-bar'
+                        'bg-transparent header-menu-container__tab-bar mt-1'
                     )}
                   />
                 </>
@@ -173,9 +245,14 @@ const HeaderMenu: React.FC<HeaderMenuI> = (props) => {
           ))}
       </ul>
       {!isHeaderFull && (
-        <Button className='p-0'>
+        <Button className='p-0' aria-label='bottone-ricerca-navbar'>
           <div className='header-container__icon-container ml-2'>
-            <Icon icon='it-search' color='white' size='xs' />
+            <Icon
+              icon='it-search'
+              color='white'
+              size='xs'
+              aria-label='Ricerca barra di navigazione'
+            />
           </div>
         </Button>
       )}

@@ -6,28 +6,28 @@ import {
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import appReducer from './features/app/appSlice';
-import areaAmministrativaReducer from './features/areaAmministrativa/areaAmministrativaSlice';
-import questionarioReducer from './features/areaAmministrativa/questionario/questionarioSlice';
+import citizensAreaReducer from './features/citizensArea/citizensAreaSlice';
+import administrativeAreaReducer from './features/administrativeArea/administrativeAreaSlice';
+import surveyReducer from './features/administrativeArea/surveys/surveysSlice';
 import modalReducer from './features/modal/modalSlice';
 import notificationReducer from './features/notification/notificationSlice';
-import programmaReducer from './features/areaAmministrativa/programma/programmaSlice';
 import userReducer from './features/user/userSlice';
-import areaCittadiniReducer from './features/areaCittadini/areaCittadiniSlice';
 import rolesReducer from './features/roles/rolesSlice';
-import areaAmministrativaDetailReducer from './features/areaAmministrativa/detail/detailSlice';
+import programReducer from './features/administrativeArea/programs/programsSlice';
+import projectReducer from './features/administrativeArea/projects/projectsSlice';
 
 const store = createStore(
   combineReducers({
     app: appReducer,
-    areaAmministrativa: areaAmministrativaReducer,
-    areaAmministrativaDetail: areaAmministrativaDetailReducer,
-    areaCittadini: areaCittadiniReducer,
+    administrativeArea: administrativeAreaReducer,
+    citizensArea: citizensAreaReducer,
     modal: modalReducer,
     notification: notificationReducer,
-    programma: programmaReducer,
-    questionario: questionarioReducer,
+    survey: surveyReducer,
+    program: programReducer,
     roles: rolesReducer,
     user: userReducer,
+    project: projectReducer,
   }),
   composeWithDevTools(applyMiddleware(thunk))
 );

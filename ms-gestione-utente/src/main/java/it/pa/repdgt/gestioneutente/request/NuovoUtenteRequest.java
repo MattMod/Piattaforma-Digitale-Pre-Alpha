@@ -42,5 +42,9 @@ public class NuovoUtenteRequest implements Serializable {
 	@JsonProperty(value = "Telefono")
 	private String telefono;
 	
-	// TODO altri campi che serviranno
+	@JsonProperty(value = "mansione")
+	private String mansione;
+	
+	@JsonProperty(value = "tipoContratto")
+	private String tipoContratto;
 }

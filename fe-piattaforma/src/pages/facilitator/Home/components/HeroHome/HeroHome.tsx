@@ -24,7 +24,12 @@ const HeroHome = () => {
           alt='imagealt'
         />
         <HeroBody>
-          <HeroTitle tag='h2' className='text-white'>
+          <HeroTitle
+            tag='h2'
+            className='text-white'
+            role='heading'
+            aria-level={1}
+          >
             {'"La più grande soddisfazione è aiutare gli altri"'.toUpperCase()}
           </HeroTitle>
           <p className='d-none d-lg-block'>
@@ -36,18 +41,18 @@ const HeroHome = () => {
           <HeroButton color='secondary'>Scopri di più</HeroButton>
         </HeroBody>
       </Hero>
-      <Container className='heroHome__hero-container'>
+      <Container className='heroHome container-responsive px-lg-5 px-sm-0 text-wrap'>
         <Card className='card-bg heroHome__hero-card'>
           <CardBody>
-            <CardTitle tag='h3' className='big-heading text-primary'>
+            <CardTitle tag='h2' className='h3 big-heading text-primary'>
               Devi compilare un questionario?
             </CardTitle>
-            <CardText className='complementary-1-color-b8'>
+            <CardText className='complementary-1-color-b8 mb-4'>
               Un futuro più accessibile per tutti è possibile. Ogni giorno stai
               facendo la tua parte per aiutare concretamente gli altri.
             </CardText>
-            <div className='d-flex flex-row'>
-              <HeroButton color='primary'>
+            <div className='d-flex flex-row flex-wrap'>
+              <HeroButton color='primary mb-2'>
                 Compila nuovo questionario
               </HeroButton>
               <CardReadMore

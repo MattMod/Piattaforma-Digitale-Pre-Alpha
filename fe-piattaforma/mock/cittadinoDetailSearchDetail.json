@@ -1,10 +1,9 @@
 {
   "data": {
-    "name": "Antonio",
-    "lastName": "Rossi",
-    "fiscalCode": "codfiscale",
+    "nome": "Antonio",
+    "cognome": "Rossi",
+    "codiceFiscale": "codfiscale",
     "email": "antoniorossi@mail.com",
-    "phone": "3211233232",
-    "userId": "44242"
+    "phone": "3211233232"
   }
 }

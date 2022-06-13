@@ -8,4 +8,8 @@ public class ContestoException extends RuntimeException implements Serializable{
 	public ContestoException(String exceptionMessage) {
 		super(exceptionMessage);
 	}
+	
+	public ContestoException(String exceptionMessage, Exception ex) {
+		super(exceptionMessage, ex);
+	}
 }

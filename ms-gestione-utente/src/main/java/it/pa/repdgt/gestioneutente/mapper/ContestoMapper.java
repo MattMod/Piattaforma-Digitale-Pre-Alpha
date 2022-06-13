@@ -23,6 +23,7 @@ public class ContestoMapper {
 		contestoResource.setNumeroCellulare(utente.getTelefono());
 		contestoResource.setEmail(utente.getEmail());
 		contestoResource.setStato(utente.getStato());
+		contestoResource.setIntegrazione(utente.getIntegrazione());
 		
 		List<RuoloResource> ruoliResource = utente.getRuoli()
 				.stream()

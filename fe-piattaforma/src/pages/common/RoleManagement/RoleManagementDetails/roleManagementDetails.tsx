@@ -1,9 +1,8 @@
 import { Button, Container } from 'design-react-kit';
 import React, { memo, useState } from 'react';
-import { Form, Input, Table } from '../../../../components';
+import { Form, Input, Accordion, InfoPanel } from '../../../../components';
+import DetailLayout from '../../../../components/DetailLayout/detailLayout';
 import PageTitle from '../../../../components/PageTitle/pageTitle';
-import { newTable, TableHeadingI } from '../../../../components/Table/table';
-import { formFieldI } from '../../../../utils/formHelper';
 import './roleManagementDetails.scss';
 
 interface RoleDetailsI {
@@ -24,125 +23,110 @@ const arrayBreadcrumb = [
   },
 ];
 
-const TableHeading: TableHeadingI[] = [
-  {
-    label: 'Funzionalità',
-    field: 'name',
-  },
-  {
-    label: 'Permessi',
-    field: 'authorized',
-    size: 'small',
-  },
-];
-
-const funzionalita = [
+const funzionalitaMock = [
   {
     name: 'Censimento ente',
-    id: 1,
+    id: '1',
   },
   {
     name: 'Visualizzazione scheda ente',
-    id: 2,
+    id: '2',
   },
   {
     name: 'Visualizzazione lista enti',
-    id: 3,
+    id: '3',
   },
   {
     name: 'Modifica scheda ente',
-    id: 4,
+    id: '4',
     authorized: true,
   },
   {
     name: 'Eliminazione ente',
-    id: 5,
+    id: '5',
   },
   {
     name: 'Compilazione questionario',
-    id: 6,
+    id: '6',
     authorized: true,
   },
   {
     name: 'Modifica questionario',
-    id: 7,
+    id: '7',
   },
   {
     name: 'Visualizzazione questionario',
-    id: 8,
+    id: '8',
     authorized: true,
   },
   {
     name: 'Eliminazione questionario',
-    id: 9,
+    id: '9',
   },
   {
     name: 'Invio questionario',
-    id: 10,
+    id: '10',
   },
 ];
 
 const RolesManagementDetails: React.FC<RoleDetailsI> = (props) => {
   const { name = 'Facilitatore' } = props;
   const [formEnabled, setEnableForm] = useState(false);
+  const [functionalities, setFunctionalities] = useState<
+    { name: string; id: string }[]
+  >([]);
 
-  const handleChangeRole = (
-    td: { name: string; id: number },
-    checked: formFieldI['value']
-  ) => {
-    console.log('handleChangeRole', td, checked);
-    // TODO: implement change role
+  const handleChangeRole = (elem: { name: string; id: string }) => {
+    let temp = [...functionalities];
+    if (temp.find((f) => f.id === elem.id)) {
+      temp = temp.filter((f) => f.id !== elem.id);
+    } else {
+      temp.push(elem);
+    }
+    setFunctionalities(temp);
+    // TO DO: integrare chiamata per settare funzionalità del ruolo
   };
-
-  const tableValues = newTable(
-    TableHeading,
-    (funzionalita || []).map((td) => ({
-      id: td.id,
-      name: td.name,
-      authorized: (
-        <Form>
-          <Input
-            id={'checkbox'}
-            field='authorization'
-            type='checkbox'
-            withLabel={false}
-            className='shadow-none w-25'
-            aria-label={'Checkbox permesso per ' + td.name}
-            checked={td.authorized}
-            disabled={!formEnabled}
-            onInputChange={(checked) => handleChangeRole(td, checked)}
-          />
-        </Form>
-      ),
-    }))
-  );
 
   return (
     <>
-      <PageTitle
-        breadcrumb={arrayBreadcrumb}
-        // subtititle
-      />
+      <PageTitle breadcrumb={arrayBreadcrumb} />
       <Container>
-        <h1 className='h6 text-primary my-4'>
-          Informazioni ruolo: <strong>{name}</strong>
-        </h1>
-        <Form>
+        <DetailLayout
+          titleInfo={{
+            title: 'Referente Ente Gestore di programma',
+            status: 'ATTIVO',
+            upperTitle: { icon: 'it-settings', text: 'Ruolo' },
+          }}
+          formButtons={[]}
+          buttonsPosition='TOP'
+          goBackTitle='Vai alla Lista Ruoli'
+        />
+        <Form className='mt-4'>
           <Input
             id='role-name'
             field='role-name'
             disabled
-            label={'Nome'}
+            label='Nome'
             value={name}
             className='role-management-details-container__input my-4'
           />
         </Form>
-        <Table
-          {...tableValues}
-          id='table'
-          onCellClick={(field, row) => console.log(field, row)}
-          //onRowClick={row => console.log(row)}
-        />
+        {(funzionalitaMock || []).map((f, index) => (
+          <Accordion
+            title={f.name}
+            key={index}
+            lastBottom={index === funzionalitaMock.length - 1}
+            checkbox
+            disabledCheckbox={!formEnabled}
+            isChecked={
+              functionalities.find((func) => func.id === f.id) ? true : false
+            }
+            handleOnCheck={() => handleChangeRole(f)}
+          >
+            <InfoPanel list={['test', 'test', 'test']} />
+            {/* TODO: carica lista dettaglio funzionalità */}
+          </Accordion>
+        ))}
         <div className='d-flex flex-row justify-content-end my-4'>
           {formEnabled ? (
             <>
@@ -156,7 +140,7 @@ const RolesManagementDetails: React.FC<RoleDetailsI> = (props) => {
               </Button>
               <Button
                 color='primary'
-                onClick={() => console.log('salva modifiche')}
+                onClick={() => console.log('salva modifiche', functionalities)}
                 className='role-management-details-container__button-width'
               >
                 Salva modifiche

@@ -1,3 +1,7 @@
+p {
+  margin: 0;
+}
+
 .footer-container {
   background-color: color('blue-900');
   color: color('white');
@@ -27,13 +31,22 @@
     font-size: 14px;
   }
 
-  h6 {
+  .h6,
+  &__small-text {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.8rem;
+  }
+
+  &__xs-text {
+    font-size: 0.75rem;
+  }
+
+  .assistance-column__desktop {
+    min-width: 255px;
   }
 }
 
-@media (max-width: 1027px) {
+@media (max-width: 1025px) {
   .footer-container {
     height: auto;
     &__assistance {

@@ -8,10 +8,11 @@ interface DashboardCardI {
   icon?: string;
   title: string;
   value: number | string;
+  ariaLabel?: string;
 }
 
 const DashboardCard: React.FC<DashboardCardI> = (props) => {
-  const { className, icon, title, value } = props;
+  const { className, icon, title, value, ariaLabel } = props;
   return (
     <div
       className={clsx(
@@ -30,7 +31,13 @@ const DashboardCard: React.FC<DashboardCardI> = (props) => {
         )}
       >
         {icon ? (
-          <Icon icon={icon} size='xs' className='mr-1' color='primary' />
+          <Icon
+            icon={icon}
+            size='xs'
+            className='mr-1'
+            color='primary'
+            aria-label={ariaLabel}
+          />
         ) : null}
         {title}
       </div>

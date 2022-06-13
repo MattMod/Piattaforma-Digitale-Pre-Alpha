@@ -6,6 +6,7 @@ import { Auth } from '../pages';
 import { useAppSelector } from '../redux/hooks';
 import { selectLogged, selectUser } from '../redux/features/user/userSlice';
 import { BreadcrumbI } from '../components/Breadcrumb/breadCrumb';
+import PrintSurvey from '../pages/administrator/AdministrativeArea/Entities/Surveys/printSurvey/printSurvey';
 
 export enum layoutEnum {
   fullLayout = 'FULL_LAYOUT',
@@ -45,12 +46,7 @@ const AppRoutes: React.FC<AppRouteProps> = (props) => {
                 <Route
                   key={index}
                   path='/'
-                  element={
-                    <FullLayout
-                      isHeaderFull={route.isHeaderFull}
-                      breadcrumbArray={route.route_paths}
-                    />
-                  }
+                  element={<FullLayout isHeaderFull={route.isHeaderFull} />}
                 >
                   <Route path={route.path} element={route.element}>
                     {route.subRoutes?.map((r: JSX.Element) => r)}
@@ -60,12 +56,7 @@ const AppRoutes: React.FC<AppRouteProps> = (props) => {
                 <Route
                   key={index}
                   path='/'
-                  element={
-                    <MainLayout
-                      isHeaderFull={route.isHeaderFull}
-                      breadcrumbArray={route.route_paths}
-                    />
-                  }
+                  element={<MainLayout isHeaderFull={route.isHeaderFull} />}
                 >
                   <Route path={route.path} element={route.element}>
                     {route.subRoutes?.map((r: JSX.Element) => r)}
@@ -73,6 +64,7 @@ const AppRoutes: React.FC<AppRouteProps> = (props) => {
                 </Route>
               )
             )}
+          <Route path='/stampa-questionario' element={<PrintSurvey />} />
         </>
       ) : (
         <>

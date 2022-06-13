@@ -30,7 +30,7 @@ declare type InputType =
 
 export interface formFieldI {
   field: string;
-  value?: string | number | boolean | Date;
+  value?: string | number | boolean | Date | string[];
   valid?: boolean;
   type?: InputType;
   required?: boolean;
@@ -39,6 +39,20 @@ export interface formFieldI {
   options?: OptionType[] | undefined;
   minimum?: string | number | undefined;
   maximum?: string | number | undefined;
+  preset?: boolean;
+  id?: string;
+  label?: string;
+  flag?: boolean;
+  dependencyFlag?: string;
+  dependencyNotFlag?: string;
+  order?: string | number;
+  format?: string;
+  relatedFrom?: string;
+  relatedTo?: string;
+  enumLevel1?: string[] | undefined;
+  enumLevel2?:
+    | { label: string; value: string; upperLevel: string }[]
+    | undefined;
 }
 export interface FormI {
   [key: string]: formFieldI;
@@ -55,6 +69,18 @@ export const newFormField = ({
   options,
   minimum,
   maximum,
+  preset = false,
+  id = new Date().getTime().toString(),
+  label = '',
+  flag = false,
+  dependencyFlag = '',
+  dependencyNotFlag = '',
+  order = 1,
+  format = 'text',
+  relatedFrom = '',
+  relatedTo = '',
+  enumLevel1,
+  enumLevel2,
 }: formFieldI) => ({
   field,
   value,
@@ -66,6 +92,18 @@ export const newFormField = ({
   options,
   minimum,
   maximum,
+  preset,
+  id,
+  label,
+  flag,
+  dependencyFlag,
+  dependencyNotFlag,
+  order,
+  format,
+  relatedFrom,
+  relatedTo,
+  enumLevel1,
+  enumLevel2,
 });
 
 export const newForm = (fields: formFieldI[] = [], keepPosition = false) => {
@@ -83,6 +121,18 @@ export const newForm = (fields: formFieldI[] = [], keepPosition = false) => {
         options,
         minimum,
         maximum,
+        preset = false,
+        id = new Date().getTime().toString(),
+        label,
+        flag,
+        dependencyFlag,
+        dependencyNotFlag,
+        order,
+        format,
+        relatedFrom,
+        relatedTo,
+        enumLevel1,
+        enumLevel2,
       },
       i: number
     ) => {
@@ -99,6 +149,18 @@ export const newForm = (fields: formFieldI[] = [], keepPosition = false) => {
           options,
           minimum,
           maximum,
+          preset,
+          id,
+          label,
+          flag,
+          dependencyFlag,
+          dependencyNotFlag,
+          order,
+          format,
+          relatedFrom,
+          relatedTo,
+          enumLevel1,
+          enumLevel2,
         },
       };
     }
@@ -113,7 +175,7 @@ export const FormHelper = {
     field?: formFieldI['field']
   ) => {
     const newForm = { ...form };
-    if (newForm && value && field) {
+    if (newForm && (value || value === '') && field) {
       newForm[field] = {
         ...newForm[field],
         touched: true,

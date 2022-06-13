@@ -1,6 +1,5 @@
 import React from 'react';
 import clsx from 'clsx';
-import './form.scss';
 
 interface FormI {
   className?: string;

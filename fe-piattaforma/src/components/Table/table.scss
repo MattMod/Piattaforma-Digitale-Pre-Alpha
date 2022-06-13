@@ -25,4 +25,13 @@
     padding: 0 8px;
     min-width: auto;
   }
+  &__toggle-button {
+    margin: 0;
+    label {
+      input[type='checkbox'] + .lever {
+        margin: 5px 0 0;
+        float: left;
+      }
+    }
+  }
 }

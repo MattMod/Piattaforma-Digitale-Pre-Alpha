@@ -1,9 +1,15 @@
+/* TODO fix this file!! */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 import clsx from 'clsx';
-import { Icon, Navbar, NavLink } from 'design-react-kit';
-import React from 'react';
-import LogoScrittaBlu from '../../../public/assets/img/LogoScrittaBlu.png';
+import { Button, Collapse, Icon, LinkList } from 'design-react-kit';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import ClickOutside from '../../hoc/ClickOutside';
 import './hamburgerMenu.scss';
+import LogoSmall from '/public/assets/img/logo-mobile.png';
+import { focusId, menuRoutes } from '../../utils/common';
 
 interface HBMenuProps {
   open: boolean;
@@ -13,95 +19,146 @@ interface HBMenuProps {
 const HamburgerMenu: React.FC<HBMenuProps> = (props) => {
   const { open, setOpen } = props;
 
-  const backLink = [
-    {
-      path: '/area-amministrativa',
-      title: 'Home',
-    },
-    {
-      path: '/area-amministrativa',
-      title: 'Area amministrativa',
-    },
-    {
-      path: '/area-cittadini',
-      title: 'Area Cittadini',
-    },
-    {
-      path: '/area-amministrativa/bacheca-digitale',
-      title: 'Dashboard',
-    },
-    {
-      path: '/area-amministrativa/bacheca-digitale',
-      title: 'Community',
-    },
-    {
-      path: '/area-amministrativa/bacheca-digitale',
-      title: 'Bacheca digitale',
-    },
+  const [collapseOpen, setCollapseOpen] = useState(false);
 
-    {
-      path: '/area-amministrativa/bacheca-digitale',
-      title: 'Documenti',
-    },
-  ];
+  const expanded = {
+    'aria-expanded': true,
+  };
+
+  useEffect(() => {
+    const body = document.querySelector('body') as HTMLBodyElement;
+    if (open) {
+      focusId('hamburger');
+      body.style.overflowY = 'hidden';
+    } else {
+      body.style.overflowY = 'unset';
+    }
+  }, [open]);
 
   return (
     <ClickOutside callback={() => setOpen(false)}>
-      <Navbar className='hamburger_nav mr-2'>
-        <ul className={`menuNav ${open ? 'showMenu' : ''}`}>
-          <NavLink onClick={() => setOpen(false)} className='px-0 py-0'>
-            <div
-              className={clsx(
-                'd-flex',
-                'align-items-row',
-                'justify-content-center',
-                'primary-bg-a6',
-                'pt-3'
-              )}
-            >
-              <div
-                className={clsx(
-                  'rounded-circle',
-                  'bg-white',
-                  'd-flex',
-                  'align-items-center',
-                  'justify-content-center',
-                  'mr-3',
-                  'mt-2'
-                )}
-                style={{ height: '38px', width: '38px' }}
-              >
-                <Icon className='m-0 primary-color' icon='it-user' size='sm' />
-              </div>
-              <div className='d-inline-flex flex-column align-items-start'>
-                <h6 className='m-0 text-sans-serif text-white'>Mario Rossi</h6>
-                <p className='text-white font-weight-light'>I tuoi dati</p>
-              </div>
-            </div>
+      <div className={clsx('hamburger_nav', 'mr-2', !open && 'invisible')}>
+        <div className={`menuNav ${open ? 'showMenu' : ''}`}>
+          <div className='px-0 py-0 d-flex flex-column-reverse' id='hamburger'>
+            <ul>
+              {menuRoutes.map((link, index: number) => {
+                return link.subRoutes ? (
+                  <React.Fragment key={index}>
+                    <li
+                      className={clsx(
+                        'right-icon',
+                        'd-flex',
+                        'justify-content-between',
+                        'pr-3',
+                        'flex-column'
+                      )}
+                      {...(collapseOpen ? expanded : {})}
+                      id={link.id}
+                    >
+                      <Button
+                        className={clsx(
+                          'primary-color d-flex',
+                          'd-flex',
+                          'justify-content-between',
+                          'anchor-button'
+                        )}
+                        onClick={() => setCollapseOpen(!collapseOpen)}
+                      >
+                        {link.label}
+                        <Icon
+                          className='right'
+                          icon='it-expand'
+                          color='primary'
+                          aria-hidden
+                          aria-label='freccia destra'
+                        />
+                      </Button>
+                    </li>
+                    <li
+                      className={clsx(
+                        !collapseOpen && 'd-none',
+                        'sublist-container'
+                      )}
+                    >
+                      <Collapse isOpen={collapseOpen}>
+                        <LinkList sublist>
+                          {link.subRoutes.map((sub, index) => (
+                            <li key={`sub-${index}`}>
+                              <Link
+                                className='ml-2 font-weight-normal'
+                                to={sub.path}
+                                onClick={() => {
+                                  setOpen(false);
+                                  setCollapseOpen(false);
+                                }}
+                              >
+                                {sub.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </LinkList>
+                      </Collapse>
+                    </li>
+                  </React.Fragment>
+                ) : (
+                  <li key={index} id={link.id}>
+                    <Link
+                      to={link.path}
+                      onClick={() => {
+                        setOpen(false);
+                        setCollapseOpen(false);
+                      }}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                );
+              })}
+              <li className='manage-profile-container'>
+                <div>
+                  <div className='nav-divider primary-bg-a6'></div>
+                  <Link
+                    to='/gestione-ruoli'
+                    className='primary-color manage-profile mt-4'
+                  >
+                    <Icon
+                      className='mr-3'
+                      icon='it-settings'
+                      color='primary'
+                      aria-label='icona ingranaggio'
+                    />
+                    Gestione Profili
+                  </Link>
+                </div>
+              </li>
+            </ul>
 
-            <div className='py-3 d-flex flex-direction-row justify-content-between'>
-              <img
-                src={LogoScrittaBlu}
-                alt='logo'
-                className='border-bottom border-primary pl-4 pb-2 ml-2'
-              />
-              <Icon
-                icon='it-close'
-                size='sm'
-                color='white'
-                className='rounded-circle mr-3 mt-2 close_nav'
-              />
+            <div className={clsx('primary-bg-a6', 'p-4', 'pl-0', 'mb-3')}>
+              <img src={LogoSmall} alt='' />
+              <Button
+                className={clsx('button-close-ham')}
+                onClick={() => setOpen(false)}
+                aria-hidden={!open}
+              >
+                <Icon
+                  icon='it-close'
+                  size=''
+                  color='primary'
+                  className={clsx(
+                    'rounded-circle',
+                    'mr-3',
+                    'mt-2',
+                    'close_nav',
+                    'white',
+                    !open && 'd-none'
+                  )}
+                  aria-label='chiudi'
+                />
+              </Button>
             </div>
-            {backLink.map((link) => {
-              return (
-                <li key={link.title}>
-                  <a href={link.path}> {link.title} </a>
-                </li>
-              );
-            })}
-          </NavLink>
-        </ul>
-      </Navbar>
+          </div>
+        </div>
+      </div>
     </ClickOutside>
   );
 };

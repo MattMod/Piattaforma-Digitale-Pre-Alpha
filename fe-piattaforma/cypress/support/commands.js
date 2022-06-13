@@ -33,7 +33,12 @@ Cypress.Commands.add('customVisit', (route, tWait = 200) => {
   });
 });
 
-Cypress.Commands.add('customVisitInjectAxe', (route) => {
+Cypress.Commands.add('customVisitInjectAxe', (route, mobile = false) => {
+  if (mobile) {
+    cy.viewport(320, 900);
+  } else {
+    cy.viewport(1400, 900);
+  }
   cy.customVisit(route);
   cy.injectAxe();
   cy.configureAxe({

@@ -6,23 +6,17 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import it.pa.repdgt.gestioneutente.dto.UtenteDto;
 import it.pa.repdgt.gestioneutente.request.NuovoUtenteRequest;
 import it.pa.repdgt.gestioneutente.resource.UtentiLightResourcePaginata;
-import it.pa.repdgt.gestioneutente.service.RuoloService;
-import it.pa.repdgt.shared.entity.RuoloEntity;
 import it.pa.repdgt.shared.entity.UtenteEntity;
 import it.pa.repdgt.shared.entity.light.UtenteLightEntity;
 
 @Component
 public class UtenteMapper {
-	
-	@Autowired
-	private RuoloService ruoloService;
 
 	public UtentiLightResourcePaginata toUtentiLightResourcePaginataFrom(Page<UtenteDto> paginaUtenti) {
 		if(paginaUtenti == null) {
@@ -42,8 +36,6 @@ public class UtenteMapper {
 		utente.setCognome(nuovoUtenteRequest.getCognome());
 		utente.setEmail(nuovoUtenteRequest.getEmail());
 		utente.setTelefono(nuovoUtenteRequest.getTelefono());
-		RuoloEntity ruolo = this.ruoloService.getRuoloByNome(nuovoUtenteRequest.getRuolo());
-		utente.getRuoli().add(ruolo);
 		
 		return utente;
 	}
@@ -64,6 +56,8 @@ public class UtenteMapper {
 		utente.setCodiceFiscale(utenteCercato.getCodiceFiscale());
 		utente.setTelefono(utenteCercato.getTelefono());
 		utente.setEmail(utenteCercato.getEmail());
+		utente.setMansione(utenteCercato.getMansione());
+		utente.setTipoContratto(utenteCercato.getTipoContratto());
 		return utente;
 	}
 }

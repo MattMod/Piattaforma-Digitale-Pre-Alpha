@@ -6,15 +6,21 @@ import GenericSearchFilterTableLayout, {
   SearchInformationI,
 } from '../../../components/genericSearchFilterTableLayout/genericSearchFilterTableLayout';
 import PageTitle from '../../../components/PageTitle/pageTitle';
-import { newTable, TableHeadingI } from '../../../components/Table/table';
-import { setEntityFilters } from '../../../redux/features/areaAmministrativa/areaAmministrativaSlice';
+import {
+  newTable,
+  TableHeadingI,
+  TableRowI,
+} from '../../../components/Table/table';
+import { setEntityFilters } from '../../../redux/features/administrativeArea/administrativeAreaSlice';
 import {
   selectRolesList,
   selectRolesPagination,
 } from '../../../redux/features/roles/rolesSlice';
 import { GetRolesListValues } from '../../../redux/features/roles/rolesThunk';
 import { useAppSelector } from '../../../redux/hooks';
-import { TableActionsI } from '../../../utils/common';
+import { CRUDActionsI, CRUDActionTypes } from '../../../utils/common';
+import { useNavigate } from 'react-router-dom';
+import { selectDevice } from '../../../redux/features/app/appSlice';
 
 const arrayBreadcrumb = [
   {
@@ -28,6 +34,7 @@ const arrayBreadcrumb = [
 
 const RoleManagement = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const ruoliList = useAppSelector(selectRolesList);
   const pagination = useAppSelector(selectRolesPagination);
   const handleOnSearch = (searchValue: string) => {
@@ -85,19 +92,34 @@ const RoleManagement = () => {
     getRolesList();
   }, []);
 
-  const onActionClick: TableActionsI = {};
+  const onActionClick: CRUDActionsI = {
+    [CRUDActionTypes.VIEW]: (td: TableRowI | string) => {
+      navigate(`${typeof td === 'string' ? td : td?.id}`);
+    },
+    [CRUDActionTypes.CLONE]: (td: TableRowI | string) => {
+      console.log(td);
+    },
+    [CRUDActionTypes.EDIT]: (td: TableRowI | string) => {
+      console.log(td);
+    },
+  };
+
+  const addRole = () => {
+    console.log('aggiungi ruolo');
+  };
+
+  const device = useAppSelector(selectDevice);
 
   return (
     <>
-      <PageTitle
-        breadcrumb={arrayBreadcrumb}
-        // subtititle
-      />
-      <Container>
+      <PageTitle title='Gestione Ruoli' breadcrumb={arrayBreadcrumb} />
+      <Container className={device.mediaIsPhone ? 'px-4' : ''}>
         <GenericSearchFilterTableLayout
           searchInformation={searchInformation}
           showButtons={false}
-          rolesLayout
+          textCta='Aggiungi ruolo'
+          iconCta='it-plus'
+          cta={addRole}
         >
           <Table
             {...tableValues}

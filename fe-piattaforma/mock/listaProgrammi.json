@@ -1,21 +1,22 @@
 {
   "data": {
-    "list": [
+    "programmiLight": [
       {
         "id": 1,
-        "name": "Programma 1",
-        "status": "ATTIVO"
+        "nome": "Programma 1",
+        "stato": "ATTIVO"
       },
       {
         "id": 2,
-        "name": "Programma 2",
-        "status": "BOZZA"
+        "nome": "Programma 2",
+        "stato": "BOZZA"
       },
       {
         "id": 3,
-        "name": "Programma 3",
-        "status": "BOZZA"
+        "nome": "Programma 3",
+        "stato": "BOZZA"
       }
-    ]
+    ],
+    "numeroPagine": 10
   }
 }

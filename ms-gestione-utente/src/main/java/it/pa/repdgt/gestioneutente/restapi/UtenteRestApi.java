@@ -70,7 +70,7 @@ public class UtenteRestApi {
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void creaNuovoUtente(@RequestBody @Valid NuovoUtenteRequest nuovoUtenteRequest) {
 		UtenteEntity utenteEntity = this.utenteMapper.toUtenteEntityFrom(nuovoUtenteRequest);
-		this.utenteService.creaNuovoUtente(utenteEntity);
+		this.utenteService.creaNuovoUtente(utenteEntity, nuovoUtenteRequest.getRuolo());
 	}
 	
 	// TOUCH POINT - 1.3.3 - Update Utente
@@ -115,18 +115,27 @@ public class UtenteRestApi {
 			@PathVariable(value = "codiceRuolo") String codiceRuolo) {
 		this.utenteService.assegnaRuoloAUtente(codiceFiscale, codiceRuolo);
 	}
+	
+	// TOUCH POINT - 4.5 - Cancella Ruolo da Utente
+	@DeleteMapping(path = "/{codiceFiscale}/cancellaruolo/{codiceRuolo}")
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public void cancellaRuoloDaUtente(
+			@PathVariable(value = "codiceFiscale") String codiceFiscale, 
+			@PathVariable(value = "codiceRuolo") String codiceRuolo) {
+		this.utenteService.cancellaRuoloDaUtente(codiceFiscale, codiceRuolo);
+	}
 
 	// TOUCH POINT - 1.3.4 -  Delete Utente
-	@DeleteMapping(path = "/{idUtente}")
+	@DeleteMapping(path = "/{cfUtente}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void cancellazioneLogicaUtente(@PathVariable Long idUtente) {
-		this.utenteService.cancellazioneLogicaUtente(idUtente);
+	public void cancellaUtente(@PathVariable String cfUtente) {
+		this.utenteService.cancellaUtente(cfUtente);
 	}
 	
 	// TOUCH-POINT 1.3.8 - Scarica lista utenti in formato csv
 	@PostMapping(path = "/download")
 	public ResponseEntity<InputStreamResource> downloadListaCSVUtenti(@RequestBody @Valid UtenteRequest sceltaContesto) {
-		List<UtenteDto> listaUtentiDto = this.utenteService.getUtentiByRuolo(sceltaContesto.getCodiceRuolo(), sceltaContesto.getCfUtente(), sceltaContesto.getIdProgramma(), sceltaContesto.getFiltroRequest());
+		List<UtenteDto> listaUtentiDto = this.utenteService.getUtentiByRuolo(sceltaContesto.getCodiceRuolo(), sceltaContesto.getCfUtente(), sceltaContesto.getIdProgramma(), sceltaContesto.getIdProgetto(), sceltaContesto.getFiltroRequest());
 		ByteArrayInputStream byteArrayInputStream = CSVUtil.exportCSVUtenti(listaUtentiDto, CSVFormat.DEFAULT);
 		InputStreamResource fileCSV = new InputStreamResource(byteArrayInputStream);
 		

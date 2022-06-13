@@ -40,4 +40,7 @@ public class ContestoResource implements Serializable {
 	// combinazione Ruolo Programma
 	@JsonProperty(value = "profiliUtente")
 	List<RuoloProgrammaResource> profili;
+	
+	@JsonProperty(value = "integrazione")
+	private Boolean integrazione;
 }

@@ -1,16 +1,16 @@
 -- CREAZIONE PERMESSI
-insert into PERMESSO (CODICE, DESCRIZIONE) values('AAA', 'prova permesso 1');
-insert into PERMESSO (CODICE, DESCRIZIONE) values('BBB', 'prova permesso 2');
+insert into permesso (CODICE, DESCRIZIONE) values('AAA', 'prova permesso 1');
+insert into permesso (CODICE, DESCRIZIONE) values('BBB', 'prova permesso 2');
 
 
 
  -- CREAZIONE ANAGRAFICA UTENTI
-insert into utente (codice_fiscale, nome, cognome, email, stato) values('UTENTE1','U1', 'U1', 'a@a.com', 'ATTIVO');
-insert into utente (codice_fiscale, nome, cognome, email, stato) values('UTENTE2','U2', 'U1', 'b@a.com', 'ATTIVO');
-insert into utente (codice_fiscale, nome, cognome, email, stato) values('UTENTE3','U3', 'U1', 'c@a.com', 'ATTIVO');
-insert into utente (codice_fiscale, nome, cognome, email, stato) values('UTENTE4','U4', 'U1', 'd@a.com', 'ATTIVO');
-insert into utente (codice_fiscale, nome, cognome, email, stato) values('FACILITATORE1','F1', 'F1', 'f1@a.com', 'ATTIVO');
-insert into utente (codice_fiscale, nome, cognome, email, stato) values('FACILITATORE2','F2', 'F2', 'f2@a.com', 'ATTIVO');
+insert into utente (codice_fiscale, nome, cognome, email, stato, integrazione) values('UTENTE1','U1', 'U1', 'a@a.com', 'ATTIVO', false);
+insert into utente (codice_fiscale, nome, cognome, email, stato, integrazione) values('UTENTE2','U2', 'U1', 'b@a.com', 'ATTIVO', true);
+insert into utente (codice_fiscale, nome, cognome, email, stato, integrazione) values('UTENTE3','U3', 'U1', 'c@a.com', 'ATTIVO', false);
+insert into utente (codice_fiscale, nome, cognome, email, stato, integrazione) values('UTENTE4','U4', 'U1', 'd@a.com', 'ATTIVO', false);
+insert into utente (codice_fiscale, nome, cognome, email, stato, integrazione) values('FACILITATORE1','F1', 'F1', 'f1@a.com', 'ATTIVO', false);
+insert into utente (codice_fiscale, nome, cognome, email, stato, integrazione) values('FACILITATORE2','F2', 'F2', 'f2@a.com', 'ATTIVO', false);
 
 
 insert into utente (codice_fiscale, nome, cognome, email, stato)
@@ -19,6 +19,8 @@ insert into utente (codice_fiscale, nome, cognome, email, stato)
     values('SMTPAL67R31F111X', 'Gina',  'Foo', 'gina.foo@email.it', 'ATTIVO');
  insert into utente (codice_fiscale, nome, cognome, email, stato)
     values('ASDPDS17R65F313X', 'Alice', 'Bar', 'alice.smith@bar.it', 'ATTIVO');
+    insert into utente (codice_fiscale, nome, cognome, email, stato)
+    values('HJKPLW87R49F321I', 'Pippo', 'Kelly', 'pippo.kelly@email.it', 'ATTIVO');
     
 
 -- CREAZIONE ANAGRAFICA RUOLI
@@ -255,23 +257,24 @@ insert into utente_x_ruolo(UTENTE_ID, RUOLO_CODICE) values ('FACILITATORE2', 'FA
  where id = 104;
  
  --INSERT REFERENTE_DELEGATI_GESTORE_PROGRAMMA
-insert into REFERENTE_DELEGATI_GESTORE_PROGRAMMA(CF_UTENTE, ID_PROGRAMMA, CODICE_RUOLO)
-	values('UTENTE2', 102, 'REG');
-insert into REFERENTE_DELEGATI_GESTORE_PROGRAMMA(CF_UTENTE, ID_PROGRAMMA, CODICE_RUOLO)
-	values('UTENTE2', 103, 'REG');
-insert into REFERENTE_DELEGATI_GESTORE_PROGRAMMA(CF_UTENTE, ID_PROGRAMMA, CODICE_RUOLO)
-	values('UTENTE3', 100, 'DEG');
-INSERT INTO REFERENTE_DELEGATI_GESTORE_PROGRAMMA(CF_UTENTE,ID_PROGRAMMA,CODICE_RUOLO)VALUES('UTENTE2',100,'REG');
+insert into referente_delegati_gestore_programma (CF_UTENTE, ID_ENTE, ID_PROGRAMMA, CODICE_RUOLO)
+	values('UTENTE2', 1001, 102, 'REG');
+insert into referente_delegati_gestore_programma(CF_UTENTE, ID_ENTE, ID_PROGRAMMA, CODICE_RUOLO)
+	values('UTENTE2', 1002, 103, 'REG');
+insert into referente_delegati_gestore_programma(CF_UTENTE, ID_ENTE, ID_PROGRAMMA, CODICE_RUOLO)
+	values('UTENTE3', 1000, 100, 'DEG');
+INSERT INTO referente_delegati_gestore_programma(CF_UTENTE, ID_ENTE, ID_PROGRAMMA,CODICE_RUOLO)
+	VALUES('UTENTE2', 1000, 100,'REG');
 
  --INSERT REFERENTE_DELEGATI_GESTORE_PROGETTO
-insert into REFERENTE_DELEGATI_GESTORE_PROGETTO(CF_UTENTE, ID_PROGETTO, CODICE_RUOLO)
-	values('UTENTE4', 253, 'REGP');
-insert into REFERENTE_DELEGATI_GESTORE_PROGETTO(CF_UTENTE, ID_PROGETTO, CODICE_RUOLO)
-	values('UTENTE1', 256, 'DEGP');
-insert into REFERENTE_DELEGATI_GESTORE_PROGETTO(CF_UTENTE, ID_PROGETTO, CODICE_RUOLO)
-	values('UTENTE4', 254, 'REGP');
-insert into REFERENTE_DELEGATI_GESTORE_PROGETTO(CF_UTENTE, ID_PROGETTO, CODICE_RUOLO)
-	values('UTENTE4', 256, 'REGP');
+insert into referente_delegati_gestore_progetto (CF_UTENTE, ID_ENTE, ID_PROGETTO, CODICE_RUOLO)
+	values('UTENTE4', 1005, 253, 'REGP');
+insert into referente_delegati_gestore_progetto(CF_UTENTE, ID_ENTE, ID_PROGETTO, CODICE_RUOLO)
+	values('UTENTE1', 1005, 256, 'DEGP');
+insert into referente_delegati_gestore_progetto(CF_UTENTE, ID_ENTE, ID_PROGETTO, CODICE_RUOLO)
+	values('UTENTE4', 1006, 254, 'REGP');
+insert into referente_delegati_gestore_progetto(CF_UTENTE, ID_ENTE, ID_PROGETTO, CODICE_RUOLO)
+	values('UTENTE4', 1005, 256, 'REGP');
 
 -- ASSOCIAMO ENTI PARTNER A PROGETTO
 INSERT INTO ENTE_PARTNER(ID_ENTE, ID_PROGETTO, STATO_ENTE_PARTNER) 

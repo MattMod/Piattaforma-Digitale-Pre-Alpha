@@ -5,86 +5,104 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.pa.repdgt.gestioneutente.entity.projection.ProfiloProjection;
 import it.pa.repdgt.gestioneutente.entity.projection.ProgettoEnteProjection;
 import it.pa.repdgt.gestioneutente.entity.projection.ProgettoEnteSedeProjection;
 import it.pa.repdgt.shared.entity.ProgrammaEntity;
 
 @Repository
 public interface ContestoRepository extends JpaRepository<ProgrammaEntity, Long> {
+	
+	@Query(value = "SELECT COUNT(*) "
+			+ "FROM progetto p "
+			+ "WHERE p.id = :idProgetto "
+			+ "AND p.id_programma = :idProgramma ", nativeQuery = true)
+	Integer getProgettoProgramma(@Param(value = "idProgetto")Long idProgetto,
+			@Param(value = "idProgramma")Long idProgramma);
 
-	@Query(value = "SELECT p.* "
+	@Query(value = "SELECT p.id as idProgramma, "
+			+ "p.nome_breve as nomeProgramma, "
+			+ "e.nome_breve as nomeEnte "
 			+ "FROM referente_delegati_gestore_programma rdgp "
 			+ "INNER JOIN programma p "
 			+ "on rdgp.id_programma = p.id "
+			+ "AND rdgp.id_ente  = p.id_ente_gestore_programma "
+			+ "INNER JOIN ente e "
+			+ "on e.id = p.id_ente_gestore_programma "
 			+ "WHERE rdgp.cf_utente = :codiceFiscale "
-			+ "AND rdgp.codice_ruolo = 'REG'", nativeQuery = true)
-	List<ProgrammaEntity> findProgrammiREG(String codiceFiscale);
+			+ "AND rdgp.codice_ruolo = :codiceRuolo", nativeQuery = true)
+	List<ProfiloProjection> findProgrammiREGDEG(@Param(value = "codiceFiscale")String codiceFiscale,
+			@Param(value = "codiceRuolo")String codiceRuolo);
 	
-	@Query(value = "SELECT p.* "
-			+ "FROM referente_delegati_gestore_programma rdgp "
-			+ "INNER JOIN programma p "
-			+ "on rdgp.id_programma = p.id "
-			+ "WHERE rdgp.cf_utente = :codiceFiscale "
-			+ "AND rdgp.codice_ruolo = 'DEG'", nativeQuery = true)
-	List<ProgrammaEntity> findProgrammiDEG(String codiceFiscale);
-	
-	@Query(value = "SELECT DISTINCT p.* "
+	@Query(value = "SELECT DISTINCT p.id as idProgramma, "
+			+ "p.nome_breve as nomeProgramma, "
+			+ "pr.id as idProgetto, "
+			+ "e.nome_breve as nomeEnte "
 			+ "FROM referente_delegati_gestore_progetto rdgp "
 			+ "INNER JOIN progetto pr "
 			+ "on rdgp.id_progetto = pr.id "
+			+ "AND rdgp.id_ente  = pr.id_ente_gestore_progetto "
+			+ "INNER JOIN ente e "
+			+ "on e.id = pr.id_ente_gestore_progetto "
 			+ "INNER JOIN programma p "
 			+ "on pr.id_programma = p.id "
 			+ "WHERE rdgp.cf_utente = :codiceFiscale "
-			+ "AND rdgp.codice_ruolo = 'REGP'", nativeQuery = true)
-	List<ProgrammaEntity> findProgrammiREGP(String codiceFiscale);
+			+ "AND rdgp.codice_ruolo = :codiceRuolo", nativeQuery = true)
+	List<ProfiloProjection> findProgrammiProgettiREGPDEGP(@Param(value = "codiceFiscale")String codiceFiscale,
+			@Param(value = "codiceRuolo")String codiceRuolo);
 	
-	@Query(value = "SELECT DISTINCT p.* "
-			+ "FROM referente_delegati_gestore_progetto rdgp "
-			+ "INNER JOIN progetto pr "
-			+ "on rdgp.id_progetto = pr.id "
-			+ "INNER JOIN programma p "
-			+ "on pr.id_programma = p.id "
-			+ "WHERE rdgp.cf_utente = :codiceFiscale "
-			+ "AND rdgp.codice_ruolo = 'DEGP'", nativeQuery = true)
-	List<ProgrammaEntity> findProgrammiDEGP(String codiceFiscale);
+	@Query(value = "SELECT DISTINCT p.id as idProgramma, "
+			+ "p.nome_breve as nomeProgramma, "
+			+ "pr.id as idProgetto, "
+			+ "e.nome_breve as nomeEnte "
+			+ "     FROM referente_delegati_partner rdp "
+			+ "     INNER JOIN ente_partner ep "
+			+ "           on rdp.id_progetto = ep.id_progetto "
+			+ "           and rdp.id_ente = ep.id_ente"
+			+ "     INNER JOIN ente e "
+			+ "			  on e.id = ep.id_ente "
+			+ "     INNER JOIN progetto pr "
+			+ "           on ep.id_progetto = pr.id "
+			+ "     INNER JOIN programma p "
+			+ "           on pr.id_programma = p.id "
+			+ "     WHERE rdp.cf_utente = :codiceFiscale "
+			+ "		AND rdp.codice_ruolo = :codiceRuolo"
+			+ "		AND (rdp.STATO_UTENTE <> 'TERMINATO' "
+			+ "			 OR "
+			+ "			 ep.terminato_singolarmente = false)", nativeQuery = true)
+	List<ProfiloProjection> findProgrammiProgettiREPPDEPP(@Param(value = "codiceFiscale")String codiceFiscale,
+			@Param(value = "codiceRuolo")String codiceRuolo);
 	
-	@Query(value = "SELECT DISTINCT p.* "
-			+ "FROM referente_delegati_partner rdp "
-			+ "INNER JOIN progetto pr "
-			+ "on rdp.id_progetto = pr.id "
+	@Query(value = "SELECT DISTINCT p.id as idProgramma, "
+			+ "			p.nome_breve as nomeProgramma, "
+			+ "			pr.id as idProgetto, "
+			+ "			e.nome_breve as nomeEnte "
+			+ "FROM progetto pr "
+			+ "INNER JOIN (SELECT DISTINCT espf.ID_PROGETTO, espf.id_ente "
+			+ "			FROM ente_sede_progetto_facilitatore espf "
+			+ "			WHERE espf.ID_FACILITATORE = :codiceFiscale"
+			+ "			AND RUOLO_UTENTE = :ruolo"
+			+ "			AND STATO_UTENTE <> 'TERMINATO') espfl "
+			+ "ON pr.id = espfl.id_progetto "
+			+ "INNER JOIN ente e "
+			+ "on e.id = espfl.id_ente "
 			+ "INNER JOIN programma p "
-			+ "on pr.id_programma = p.id "
-			+ "WHERE rdp.cf_utente = :codiceFiscale "
-			+ "AND rdp.codice_ruolo = 'REPP'", nativeQuery = true)
-	List<ProgrammaEntity> findProgrammiREPP(String codiceFiscale);
-	
-	@Query(value = "SELECT DISTINCT p.* "
-			+ "FROM referente_delegati_partner rdp "
-			+ "INNER JOIN progetto pr "
-			+ "on rdp.id_progetto = pr.id "
-			+ "INNER JOIN programma p "
-			+ "on pr.id_programma = p.id "
-			+ "WHERE rdp.cf_utente = :codiceFiscale "
-			+ "AND rdp.codice_ruolo = 'DEPP'", nativeQuery = true)
-	List<ProgrammaEntity> findProgrammiDEPP(String codiceFiscale);
-	
-	@Query(value = "SELECT DISTINCT p.* "
-			+ "FROM PROGETTO pr "
-			+ "INNER JOIN programma p "
-			+ "on pr.id_programma = p.id "
-			+ "WHERE pr.ID in (:listaProgettiPerFacilitatore)", nativeQuery = true)
-	List<ProgrammaEntity> findProgrammiFacVol(List<Long> listaProgettiPerFacilitatore);
+			+ "on pr.id_programma = p.id ", nativeQuery = true)
+	List<ProfiloProjection> findProgrammiProgettiFacVol(@Param(value = "codiceFiscale")String codiceFiscale,
+			@Param(value = "ruolo")String ruolo);
 	
 	@Transactional
 	@Modifying
 	@Query(value = "UPDATE programma "
 			+ "SET STATO = 'ATTIVO', "
-			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
+			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP, "
+			+ "data_ora_attivazione_programma = CURRENT_TIMESTAMP "
 			+ "WHERE ID = :idProgramma", nativeQuery = true)
-	void updateStatoProgrammaToAttivo(Long idProgramma);
+	void updateStatoProgrammaToAttivo(@Param(value = "idProgramma")Long idProgramma);
 	
 	@Transactional
 	@Modifying
@@ -92,56 +110,65 @@ public interface ContestoRepository extends JpaRepository<ProgrammaEntity, Long>
 			+ "SET STATO_GESTORE_PROGRAMMA = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
 			+ "WHERE ID = :idProgramma", nativeQuery = true)
-	void updateStatoGestoreProgrammaToAttivo(Long idProgramma);
+	void updateStatoGestoreProgrammaToAttivo(@Param(value = "idProgramma")Long idProgramma);
 	
-	@Transactional
-	@Modifying
-	@Query(value = "UPDATE PROGETTO "
-			+ "SET STATO = 'ATTIVABILE' ,"
-			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
-			+ "WHERE ID in (SELECT distinct p.id "
-			+ "FROM PROGETTO p "
-			+ "INNER JOIN ENTE_SEDE_PROGETTO_FACILITATORE espf "
+	@Query(value = "SELECT distinct p.id "
+			+ "FROM progetto p "
+			+ "INNER JOIN ente_sede_progetto_facilitatore espf "
 			+ "ON p.ID = espf.ID_PROGETTO "
 			+ "WHERE p.id_programma = :idProgramma "
-			+ "AND p.STATO = 'NON ATTIVO')", nativeQuery = true)
-	void rendiProgettiAttivabili(Long idProgramma);
+			+ "AND p.STATO = 'NON ATTIVO'", nativeQuery = true)
+	List<Long> getIdsProgettiAttivabili(@Param(value = "idProgramma")Long idProgramma);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE PROGETTO "
+	@Query(value = "UPDATE progetto "
+			+ "SET STATO = 'ATTIVABILE' ,"
+			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
+			+ "WHERE ID in (:idsProgetti)", nativeQuery = true)
+	void rendiProgettiAttivabili(@Param(value = "idsProgetti")List<Long> idsProgetti);	
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE progetto "
 			+ "SET STATO_GESTORE_PROGETTO = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
-			+ "WHERE ID in (SELECT distinct p.id "
-			+ "FROM PROGETTO p "
-			+ "INNER JOIN REFERENTE_DELEGATI_GESTORE_PROGETTO rdgp "
-			+ "ON p.ID = rdgp.ID_PROGETTO "
-			+ "WHERE p.id_programma = :idProgramma "
-			+ "AND STATO_GESTORE_PROGETTO = 'NON ATTIVO'"
-			+ "AND CF_UTENTE = :codiceFiscale "
-			+ "AND CODICE_RUOLO = :ruolo)", nativeQuery = true)
-	void updateStatoGestoreProgettoInAttivo(Long idProgramma, String codiceFiscale, String ruolo);
+			+ "WHERE ID = :idProgetto", nativeQuery = true)
+	void updateStatoGestoreProgettoInAttivo(@Param(value = "idProgetto")Long idProgetto);
+	
+	@Query(value = "SELECT p.id as idProgetto, p.STATO_GESTORE_PROGETTO as stato "
+			+ "FROM progetto p "
+			+ "WHERE p.id = :idProgetto "
+			+ "AND p.id_programma = :idProgramma ", nativeQuery = true)
+	ProgettoEnteProjection getProgettoEnteGestoreProgetto(@Param(value = "idProgetto")Long idProgetto,
+			@Param(value = "idProgramma")Long idProgramma);
 	
 	@Query(value = "SELECT distinct ep.ID_PROGETTO as idProgetto, ep.ID_ENTE as idEnte, ep.STATO_ENTE_PARTNER as stato "
-			+ "		FROM PROGETTO p "
-			+ "		INNER JOIN ENTE_PARTNER ep "
+			+ "		FROM progetto p "
+			+ "		INNER JOIN ente_partner ep "
 			+ "		on p.ID = ep.ID_PROGETTO "
-			+ "		INNER JOIN REFERENTE_DELEGATI_PARTNER  rdp "
+			+ "		INNER JOIN referente_delegati_partner  rdp "
 			+ "		ON ep.ID_PROGETTO = rdp.ID_PROGETTO "
 			+ "		AND ep.ID_ENTE = rdp.ID_ENTE"
-			+ "		WHERE p.id_programma = :idProgramma "
+			+ "		WHERE p.id = :idProgetto "
+			+ "     AND p.id_programma = :idProgramma"
 			+ "		AND rdp.CF_UTENTE = :codiceFiscale "
-			+ "		AND rdp.CODICE_RUOLO = :ruolo", nativeQuery = true)
-	List<ProgettoEnteProjection> findEntiPartnerNonAttiviPerProgrammaECodiceFiscaleReferenteDelegato(Long idProgramma, String codiceFiscale, String ruolo);
+			+ "		AND rdp.CODICE_RUOLO = :ruolo "
+			+ "     AND ep.stato_ente_partner <> 'TERMINATO'", nativeQuery = true)
+	List<ProgettoEnteProjection> findEntiPartnerNonTerminatiPerProgettoECodiceFiscaleReferenteDelegato(@Param(value = "idProgetto")Long idProgetto,
+			@Param(value = "idProgramma")Long idProgramma,
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "ruolo")String ruolo);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE ENTE_PARTNER "
+	@Query(value = "UPDATE ente_partner "
 			+ "SET STATO_ENTE_PARTNER = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
 			+ "WHERE ID_PROGETTO = :idProgetto "
 			+ "AND ID_ENTE = :idEnte", nativeQuery = true)
-	void updateStatoEntePartnerProgettoToAttivo(Long idProgetto, Long idEnte);
+	void updateStatoEntePartnerProgettoToAttivo(@Param(value = "idProgetto")Long idProgetto, 
+			@Param(value = "idEnte")Long idEnte);
 	
 	@Query(value = "select esp.id_ente as idEnte, esp.id_sede as idSede, esp.id_progetto as idProgetto, esp.stato_sede as stato "
 			+ "from ente_sede_progetto_facilitatore espf "
@@ -149,55 +176,93 @@ public interface ContestoRepository extends JpaRepository<ProgrammaEntity, Long>
 			+ "ON espf.id_progetto = esp.ID_PROGETTO "
 			+ "AND espf.id_ente = esp.ID_ente "
 			+ "AND espf.id_sede = esp.id_sede "
-			+ "where espf.id_progetto in (select id from PROGETTO where id_programma = :idProgramma) "
+			+ "where espf.id_progetto = :idProgetto "
 			+ "and espf.ID_FACILITATORE = :codiceFiscale "
 			+ "and espf.RUOLO_UTENTE = :ruolo ", nativeQuery = true)
-	List<ProgettoEnteSedeProjection> findSediPerProgrammaECodiceFiscaleFacilitatoreVolontario(Long idProgramma, String codiceFiscale, String ruolo);
+	List<ProgettoEnteSedeProjection> findSediPerProgrammaECodiceFiscaleFacilitatoreVolontario(@Param(value = "idProgetto")Long idProgetto,
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "ruolo")String ruolo);
+	
+	@Query(value = "SELECT COUNT(*) "
+			+ "FROM referente_delegati_gestore_programma "
+			+ "where cf_utente = :codiceFiscale "
+			+ "and codice_ruolo = :ruolo "
+			+ "and id_programma = :idProgramma", nativeQuery = true)
+	Integer verificaUtenteRuoloDEGREGPerProgramma(@Param(value = "idProgramma")Long idProgramma, 
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "ruolo")String ruolo);
+	
+	@Query(value = "SELECT COUNT(*) "
+			+ "FROM referente_delegati_gestore_progetto "
+			+ "where cf_utente = :codiceFiscale "
+			+ "and codice_ruolo = :ruolo "
+			+ "and id_progetto = :idProgetto", nativeQuery = true)
+	Integer verificaUtenteRuoloDEGPREGPPerProgetto(@Param(value = "idProgetto")Long idProgetto, 
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "ruolo")String ruolo);
+	
+	@Query(value = "SELECT COUNT(*) "
+			+ "FROM referente_delegati_partner "
+			+ "where cf_utente = :codiceFiscale "
+			+ "and codice_ruolo = :ruolo "
+			+ "and id_progetto = :idProgetto", nativeQuery = true)
+	Integer verificaUtenteRuoloDEPPREPPPerProgetto(@Param(value = "idProgetto")Long idProgetto, 
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "ruolo")String ruolo);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE ENTE_SEDE_PROGETTO "
+	@Query(value = "UPDATE ente_sede_progetto "
 			+ "SET STATO_SEDE = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
 			+ "WHERE ID_PROGETTO = :idProgetto "
 			+ "AND ID_ENTE = :idEnte "
 			+ "AND ID_SEDE = :idSede", nativeQuery = true)
-	void updateStatoSedeProgettoToAttivo(Long idProgetto, Long idEnte, Long idSede);
+	void updateStatoSedeProgettoToAttivo(@Param(value = "idProgetto")Long idProgetto, 
+			@Param(value = "idEnte")Long idEnte, 
+			@Param(value = "idSede")Long idSede);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE REFERENTE_DELEGATI_GESTORE_PROGRAMMA "
+	@Query(value = "UPDATE referente_delegati_gestore_programma "
 			+ "SET STATO_UTENTE = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
 			+ "WHERE ID_PROGRAMMA = :idProgramma "
 			+ "AND CF_UTENTE = :codiceFiscale "
 			+ "AND CODICE_RUOLO = :codiceRuolo", nativeQuery = true)
-	void attivaREGDEG(Long idProgramma, String codiceFiscale, String codiceRuolo);
+	void attivaREGDEG(@Param(value = "idProgramma")Long idProgramma, 
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "codiceRuolo")String codiceRuolo);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE REFERENTE_DELEGATI_GESTORE_PROGETTO "
+	@Query(value = "UPDATE referente_delegati_gestore_progetto "
 			+ "SET STATO_UTENTE = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
-			+ "WHERE ID_PROGETTO in ( SELECT ID FROM PROGETTO WHERE ID_PROGRAMMA = :idProgramma)  "
+			+ "WHERE ID_PROGETTO = :idProgetto "
 			+ "AND CF_UTENTE = :codiceFiscale "
 			+ "AND CODICE_RUOLO = :codiceRuolo", nativeQuery = true)
-	void attivaREGPDEGP(Long idProgramma, String codiceFiscale, String codiceRuolo);
+	void attivaREGPDEGP(@Param(value = "idProgetto")Long idProgetto, 
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "codiceRuolo")String codiceRuolo);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE REFERENTE_DELEGATI_PARTNER "
+	@Query(value = "UPDATE referente_delegati_partner "
 			+ "SET STATO_UTENTE = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
 			+ "WHERE ID_PROGETTO = :idProgetto "
 			+ "AND ID_ENTE = :idEnte "
 			+ "AND CF_UTENTE = :codiceFiscale "
 			+ "AND CODICE_RUOLO = :codiceRuolo", nativeQuery = true)
-	void attivaREPPDEPP(Long idProgetto, Long idEnte, String codiceFiscale, String codiceRuolo);
+	void attivaREPPDEPP(@Param(value = "idProgetto")Long idProgetto, 
+			@Param(value = "idEnte")Long idEnte, 
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "codiceRuolo")String codiceRuolo);
 	
 	@Transactional
 	@Modifying
-	@Query(value = "UPDATE ENTE_SEDE_PROGETTO_FACILITATORE "
+	@Query(value = "UPDATE ente_sede_progetto_facilitatore "
 			+ "SET STATO_UTENTE = 'ATTIVO', "
 			+ "DATA_ORA_AGGIORNAMENTO = CURRENT_TIMESTAMP "
 			+ "WHERE ID_PROGETTO = :idProgetto "
@@ -205,5 +270,9 @@ public interface ContestoRepository extends JpaRepository<ProgrammaEntity, Long>
 			+ "AND ID_SEDE = :idSede "
 			+ "AND ID_FACILITATORE = :codiceFiscale "
 			+ "AND ruolo_utente = :codiceRuolo", nativeQuery = true)
-	void attivaFACVOL(Long idProgetto, Long idEnte, Long idSede, String codiceFiscale, String codiceRuolo);
+	void attivaFACVOL(@Param(value = "idProgetto")Long idProgetto, 
+			@Param(value = "idEnte")Long idEnte, 
+			@Param(value = "idSede")Long idSede, 
+			@Param(value = "codiceFiscale")String codiceFiscale, 
+			@Param(value = "codiceRuolo")String codiceRuolo);
 }

@@ -25,6 +25,7 @@ const Curtain: React.FC<CurtainI> = (props) => {
       className='curtain-wrapper fixed-top w-100 h-100'
       role='dialog'
       onMouseDown={onClick}
+      aria-label='Curtain modale'
     >
       {children}
     </div>,

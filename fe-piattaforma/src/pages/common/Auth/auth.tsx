@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import Logo from '/public/assets/img/logo.png';
+import LogoScrittaBlu from '/public/assets/img/logo-scritta-blu.png';
 import { Footer } from '../../../components';
 import clsx from 'clsx';
 import { Button, Card, Icon } from 'design-react-kit';
@@ -14,7 +14,7 @@ const Auth = () => {
     <>
       <div className='mt-0 py-3 primary-bg '>
         <div className='mr-auto'>
-          <h6 className='m-0 pl-5 text-white'>Repubblica Digitale</h6>
+          <p className='h6 m-0 pl-5 text-white'>Repubblica Digitale</p>
         </div>
       </div>
 
@@ -25,10 +25,11 @@ const Auth = () => {
           'main-container__content-container'
         )}
         id='main'
+        tabIndex={-1}
       >
         <div className={clsx('auth-container')}>
           <div className={clsx('w-100', 'text-center', 'mb-5')}>
-            <img src={Logo} alt='' className='auth-container__logo' />
+            <img src={LogoScrittaBlu} alt='' className='auth-container__logo' />
           </div>
           <div
             className={clsx(
@@ -58,7 +59,12 @@ const Auth = () => {
                     'mb-3'
                   )}
                 >
-                  <Icon icon={Authicon} color='white' size='sm' />
+                  <Icon
+                    icon={Authicon}
+                    color='white'
+                    size='sm'
+                    aria-label='Autenticazione'
+                  />
                 </div>
                 <h1 className='h3 font-weight-semibold text-secondary'>
                   Accedi con la tua identità digitale
@@ -98,7 +104,13 @@ const Auth = () => {
                           'mr-1'
                         )}
                       >
-                        <Icon size='' icon='it-user' color='primary' padding />
+                        <Icon
+                          size=''
+                          icon='it-user'
+                          color='primary'
+                          padding
+                          aria-label='Utente'
+                        />
                       </div>
                       <span className='ml-2'>Entra con SPID</span>
                     </div>

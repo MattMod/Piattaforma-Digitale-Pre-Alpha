@@ -37,6 +37,7 @@ const Rating: React.FC<RatingI> = (props) => {
               icon='it-star-full'
               size='sm'
               onClick={() => handleChangeRate(index)}
+              aria-label='Stella piena rating'
             />
           ) : null}
           {index + 1 > rate ? (
@@ -46,6 +47,7 @@ const Rating: React.FC<RatingI> = (props) => {
               icon='it-star-outline'
               size='sm'
               onClick={() => handleChangeRate(index)}
+              aria-label='Stella vuota rating'
             />
           ) : null}
         </div>

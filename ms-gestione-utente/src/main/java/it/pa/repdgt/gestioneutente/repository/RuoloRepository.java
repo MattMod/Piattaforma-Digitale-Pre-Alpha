@@ -20,7 +20,7 @@ public interface RuoloRepository extends JpaRepository<RuoloEntity, String> {
 	@Query(value = " SELECT "
 				 + "	uxr.RUOLO_CODICE "
 				 + " FROM "
-				 + "	UTENTE_X_RUOLO uxr "
+				 + "	utente_x_ruolo uxr "
 				 + " WHERE 1=1 "
 				 + "   AND uxr.UTENTE_ID = :codiceFiscale",
 			nativeQuery = true)
@@ -43,10 +43,16 @@ public interface RuoloRepository extends JpaRepository<RuoloEntity, String> {
 	List<RuoloEntity> findAllRuoliNonPredefiniti();
 
 	@Query(value = "SELECT * "
-			+ "FROM RUOLO ruolo "
-			+ "	INNER JOIN UTENTE_X_RUOLO uxr "
+			+ "FROM ruolo ruolo "
+			+ "	INNER JOIN utente_x_ruolo uxr "
 			+ "		ON uxr.RUOLO_CODICE = ruolo.CODICE "
 			+ "WHERE uxr.UTENTE_ID = :cfUtente ",
 			nativeQuery = true)
 	List<RuoloEntity> findRuoloCompletoByCodiceFiscaleUtente(@Param(value = "cfUtente") String cfUtente);
+
+	@Query(value = "SELECT COUNT(*) "
+			+ "FROM utente_x_ruolo uxr "
+			+ "WHERE uxr.RUOLO_CODICE = :codiceRuolo ", 
+			nativeQuery = true)
+	int countUtentiPerRuolo(@Param(value = "codiceRuolo") String codiceRuolo);
 }

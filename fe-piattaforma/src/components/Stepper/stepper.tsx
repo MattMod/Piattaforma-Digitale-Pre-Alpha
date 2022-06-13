@@ -26,9 +26,19 @@ const Stepper: React.FC<StepperI> = (props) => {
             key={index}
           >
             {index < currentStep ? (
-              <Icon color='white' icon={CheckNoCircle} size='xs' />
+              <Icon
+                color='white'
+                icon={CheckNoCircle}
+                size='xs'
+                aria-label='Bandiera bianca'
+              />
             ) : (
-              <Icon color='primary' icon='it-flag' size='xs' />
+              <Icon
+                color='primary'
+                icon='it-flag'
+                size='xs'
+                aria-label='Check blu'
+              />
             )}
           </div>
         ))}

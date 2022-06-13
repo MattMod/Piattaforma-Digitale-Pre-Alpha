@@ -50,41 +50,47 @@ const Paginator: React.FC<PaginatorI> = (props) => {
       aria-label={ariaLabel}
       className={clsx(center && 'justify-content-center', className)}
     >
-      <ul className='pagination'>
-        {withArrows ? (
-          <PagerItem disabled={active <= 1}>
-            <PagerLink
-              previous
-              href={refID}
-              onClick={() => handleOnChange(active - 1)}
-            >
-              <Icon icon='it-chevron-left' aria-hidden />
-            </PagerLink>
-          </PagerItem>
-        ) : null}
-        {[...Array(pages).keys()].map((page) => (
-          <PagerItem key={page}>
-            <PagerLink
-              href={refID}
-              aria-current={page + 1 === active ? 'page' : undefined}
-              onClick={() => handleOnChange(page + 1)}
-            >
-              {page + 1}
-            </PagerLink>
-          </PagerItem>
-        ))}
-        {withArrows ? (
-          <PagerItem disabled={active >= pages}>
-            <PagerLink
-              next
-              href={refID}
-              onClick={() => handleOnChange(active + 1)}
-            >
-              <Icon icon='it-chevron-right' aria-hidden />
-            </PagerLink>
-          </PagerItem>
-        ) : null}
-      </ul>
+      {withArrows ? (
+        <PagerItem disabled={active <= 1}>
+          <PagerLink
+            previous
+            href={refID}
+            onClick={() => handleOnChange(active - 1)}
+          >
+            <Icon
+              icon='it-chevron-left'
+              aria-hidden
+              aria-label='Pagina precedente'
+            />
+          </PagerLink>
+        </PagerItem>
+      ) : null}
+      {[...Array(pages).keys()].map((page) => (
+        <PagerItem key={page}>
+          <PagerLink
+            href={refID}
+            aria-current={page + 1 === active ? 'page' : undefined}
+            onClick={() => handleOnChange(page + 1)}
+          >
+            {page + 1}
+          </PagerLink>
+        </PagerItem>
+      ))}
+      {withArrows ? (
+        <PagerItem disabled={active >= pages}>
+          <PagerLink
+            next
+            href={refID}
+            onClick={() => handleOnChange(active + 1)}
+          >
+            <Icon
+              icon='it-chevron-right'
+              aria-hidden
+              aria-label='Pagina successiva'
+            />
+          </PagerLink>
+        </PagerItem>
+      ) : null}
     </Pager>
   );
 };

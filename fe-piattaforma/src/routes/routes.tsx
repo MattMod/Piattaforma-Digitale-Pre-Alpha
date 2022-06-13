@@ -1,16 +1,16 @@
 import React from 'react';
 import {
-  AreaAmministrativa,
+  AdministrativeArea,
   Documents,
   HomeFacilitator,
   Playground,
   Survey,
 } from '../pages';
-import { AreaAmministrativaRoutes } from '../pages/administrator/AreaAmministrativa/areaAmministrativa';
-import ProgrammiDetails from '../pages/administrator/AreaAmministrativa/Entities/Programmi/programmiDetails';
-import AreaCittadini, {
+import { AreaAmministrativaRoutes } from '../pages/administrator/AdministrativeArea/administrativeArea';
+import ProgramsDetails from '../pages/administrator/AdministrativeArea/Entities/Programs/programsDetails';
+import CitizensArea, {
   AreaCittadiniRoutes,
-} from '../pages/administrator/AreaCittadini/areaCittadini';
+} from '../pages/administrator/CitizensArea/Entities/citizensArea';
 import RoleManagement from '../pages/common/RoleManagement/roleManagement';
 import RoleManagementDetails from '../pages/common/RoleManagement/RoleManagementDetails/roleManagementDetails';
 import Onboarding from '../pages/facilitator/Onboarding/onboarding';
@@ -25,7 +25,6 @@ const newRoute: (NewRoute: AppRoutesI) => AppRoutesI = ({
   isHeaderFull = true,
   authenticated = true,
   subRoutes,
-  route_paths = [],
 }) => ({
   path,
   title,
@@ -35,7 +34,6 @@ const newRoute: (NewRoute: AppRoutesI) => AppRoutesI = ({
   isHeaderFull,
   authenticated,
   subRoutes,
-  route_paths,
 });
 
 const routes = [
@@ -46,41 +44,32 @@ const routes = [
     element: <HomeFacilitator />,
     layout: layoutEnum.fullLayout,
     isHeaderFull: true,
-    route_paths: [],
   }),
   newRoute({
     path: '/area-amministrativa',
     title: `Area amministrativa`,
     visibleTo: ['Referente Ente gestore di progetto'],
-    element: <AreaAmministrativa />,
+    element: <AdministrativeArea />,
     subRoutes: AreaAmministrativaRoutes,
     layout: layoutEnum.fullLayout,
     isHeaderFull: true,
-    route_paths: [
-      { label: 'area amministrativa', url: '/area-amministrativa' },
-    ],
   }),
   newRoute({
-    path: '/area-amministrativa/programmi/dettaglio',
+    path: '/area-amministrativa/programmi',
     title: 'Dettaglio area amministrativa',
-    element: <ProgrammiDetails />,
+    element: <ProgramsDetails />,
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.fullLayout,
     isHeaderFull: false,
-    route_paths: [
-      { label: 'area amministrativa', url: '/area-amministrativa' },
-      { label: 'programmi', url: '/area-amministrativa/programmi/dettaglio' },
-    ],
   }),
   newRoute({
     path: '/area-cittadini',
     title: 'Area cittadini',
-    element: <AreaCittadini />,
+    element: <CitizensArea />,
     subRoutes: AreaCittadiniRoutes,
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.fullLayout,
     isHeaderFull: true,
-    route_paths: [{ label: 'Area cittadini', url: '/area-cittadini' }],
   }),
   newRoute({
     path: '/survey',
@@ -89,7 +78,6 @@ const routes = [
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.fullLayout,
     isHeaderFull: false,
-    route_paths: [{ label: 'Survey', url: '/survey' }],
   }),
   newRoute({
     path: '/documents',
@@ -98,7 +86,6 @@ const routes = [
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.fullLayout,
     isHeaderFull: true,
-    route_paths: [{ label: 'Documenti', url: '/documents' }],
   }),
   newRoute({
     path: '/gestione-ruoli',
@@ -107,19 +94,14 @@ const routes = [
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.fullLayout,
     isHeaderFull: true,
-    route_paths: [{ label: 'Gestione ruoli', url: '/gestione-ruoli' }],
   }),
   newRoute({
-    path: '/gestione-ruoli/dettaglio',
+    path: '/gestione-ruoli/:idRuoloUtente',
     title: 'Dettaglio gestione ruoli',
     element: <RoleManagementDetails />,
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.fullLayout,
     isHeaderFull: false,
-    route_paths: [
-      { label: 'Gestione ruoli', url: '/gestione-ruoli' },
-      { label: 'Dettaglio', url: '/gestione-ruoli/dettaglio' },
-    ],
   }),
   newRoute({
     path: '/onboarding',
@@ -128,7 +110,6 @@ const routes = [
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.mainLayout,
     isHeaderFull: false,
-    route_paths: [{ label: 'Onboarding', url: '/onboarding' }],
   }),
   newRoute({
     path: '*',
@@ -137,10 +118,6 @@ const routes = [
     visibleTo: ['Referente Ente gestore di progetto'],
     layout: layoutEnum.mainLayout,
     isHeaderFull: false,
-    route_paths: [
-      { label: 'home', url: '/' },
-      { label: 'playground', url: '/dashboard' },
-    ],
   }),
 ];
 

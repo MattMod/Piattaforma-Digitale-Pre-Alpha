@@ -55,6 +55,7 @@ const NotificationHandler: React.FC = () => {
             <Icon
               className='icon-close position-absolute'
               icon='it-close'
+              aria-label='Chiudi notifica'
               onClick={() => (notify?.id ? handleCloseNotify(notify.id) : null)}
             />
           ) : null}

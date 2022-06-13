@@ -22,6 +22,7 @@ export const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
+    resetModalState: () => initialState,
     openModal: (state, action: PayloadAction<ModalStateI>) => {
       if (action.payload.id) {
         state.id = action.payload.id;
@@ -33,7 +34,7 @@ export const modalSlice = createSlice({
   },
 });
 
-export const { openModal, closeModal } = modalSlice.actions;
+export const { resetModalState, openModal, closeModal } = modalSlice.actions;
 
 export const selectModalId = (state: RootState) => state.modal.id;
 export const selectModalPayload = (state: RootState) => state.modal.payload;

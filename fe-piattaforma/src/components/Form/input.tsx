@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Input as InputKit, InputProps } from 'design-react-kit';
 import { formFieldI } from '../../utils/formHelper';
 
@@ -26,6 +26,7 @@ const Input: React.FC<InputI> = (props) => {
     name,
     onInputChange,
     onInputBlur,
+    placeholder = '',
     required = false,
     type = 'text',
     valid,
@@ -61,6 +62,7 @@ const Input: React.FC<InputI> = (props) => {
     field: undefined,
     onInputBlur: undefined,
     onInputChange: undefined,
+    placeholder: type === 'date' ? 'dd/mm/aaaa' : placeholder,
     withLabel: undefined,
   };
 
@@ -103,7 +105,16 @@ const Input: React.FC<InputI> = (props) => {
   }
 
   InputProps.name = name ?? InputProps.id;
-  InputProps.label = withLabel ? label ?? InputProps.name : undefined;
+  InputProps.label = withLabel ? label ?? InputProps.name : '';
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputLabel = inputRef.current?.nextElementSibling;
+
+  useEffect(() => {
+    if (!withLabel && inputRef) {
+      inputLabel?.classList.add('visibility-hidden');
+    }
+  }, [withLabel, inputLabel]);
 
   return (
     <InputKit
@@ -111,6 +122,7 @@ const Input: React.FC<InputI> = (props) => {
       {...InputProps}
       onChange={handleOnChange}
       value={typeof val === 'number' ? val : val?.toString() || ''}
+      innerRef={inputRef}
     />
   );
 };

@@ -28,4 +28,24 @@ public class GruppoService {
 	public List<GruppoEntity> getGruppiByRuolo(String codiceRuolo) {
 		return this.gruppoRepository.findGruppiByRuolo(codiceRuolo);
 	}
+
+	/**
+	 * A partire dai codici dei gruppi passati come argomento, verifica se esistono tutti i gruppi 
+	 * associati ai codici.
+	 * Restiutisce true se esistono tutti i gruppi dati i loro codiciGruppo e false altrimenti
+	 * 
+	 * */
+	public boolean existsAllGruppiByCodiciGruppi(List<String> codiciGruppi) {
+		if(codiciGruppi == null) {
+			return false;
+		}
+		return codiciGruppi
+				.stream()
+				.map(codiceGruppo -> {
+					boolean existGruppo = this.getGruppoByCodice(codiceGruppo) != null;
+					return existGruppo;
+				 })
+				.filter(Boolean.TRUE::equals)
+				.count() == codiciGruppi.size();
+	}
 }
