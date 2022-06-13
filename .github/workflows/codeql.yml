@@ -79,7 +79,7 @@ jobs:
         languages: 'javascript'
         # queries: security-extended,security-and-quality
 
-    - name: FE-Build
+    - name: fe-piattaforma Build
       run: |
         cd ${{ github.workspace }}/fe-piattaforma
         npm install
