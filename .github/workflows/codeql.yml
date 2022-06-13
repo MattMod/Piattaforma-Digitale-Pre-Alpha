@@ -82,7 +82,7 @@ jobs:
     - name: fe-piattaforma Build
       run: |
         cd ${{ github.workspace }}/fe-piattaforma
-        npm install
+        npm install --force
         npm run build
 
     - name: Perform CodeQL Analysis
@@ -102,15 +102,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - run: java -version
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: 'java'
         # queries: security-extended,security-and-quality
 
-    - name: Lib-Build
+    - name: lib-repdgt-shared Compilation
       run: |
         cd ${{ github.workspace }}/lib-repdgt-shared
         mvn install
@@ -132,15 +130,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - run: java -version
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: 'java'
         # queries: security-extended,security-and-quality
 
-    - name: Lib-Build
+    - name: lib-repdgt-shared Compilation
       run: |
         cd ${{ github.workspace }}/lib-repdgt-shared
         mvn install
@@ -167,15 +163,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - run: java -version
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: 'java'
         # queries: security-extended,security-and-quality
 
-    - name: Lib-Build
+    - name: lib-repdgt-shared Compilation
       run: |
         cd ${{ github.workspace }}/lib-repdgt-shared
         mvn install
@@ -202,15 +196,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - run: java -version
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: 'java'
         # queries: security-extended,security-and-quality
 
-    - name: Lib-Build
+    - name: lib-repdgt-shared Compilation
       run: |
         cd ${{ github.workspace }}/lib-repdgt-shared
         mvn install
@@ -237,15 +229,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - run: java -version
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: 'java'
         # queries: security-extended,security-and-quality
 
-    - name: Lib-Build
+    - name: lib-repdgt-shared Compilation
       run: |
         cd ${{ github.workspace }}/lib-repdgt-shared
         mvn install
@@ -272,15 +262,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - run: java -version
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: 'java'
         # queries: security-extended,security-and-quality
 
-    - name: Lib-Build
+    - name: lib-repdgt-shared Compilation
       run: |
         cd ${{ github.workspace }}/lib-repdgt-shared
         mvn install
@@ -307,15 +295,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - run: java -version
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: 'java'
         # queries: security-extended,security-and-quality
 
-    - name: Lib-Build
+    - name: lib-repdgt-shared Compilation
       run: |
         cd ${{ github.workspace }}/lib-repdgt-shared
         mvn install
