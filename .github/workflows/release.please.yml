@@ -473,32 +473,32 @@ jobs:
 ##            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
 ##            kubectl rollout status deployment.apps/ms-gestione-utente-deployment
 
-  RepoUpdate:
-    if: ${{ github.event.inputs.version == '' }}
-    needs: [DryRunRelease] #, Deploy]
-    name: Repo Update
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ github.workspace }}/fe-piattaforma
-    steps:
-      - uses: actions/checkout@v3.0.2
-        with:
-          ref: main
-          lfs: 'true'
-
-      - name: File Package Update
-        uses: mingjun97/file-regex-replace@v1
-        with:
-          # regex to apply(regex)
-          regex: '"version":[\s\S]"[0-9].[0-9].[0-9]"'
-          # flags of the regex
-          flags: "gmi"
-          # replacement string
-          replacement: '"version": "${{needs.DryRunRelease.outputs.version}}"'
-          # Files to be replaced(regex)
-          include: "package.json"
+#  RepoUpdate:
+#    if: ${{ github.event.inputs.version == '' }}
+#    needs: [DryRunRelease] #, Deploy]
+#    name: Repo Update
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        shell: bash
+#        working-directory: ${{ github.workspace }}/fe-piattaforma
+#    steps:
+#      - uses: actions/checkout@v3.0.2
+#        with:
+#          ref: main
+#          lfs: 'true'
+#
+#      - name: File Package Update
+#        uses: mingjun97/file-regex-replace@v1
+#        with:
+#          # regex to apply(regex)
+#          regex: '"version":[\s\S]"[0-9].[0-9].[0-9]"'
+#          # flags of the regex
+#          flags: "gmi"
+#          # replacement string
+#          replacement: '"version": "${{needs.DryRunRelease.outputs.version}}"'
+#          # Files to be replaced(regex)
+#          include: "package.json"
 
 #      - name: File POM Update
 #        if: ${{ success() }}
@@ -518,53 +518,53 @@ jobs:
 #          cd ${{ github.workspace }}/ms-questionario-cittadino
 #          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
 
-      - name: Push files updated
-        run: |
-          cd ${{ github.workspace }}
-          git diff
-          git config user.email "$BOT_MAIL"
-          git config user.name "$BOT_USER"
-          git add -A
-          git commit -m "chore: update version ${{needs.DryRunRelease.outputs.version}}" || exit 0
-          git push
-
-  Release:
-    if: ${{ github.event.inputs.version == '' }}
-    needs: [RepoUpdate]
-    name: Release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.0.2
-        with:
-          token: ${{ secrets.SEMANTICRELEASE }}
-          persist-credentials: 'true'
-          fetch-depth: '0'
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: 'lts/*'
-      - name: Install semantic-release extra plugins
-        run: |
-              npm install --save-dev \
-                semantic-release \
-                @semantic-release/commit-analyzer \
-                @semantic-release/changelog \
-                @semantic-release/git \
-                @semantic-release/release-notes-generator \
-                @semantic-release/exec \
-                conventional-changelog-conventionalcommits
-      - name: Create .VERSION file
-        run: echo "There are no relevant changes, so no new version is released" > .VERSION
-      - name: Release
-        env:
-          # ad-hoc token (PAT) in order to permit the push on a protected branch
-          # without protected branches can be use secrets.GITHUB_TOKEN
-          GITHUB_TOKEN: ${{ secrets.SEMANTICRELEASE }}
-        run: |
-          npx semantic-release
-      - name: Version
-        id: version
-        run: |
-          nextversion=$(cat .VERSION)
-          echo "::set-output name=VERSION::$nextversion"
-          echo "### Release $nextversion created!" >> $GITHUB_STEP_SUMMARY
+#      - name: Push files updated
+#        run: |
+#          cd ${{ github.workspace }}
+#          git diff
+#          git config user.email "$BOT_MAIL"
+#          git config user.name "$BOT_USER"
+#          git add -A
+#          git commit -m "chore: update version ${{needs.DryRunRelease.outputs.version}}" || exit 0
+#          git push
+#
+#  Release:
+#    if: ${{ github.event.inputs.version == '' }}
+#    needs: [RepoUpdate]
+#    name: Release
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3.0.2
+#        with:
+#          token: ${{ secrets.SEMANTICRELEASE }}
+#          persist-credentials: 'true'
+#          fetch-depth: '0'
+#      - name: Setup Node.js environment
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 'lts/*'
+#      - name: Install semantic-release extra plugins
+#        run: |
+#              npm install --save-dev \
+#                semantic-release \
+#                @semantic-release/commit-analyzer \
+#                @semantic-release/changelog \
+#                @semantic-release/git \
+#                @semantic-release/release-notes-generator \
+#                @semantic-release/exec \
+#                conventional-changelog-conventionalcommits
+#      - name: Create .VERSION file
+#        run: echo "There are no relevant changes, so no new version is released" > .VERSION
+#      - name: Release
+#        env:
+#          # ad-hoc token (PAT) in order to permit the push on a protected branch
+#          # without protected branches can be use secrets.GITHUB_TOKEN
+#          GITHUB_TOKEN: ${{ secrets.SEMANTICRELEASE }}
+#        run: |
+#          npx semantic-release
+#      - name: Version
+#        id: version
+#        run: |
+#          nextversion=$(cat .VERSION)
+#          echo "::set-output name=VERSION::$nextversion"
+#          echo "### Release $nextversion created!" >> $GITHUB_STEP_SUMMARY
