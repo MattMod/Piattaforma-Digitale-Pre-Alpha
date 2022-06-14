@@ -129,88 +129,68 @@ jobs:
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-  buildBE:
-    if: ${{ github.event.inputs.version == '' }}
-    needs: DryRunRelease
-    name: BE Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.0.2
-        with:
-          ref: main
-          lfs: 'true'
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'adopt-openj9'
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Install Lib repdgt-shared
-        if: ${{ success() }}
-        run: |
-          cd ${{ github.workspace }}/lib-repdgt-shared
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-          mvn install
-
-#      - name: ms-ente Build & Push Image to Amazon ECR
-#        id: ms-ente
+#  buildBE:
+#    if: ${{ github.event.inputs.version == '' }}
+#    needs: DryRunRelease
+#    name: BE Build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3.0.2
+#        with:
+#          ref: main
+#          lfs: 'true'
+#
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt-openj9'
+#
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#
+#      - name: Install Lib repdgt-shared
 #        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-ente
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-ente
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
-#          # set version
+#          cd ${{ github.workspace }}/lib-repdgt-shared
 #          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: ms-gestione-utente Build & Push Image to Amazon ECR
-        id: ms-gestione-utente
-        if: ${{ success() }}
-        working-directory: ${{ github.workspace }}/ms-gestione-utente
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-gestione-utente
-          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-        run: |
-          # set version
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-          # build
-          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-          # docker build
-          docker build . \
-            --file Dockerfile \
-            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          # docker push
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-#      - name: ms-notifiche-integration Build & Push Image to Amazon ECR
-#        id: ms-notifiche-integration
+#          mvn install
+#
+##      - name: ms-ente Build & Push Image to Amazon ECR
+##        id: ms-ente
+##        if: ${{ success() }}
+##        working-directory: ${{ github.workspace }}/ms-ente
+##        env:
+##          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+##          ECR_REPOSITORY: ms-ente
+##          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+##        run: |
+##          # set version
+##          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+##          # build
+##          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
+##          # docker build
+##          docker build . \
+##            --file Dockerfile \
+##            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##          # docker push
+##          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#
+#      - name: ms-gestione-utente Build & Push Image to Amazon ECR
+#        id: ms-gestione-utente
 #        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-notifiche-integration
+#        working-directory: ${{ github.workspace }}/ms-gestione-utente
 #        env:
 #          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-notifiche-integration
+#          ECR_REPOSITORY: ms-gestione-utente
 #          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
 #        run: |
 #          # set version
@@ -224,68 +204,88 @@ jobs:
 #          # docker push
 #          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 #
-#      - name: ms-open-data Build & Push Image to Amazon ECR
-#        id: ms-open-data
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-open-data
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-open-data
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#
-#      - name: ms-programma-progetto Build & Push Image to Amazon ECR
-#        id: ms-programma-progetto
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-programma-progetto
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-programma-progetto
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#
-#      - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
-#        id: ms-questionario-cittadino
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-questionario-cittadino
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-questionario-cittadino
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }} -DMONGODB_HOST=${{ secrets.MONGODB_HOST }} -DMONGODB_NAME=${{ secrets.MONGODB_NAME }} -DMONGODB_PORT=${{ secrets.MONGODB_PORT }} -DDB_MONGO_USERNAME=${{ secrets.DB_MONGO_USERNAME }} -DDB_MONGO_PASSWORD=${{ secrets.DB_MONGO_PASSWORD }} -DKEYSTORE_PATH=${{ secrets.KEYSTORE_PATH }} -DKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##      - name: ms-notifiche-integration Build & Push Image to Amazon ECR
+##        id: ms-notifiche-integration
+##        if: ${{ success() }}
+##        working-directory: ${{ github.workspace }}/ms-notifiche-integration
+##        env:
+##          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+##          ECR_REPOSITORY: ms-notifiche-integration
+##          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+##        run: |
+##          # set version
+##          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+##          # build
+##          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
+##          # docker build
+##          docker build . \
+##            --file Dockerfile \
+##            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##          # docker push
+##          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##
+##      - name: ms-open-data Build & Push Image to Amazon ECR
+##        id: ms-open-data
+##        if: ${{ success() }}
+##        working-directory: ${{ github.workspace }}/ms-open-data
+##        env:
+##          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+##          ECR_REPOSITORY: ms-open-data
+##          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+##        run: |
+##          # set version
+##          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+##          # build
+##          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
+##          # docker build
+##          docker build . \
+##            --file Dockerfile \
+##            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##          # docker push
+##          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##
+##      - name: ms-programma-progetto Build & Push Image to Amazon ECR
+##        id: ms-programma-progetto
+##        if: ${{ success() }}
+##        working-directory: ${{ github.workspace }}/ms-programma-progetto
+##        env:
+##          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+##          ECR_REPOSITORY: ms-programma-progetto
+##          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+##        run: |
+##          # set version
+##          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+##          # build
+##          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
+##          # docker build
+##          docker build . \
+##            --file Dockerfile \
+##            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##          # docker push
+##          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##
+##      - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
+##        id: ms-questionario-cittadino
+##        if: ${{ success() }}
+##        working-directory: ${{ github.workspace }}/ms-questionario-cittadino
+##        env:
+##          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+##          ECR_REPOSITORY: ms-questionario-cittadino
+##          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+##        run: |
+##          # set version
+##          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+##          # build
+##          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }} -DMONGODB_HOST=${{ secrets.MONGODB_HOST }} -DMONGODB_NAME=${{ secrets.MONGODB_NAME }} -DMONGODB_PORT=${{ secrets.MONGODB_PORT }} -DDB_MONGO_USERNAME=${{ secrets.DB_MONGO_USERNAME }} -DDB_MONGO_PASSWORD=${{ secrets.DB_MONGO_PASSWORD }} -DKEYSTORE_PATH=${{ secrets.KEYSTORE_PATH }} -DKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+##          # docker build
+##          docker build . \
+##            --file Dockerfile \
+##            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+##          # docker push
+##          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   Deploy:
-    needs: [DryRunRelease, buildFE, buildBE]
+    needs: [DryRunRelease] #, buildFE, buildBE]
     if: |
       always() &&
       needs.DryRunRelease.result == 'success' &&
@@ -382,17 +382,17 @@ jobs:
 #          envsubst < deployment.tmp.yml
 #          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
-      - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-gestione-utente
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/ms-gestione-utente/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          envsubst < deployment.tmp.yml
-          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#      - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-gestione-utente
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-gestione-utente/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          envsubst < deployment.tmp.yml
+#          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
 #      - name: Setup 'ms-notifiche-integration' deployment.tmp.yaml
 #        env:
