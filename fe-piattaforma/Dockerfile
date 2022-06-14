@@ -1,4 +1,4 @@
-FROM alpine:latest as build
+FROM alpine:latest as builder
 
 RUN apk --update add nginx
 
