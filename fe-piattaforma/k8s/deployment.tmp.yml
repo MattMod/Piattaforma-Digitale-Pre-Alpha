@@ -22,7 +22,7 @@ spec:
         - name: fe-piattaforma
           image: ${ECR_REPOSITORY}:${IMAGE_TAG}
           ports:
-            - containerPort: 8080
+            - containerPort: 80
               protocol: TCP
           imagePullPolicy: Always
 ---
@@ -37,8 +37,8 @@ spec:
     app.kubernetes.io/name: fe-piattaforma
   ports:
     - name: http
-      port: 8080
-      targetPort: 8080
+      port: 80
+      targetPort: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -60,4 +60,4 @@ spec:
             service:
               name: service-ingress-dev-2
               port:
-                number: 8080
+                number: 80
