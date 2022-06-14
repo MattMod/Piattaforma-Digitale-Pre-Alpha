@@ -4,26 +4,23 @@ kind: Deployment
 metadata:
   namespace: dev
   name: fe-piattaforma-deployment
-  labels:
-    app: fe-piattaforma
 spec:
   selector:
     matchLabels:
-        app: fe-piattaforma
-  replicas: 1
+      app.kubernetes.io/name: fe-piattaforma
+  replicas: 2
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: fe-piattaforma
+        app.kubernetes.io/name: fe-piattaforma
     spec:
       containers:
         - name: fe-piattaforma
           image: ${ECR_REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 80
-              protocol: TCP
           imagePullPolicy: Always
 ---
 apiVersion: v1
@@ -32,13 +29,13 @@ metadata:
   namespace: dev
   name: service-ingress-dev-2
 spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
   type: NodePort
   selector:
     app.kubernetes.io/name: fe-piattaforma
-  ports:
-    - name: http
-      port: 80
-      targetPort: 80
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
