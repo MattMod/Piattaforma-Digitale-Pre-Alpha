@@ -2,6 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: ${K8S_NAMESPACE}
   name: fe-piattaforma-deployment
   labels:
     app: fe-piattaforma
@@ -28,6 +29,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  namespace: ${K8S_NAMESPACE}
   name: ingress-dev-2
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
