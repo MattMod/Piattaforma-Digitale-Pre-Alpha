@@ -113,7 +113,7 @@ jobs:
 
       - name: Install FE dependencies
         run: |
-          npm install
+          npm install --force
 
       - name: Build & Push Image to Amazon ECR
         id: build
@@ -285,7 +285,7 @@ jobs:
 ##          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   Deploy:
-    needs: [DryRunRelease] #, buildFE, buildBE]
+    needs: [DryRunRelease, buildFE] #, buildBE]
     if: |
       always() &&
       needs.DryRunRelease.result == 'success' &&
@@ -501,13 +501,13 @@ jobs:
           # Files to be replaced(regex)
           include: "package.json"
 
-      - name: File POM Update
-        if: ${{ success() }}
-        run: |
-          cd ${{ github.workspace }}/lib-repdgt-shared
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-          cd ${{ github.workspace }}/ms-gestione-utente
-          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#      - name: File POM Update
+#        if: ${{ success() }}
+#        run: |
+#          cd ${{ github.workspace }}/lib-repdgt-shared
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+#          cd ${{ github.workspace }}/ms-gestione-utente
+#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
 #          cd ${{ github.workspace }}/ms-ente
 #          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
 #          cd ${{ github.workspace }}/ms-notifiche-integration
