@@ -1,4 +1,6 @@
-FROM nginx:alpine as builder
+FROM alpine:latest as build
+
+RUN apk --update add nginx
 
 RUN rm -rf /usr/share/nginx/html/*
 
