@@ -295,7 +295,7 @@ jobs:
 ##          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   Deploy:
-    needs: [DryRunRelease, buildFE] #, buildBE]
+    needs: [DryRunRelease, buildFE, buildBE]
     if: |
       always() &&
       needs.DryRunRelease.result == 'success' &&
