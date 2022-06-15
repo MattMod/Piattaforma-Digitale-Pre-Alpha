@@ -28,33 +28,17 @@ kind: Service
 metadata:
   namespace: dev
   name: service-ingress-ms-gestione-utente-dev
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+    external-dns.alpha.kubernetes.io/hostname: gestioneutente.backend-dev.mitd.technology
 spec:
-  type: NodePort
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    name: http
+    targetPort: 8080
   selector:
     app.kubernetes.io/name: ms-gestione-utente
-  ports:
-    - port: 8080
-      targetPort: 8080
-      protocol: TCP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  namespace: dev
-  name: ingress-ms-gestione-utente-dev
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internal
-    external-dns.alpha.kubernetes.io/hostname: gestioneutente.backend-dev.mitd.technology
-    alb.ingress.kubernetes.io/target-type: ip
-spec:
-  ingressClassName: alb
-  rules:
-    - http:
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: service-ingress-ms-gestione-utente-dev
-              port:
-                number: 8080
+    
