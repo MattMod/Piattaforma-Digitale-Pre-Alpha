@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: ms-gestione-utente
-          image: ***.dkr.ecr.***.amazonaws.com/ms-gestione-utente:2.0.0
+          image: ${ECR_REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
