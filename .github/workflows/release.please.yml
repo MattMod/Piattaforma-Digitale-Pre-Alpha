@@ -400,8 +400,7 @@ jobs:
           cd ${{ github.workspace }}/ms-gestione-utente/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
-          envsubst < deployment.tmp.yml
-          cat deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
 #      - name: Setup 'ms-notifiche-integration' deployment.tmp.yaml
 #        env:
