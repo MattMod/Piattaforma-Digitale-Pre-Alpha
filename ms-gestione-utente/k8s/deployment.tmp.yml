@@ -2,25 +2,59 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: dev
   name: ms-gestione-utente-deployment
-  labels:
-    app: ms-gestione-utente
 spec:
   selector:
     matchLabels:
-        app: ms-gestione-utente
-  replicas: 1
+        app.kubernetes.io/name: ms-gestione-utente
+  replicas: 2
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: ms-gestione-utente
+        app.kubernetes.io/name: ms-gestione-utente
     spec:
       containers:
         - name: ms-gestione-utente
-          image: ${ECR_REPOSITORY}:${IMAGE_TAG}
+          image: ***.dkr.ecr.***.amazonaws.com/ms-gestione-utente:2.0.0
           ports:
-            - containerPort: 80
-              protocol: TCP
+            - containerPort: 8080
           imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev
+  name: service-ingress-ms-gestione-utente-dev
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: ms-gestione-utente
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: dev
+  name: ingress-ms-gestione-utente-dev
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internal
+    external-dns.alpha.kubernetes.io/hostname: gestioneutente.backend-dev.mitd.technology
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: service-ingress-ms-gestione-utente-dev
+              port:
+                number: 8080
