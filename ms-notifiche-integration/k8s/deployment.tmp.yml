@@ -2,25 +2,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: dev
   name: ms-notifiche-integration-deployment
-  labels:
-    app: ms-notifiche-integration
 spec:
   selector:
     matchLabels:
-        app: ms-notifiche-integration
-  replicas: 1
+        app.kubernetes.io/name: ms-notifiche-integration
+  replicas: 2
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: ms-notifiche-integration
+        app.kubernetes.io/name: ms-notifiche-integration
     spec:
       containers:
         - name: ms-notifiche-integration
           image: ${ECR_REPOSITORY}:${IMAGE_TAG}
           ports:
-            - containerPort: 80
-              protocol: TCP
+            - containerPort: 8080
           imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev
+  name: service-ingress-ms-notifiche-integration-dev
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+    external-dns.alpha.kubernetes.io/hostname: notificheintegration.backend-dev.mitd.technology
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    name: http
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: ms-notifiche-integration
