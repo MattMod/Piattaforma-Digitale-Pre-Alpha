@@ -6,6 +6,9 @@ on:
       version:
         description: 'Existing Version to release (*Blank to create a new one)'
         required: false
+      forced-version:
+        description: 'Forced Version'
+        required: false
 
 permissions:
   contents: write
@@ -53,14 +56,19 @@ jobs:
       - name: Version
         id: version
         run: |
-          nextversion=$(cat .VERSION)
+          forcedVersion=${{ github.event.inputs.forced-version }}
+          if [ "$forcedVersion" = "" ]; then
+            nextversion=$(cat .VERSION)
+          else
+            nextversion=forcedVersion
+          fi
+
           echo "::set-output name=VERSION::$nextversion"
           echo "Next version: $nextversion"
 
       - name: Check changes
         run: |
           if [ $(wc -c .VERSION) -gt 5]; then
-            echo "se non ci sono variazioni alla versione...non si deve andare avanti"
             exit 1
           fi
 
@@ -299,7 +307,7 @@ jobs:
     if: |
       always() &&
       needs.DryRunRelease.result == 'success' &&
-      (needs.buildFE.result == 'success' || needs.buildFE.result == 'skipped') 
+      (needs.buildFE.result == 'success' || needs.buildFE.result == 'skipped')
       && (needs.buildBE.result == 'success' || needs.buildBE.result == 'skipped')
     name: Deploy
     runs-on: ubuntu-latest
