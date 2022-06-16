@@ -60,7 +60,7 @@ jobs:
           if [ "$forcedVersion" = "" ]; then
             nextversion=$(cat .VERSION)
           else
-            nextversion=forcedVersion
+            nextversion=$forcedVersion
           fi
 
           echo "::set-output name=VERSION::$nextversion"
