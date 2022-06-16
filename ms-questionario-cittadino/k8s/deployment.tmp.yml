@@ -2,25 +2,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: dev
   name: ms-questionario-cittadino-deployment
-  labels:
-    app: ms-questionario-cittadino
 spec:
   selector:
     matchLabels:
-        app: ms-questionario-cittadino
-  replicas: 1
+        app.kubernetes.io/name: ms-questionario-cittadino
+  replicas: 2
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: ms-questionario-cittadino
+        app.kubernetes.io/name: ms-questionario-cittadino
     spec:
       containers:
         - name: ms-questionario-cittadino
           image: ${ECR_REPOSITORY}:${IMAGE_TAG}
           ports:
-            - containerPort: 80
-              protocol: TCP
+            - containerPort: 8080
           imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev
+  name: service-ingress-ms-questionario-cittadino-dev
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+    external-dns.alpha.kubernetes.io/hostname: questionariocittadino.backend-dev.mitd.technology
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    name: http
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: ms-questionario-cittadino
