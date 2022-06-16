@@ -2,25 +2,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: dev
   name: ms-open-data-deployment
-  labels:
-    app: ms-open-data
 spec:
   selector:
     matchLabels:
-        app: ms-open-data
-  replicas: 1
+        app.kubernetes.io/name: ms-open-data
+  replicas: 2
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: ms-open-data
+        app.kubernetes.io/name: ms-open-data
     spec:
       containers:
         - name: ms-open-data
           image: ${ECR_REPOSITORY}:${IMAGE_TAG}
           ports:
-            - containerPort: 80
-              protocol: TCP
+            - containerPort: 8080
           imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev
+  name: service-ingress-ms-open-data-dev
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: external
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internal
+    external-dns.alpha.kubernetes.io/hostname: opendata.backend-dev.mitd.technology
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    name: http
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: ms-open-data
