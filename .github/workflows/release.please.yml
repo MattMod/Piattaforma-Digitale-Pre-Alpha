@@ -241,29 +241,29 @@ jobs:
 #          # docker push
 #          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 #
-#      - name: ms-open-data Build & Push Image to Amazon ECR
-#        id: ms-open-data
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-open-data
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-open-data
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-#          echo "===DOCKERFILE==="
-#          cat Dockerfile
-#          echo "====================="
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#
+      - name: ms-open-data Build & Push Image to Amazon ECR
+        id: ms-open-data
+        if: ${{ success() }}
+        working-directory: ${{ github.workspace }}/ms-open-data
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ms-open-data
+          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+        run: |
+          # set version
+          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          # build
+          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
+          echo "===DOCKERFILE==="
+          cat Dockerfile
+          echo "====================="
+          # docker build
+          docker build . \
+            --file Dockerfile \
+            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          # docker push
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
 #      - name: ms-programma-progetto Build & Push Image to Amazon ECR
 #        id: ms-programma-progetto
 #        if: ${{ success() }}
