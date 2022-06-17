@@ -429,16 +429,16 @@ jobs:
 #          export IMAGE_TAG=$IMAGE_TAG
 #          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 #
-#      - name: Setup 'ms-open-data' deployment.tmp.yaml
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-open-data
-#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-#        run: |
-#          cd ${{ github.workspace }}/ms-open-data/k8s
-#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-#          export IMAGE_TAG=$IMAGE_TAG
-#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+      - name: Setup 'ms-open-data' deployment.tmp.yaml
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ms-open-data
+          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+        run: |
+          cd ${{ github.workspace }}/ms-open-data/k8s
+          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+          export IMAGE_TAG=$IMAGE_TAG
+          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 #
 #      - name: Setup 'ms-programma-progetto' deployment.tmp.yaml
 #        env:
