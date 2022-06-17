@@ -57,4 +57,4 @@ spec:
             service:
               name: service-ingress-fe-dev
               port:
-                number: 80
+                number: 443
