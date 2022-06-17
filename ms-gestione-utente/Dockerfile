@@ -1,11 +1,11 @@
 FROM openjdk:8-jdk-alpine
 
-ENV urlDB
-ENV passwordDB
-ENV usernameDB
-ENV awsAppId
-ENV awsPinpointAccessKey
-ENV awsPinpointSecretKey
+ENV urlDB=""
+ENV passwordDB=""
+ENV usernameDB=""
+ENV awsAppId=""
+ENV awsPinpointAccessKey=""
+ENV awsPinpointSecretKey=""
 
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
