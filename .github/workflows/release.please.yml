@@ -185,13 +185,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           # build
           mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-          # Dockerfile replace ENV
-          sed -i "s/{{_DDB_URL_}}/${{ secrets.DDB_URL }}/g" Dockerfile
-          sed -i "s/{{_DDB_PASSWORD_}}/${{ secrets.DDB_PASSWORD }}/g" Dockerfile
-          sed -i "s/{{_DDB_USERNAME_}}/${{ secrets.DDB_USERNAME }}/g" Dockerfile
-          sed -i "s/{{_AWS_APP_ID_}}/${{ secrets.AWS_APP_ID }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_ACCESS_KEY_}}/${{ secrets.AWS_PINPOINT_ACCESS_KEY }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_SECRET_KEY_}}/${{ secrets.AWS_PINPOINT_SECRET_KEY }}/g" Dockerfile
           echo "===DOCKERFILE==="
           cat Dockerfile
           echo "====================="
@@ -215,13 +208,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           # build
           mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-          # Dockerfile replace ENV
-          sed -i "s/{{_DDB_URL_}}/${{ secrets.DDB_URL }}/g" Dockerfile
-          sed -i "s/{{_DDB_PASSWORD_}}/${{ secrets.DDB_PASSWORD }}/g" Dockerfile
-          sed -i "s/{{_DDB_USERNAME_}}/${{ secrets.DDB_USERNAME }}/g" Dockerfile
-          sed -i "s/{{_AWS_APP_ID_}}/${{ secrets.AWS_APP_ID }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_ACCESS_KEY_}}/${{ secrets.AWS_PINPOINT_ACCESS_KEY }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_SECRET_KEY_}}/${{ secrets.AWS_PINPOINT_SECRET_KEY }}/g" Dockerfile
           echo "===DOCKERFILE==="
           cat Dockerfile
           echo "====================="
@@ -245,13 +231,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           # build
           mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-          # Dockerfile replace ENV
-          sed -i "s/{{_DDB_URL_}}/${{ secrets.DDB_URL }}/g" Dockerfile
-          sed -i "s/{{_DDB_PASSWORD_}}/${{ secrets.DDB_PASSWORD }}/g" Dockerfile
-          sed -i "s/{{_DDB_USERNAME_}}/${{ secrets.DDB_USERNAME }}/g" Dockerfile
-          sed -i "s/{{_AWS_APP_ID_}}/${{ secrets.AWS_APP_ID }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_ACCESS_KEY_}}/${{ secrets.AWS_PINPOINT_ACCESS_KEY }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_SECRET_KEY_}}/${{ secrets.AWS_PINPOINT_SECRET_KEY }}/g" Dockerfile
           echo "===DOCKERFILE==="
           cat Dockerfile
           echo "====================="
@@ -275,13 +254,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           # build
           mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-          # Dockerfile replace ENV
-          sed -i "s/{{_DDB_URL_}}/${{ secrets.DDB_URL }}/g" Dockerfile
-          sed -i "s/{{_DDB_PASSWORD_}}/${{ secrets.DDB_PASSWORD }}/g" Dockerfile
-          sed -i "s/{{_DDB_USERNAME_}}/${{ secrets.DDB_USERNAME }}/g" Dockerfile
-          sed -i "s/{{_AWS_APP_ID_}}/${{ secrets.AWS_APP_ID }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_ACCESS_KEY_}}/${{ secrets.AWS_PINPOINT_ACCESS_KEY }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_SECRET_KEY_}}/${{ secrets.AWS_PINPOINT_SECRET_KEY }}/g" Dockerfile
           echo "===DOCKERFILE==="
           cat Dockerfile
           echo "====================="
@@ -305,13 +277,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           # build
           mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }}
-          # Dockerfile replace ENV
-          sed -i "s/{{_DDB_URL_}}/${{ secrets.DDB_URL }}/g" Dockerfile
-          sed -i "s/{{_DDB_PASSWORD_}}/${{ secrets.DDB_PASSWORD }}/g" Dockerfile
-          sed -i "s/{{_DDB_USERNAME_}}/${{ secrets.DDB_USERNAME }}/g" Dockerfile
-          sed -i "s/{{_AWS_APP_ID_}}/${{ secrets.AWS_APP_ID }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_ACCESS_KEY_}}/${{ secrets.AWS_PINPOINT_ACCESS_KEY }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_SECRET_KEY_}}/${{ secrets.AWS_PINPOINT_SECRET_KEY }}/g" Dockerfile
           echo "===DOCKERFILE==="
           cat Dockerfile
           echo "====================="
@@ -335,20 +300,6 @@ jobs:
           mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
           # build
           mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }} -DMONGODB_HOST=${{ secrets.MONGODB_HOST }} -DMONGODB_NAME=${{ secrets.MONGODB_NAME }} -DMONGODB_PORT=${{ secrets.MONGODB_PORT }} -DDB_MONGO_USERNAME=${{ secrets.DB_MONGO_USERNAME }} -DDB_MONGO_PASSWORD=${{ secrets.DB_MONGO_PASSWORD }} -DKEYSTORE_PATH=${{ github.workspace }}/${{ secrets.KEYSTORE_PATH }} -DKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
-          # Dockerfile replace ENV
-          sed -i "s/{{_DDB_URL_}}/${{ secrets.DDB_URL }}/g" Dockerfile
-          sed -i "s/{{_DDB_PASSWORD_}}/${{ secrets.DDB_PASSWORD }}/g" Dockerfile
-          sed -i "s/{{_DDB_USERNAME_}}/${{ secrets.DDB_USERNAME }}/g" Dockerfile
-          sed -i "s/{{_AWS_APP_ID_}}/${{ secrets.AWS_APP_ID }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_ACCESS_KEY_}}/${{ secrets.AWS_PINPOINT_ACCESS_KEY }}/g" Dockerfile
-          sed -i "s/{{_AWS_PINPOINT_SECRET_KEY_}}/${{ secrets.AWS_PINPOINT_SECRET_KEY }}/g" Dockerfile
-          sed -i "s/{{_MONGODB_HOST_}}/${{ secrets.MONGODB_HOST }}/g" Dockerfile
-          sed -i "s/{{_MONGODB_NAME_}}/${{ secrets.MONGODB_NAME }}/g" Dockerfile
-          sed -i "s/{{_MONGODB_PORT_}}/${{ secrets.MONGODB_PORT }}/g" Dockerfile
-          sed -i "s/{{_DB_MONGO_USERNAME_}}/${{ secrets.DB_MONGO_USERNAME }}/g" Dockerfile
-          sed -i "s/{{_DB_MONGO_PASSWORD_}}/${{ secrets.DB_MONGO_PASSWORD }}/g" Dockerfile
-          sed -i "s/{{_KEYSTORE_PATH_}}/${{ secrets.KEYSTORE_PATH }}/g" Dockerfile
-          sed -i "s/{{_KEYSTORE_PASSWORD_}}/${{ secrets.KEYSTORE_PASSWORD }}/g" Dockerfile
           echo "===DOCKERFILE==="
           cat Dockerfile
           echo "====================="
