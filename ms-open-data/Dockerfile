@@ -1,11 +1,11 @@
 FROM openjdk:8-jdk-alpine
 
-ENV urlDB={{_DDB_URL_}}
-ENV passwordDB={{_DDB_PASSWORD_}}
-ENV usernameDB={{_DDB_USERNAME_}}
-ENV awsAppId={{_AWS_APP_ID_}}
-ENV awsPinpointAccessKey={{_AWS_PINPOINT_ACCESS_KEY_}}
-ENV awsPinpointSecretKey={{_AWS_PINPOINT_SECRET_KEY_}}
+ENV urlDB
+ENV passwordDB
+ENV usernameDB
+ENV awsAppId
+ENV awsPinpointAccessKey
+ENV awsPinpointSecretKey
 
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
