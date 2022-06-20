@@ -309,6 +309,12 @@ jobs:
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           # docker push
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+      - name: Archive artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build_cittadino_${{needs.DryRunRelease.outputs.version}}
+          path: ${{ github.workspace }}/ms-questionario-cittadino/target/*
 
   Deploy:
     needs: [DryRunRelease, buildFE, buildBE]
