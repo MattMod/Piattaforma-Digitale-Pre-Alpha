@@ -287,28 +287,34 @@ jobs:
 #          # docker push
 #          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 #
-#      - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
-#        id: ms-questionario-cittadino
-#        if: ${{ success() }}
-#        working-directory: ${{ github.workspace }}/ms-questionario-cittadino
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-questionario-cittadino
-#          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
-#        run: |
-#          # set version
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          # build
-#          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }} -DMONGODB_HOST=${{ secrets.MONGODB_HOST }} -DMONGODB_NAME=${{ secrets.MONGODB_NAME }} -DMONGODB_PORT=${{ secrets.MONGODB_PORT }} -DDB_MONGO_USERNAME=${{ secrets.DB_MONGO_USERNAME }} -DDB_MONGO_PASSWORD=${{ secrets.DB_MONGO_PASSWORD }} -DKEYSTORE_PATH=${{ github.workspace }}/${{ secrets.KEYSTORE_PATH }} -DKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
-#          echo "===DOCKERFILE==="
-#          cat Dockerfile
-#          echo "====================="
-#          # docker build
-#          docker build . \
-#            --file Dockerfile \
-#            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-#          # docker push
-#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
+        id: ms-questionario-cittadino
+        if: ${{ success() }}
+        working-directory: ${{ github.workspace }}/ms-questionario-cittadino
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ms-questionario-cittadino
+          IMAGE_TAG: ${{needs.DryRunRelease.outputs.version}}
+        run: |
+          # set version
+          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          # build
+          mvn package -DDB_URL=${{ secrets.DDB_URL }} -DDB_USERNAME=${{ secrets.DDB_USERNAME }} -DDB_PASSWORD=${{ secrets.DDB_PASSWORD }} -DAWS.APP-ID=${{ secrets.AWS_APP_ID }} -DAWS.PINPOINT.ACCESS-KEY=${{ secrets.AWS_PINPOINT_ACCESS_KEY }} -DAWS.PINPOINT.SECRET-KEY=${{ secrets.AWS_PINPOINT_SECRET_KEY }} -DMONGODB_HOST=${{ secrets.MONGODB_HOST }} -DMONGODB_NAME=${{ secrets.MONGODB_NAME }} -DMONGODB_PORT=${{ secrets.MONGODB_PORT }} -DDB_MONGO_USERNAME=${{ secrets.DB_MONGO_USERNAME }} -DDB_MONGO_PASSWORD=${{ secrets.DB_MONGO_PASSWORD }} -DKEYSTORE_PATH=${{ github.workspace }}/${{ secrets.KEYSTORE_PATH }} -DKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+          echo "===DOCKERFILE==="
+          cat Dockerfile
+          echo "====================="
+          # docker build
+          docker build . \
+            --file Dockerfile \
+            --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          # docker push
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+      - name: Archive artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Build_cittadino_${{needs.DryRunRelease.outputs.version}}
+          path: ${{ github.workspace }}/ms-questionario-cittadino/target/*
 
   Deploy:
     needs: [DryRunRelease, buildFE, buildBE]
@@ -451,16 +457,16 @@ jobs:
 #          export IMAGE_TAG=$IMAGE_TAG
 #          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 #
-#      - name: Setup 'ms-questionario-cittadino' deployment.tmp.yaml
-#        env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          ECR_REPOSITORY: ms-questionario-cittadino
-#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-#        run: |
-#          cd ${{ github.workspace }}/ms-questionario-cittadino/k8s
-#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-#          export IMAGE_TAG=$IMAGE_TAG
-#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+      - name: Setup 'ms-questionario-cittadino' deployment.tmp.yaml
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ms-questionario-cittadino
+          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+        run: |
+          cd ${{ github.workspace }}/ms-questionario-cittadino/k8s
+          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+          export IMAGE_TAG=$IMAGE_TAG
+          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Deploy
         run: |

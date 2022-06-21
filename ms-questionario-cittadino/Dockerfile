@@ -1,18 +1,18 @@
 FROM openjdk:8-jdk-alpine
 
-ENV urlDB
-ENV passwordDB
-ENV usernameDB
-ENV awsAppId
-ENV awsPinpointAccessKey
-ENV awsPinpointSecretKey
-ENV MONGODB_HOST
-ENV MONGODB_NAME
-ENV MONGODB_PORT
-ENV DB_MONGO_USERNAME
-ENV DB_MONGO_PASSWORD
-ENV KEYSTORE_PATH
-ENV KEYSTORE_PASSWORD
+ENV urlDB=""
+ENV passwordDB=""
+ENV usernameDB=""
+ENV awsAppId=""
+ENV awsPinpointAccessKey=""
+ENV awsPinpointSecretKey=""
+ENV MONGODB_HOST=""
+ENV MONGODB_NAME=""
+ENV MONGODB_PORT=""
+ENV DB_MONGO_USERNAME=""
+ENV DB_MONGO_PASSWORD=""
+ENV KEYSTORE_PATH=""
+ENV KEYSTORE_PASSWORD=""
 
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
