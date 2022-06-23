@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: dev
+  namespace: ${K8S_NAMESPACE}
   name: fe-piattaforma-deployment
 spec:
   selector:
@@ -26,8 +26,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: dev
-  name: service-ingress-fe-dev
+  namespace: ${K8S_NAMESPACE}
+  name: service-ingress-fe-${K8S_NAMESPACE}
 spec:
   ports:
     - port: 80
@@ -40,11 +40,11 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: dev
-  name: ingress-fe-dev
+  namespace: ${K8S_NAMESPACE}
+  name: ingress-fe-${K8S_NAMESPACE}
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
-    external-dns.alpha.kubernetes.io/hostname: frontend.facilitazione-dev.mitd.technology
+    external-dns.alpha.kubernetes.io/hostname: frontend.facilitazione-${K8S_NAMESPACE}.mitd.technology
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/certificate-arn: ${K8S_INGRESS_CERTIFICATE}
@@ -57,6 +57,6 @@ spec:
           pathType: Prefix
           backend:
             service:
-              name: service-ingress-fe-dev
+              name: service-ingress-fe-${K8S_NAMESPACE}
               port:
                 number: 443
