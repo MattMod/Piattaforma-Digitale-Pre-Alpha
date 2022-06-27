@@ -406,7 +406,7 @@ jobs:
 #          path: ${{ github.workspace }}/ms-questionario-cittadino/target/*
 
   Deploy:
-    needs: [DryRunRelease, buildFE, buildBE]
+    needs: [CheckInputModules, DryRunRelease, buildFE, buildBE]
     if: |
       always() &&
       needs.DryRunRelease.result == 'success' &&
