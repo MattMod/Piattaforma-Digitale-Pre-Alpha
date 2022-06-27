@@ -28,6 +28,7 @@ jobs:
   CheckInputModules:
     name: Check Input Modules
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     outputs:
       fe-piattaforma: ${{ steps.modules.outputs.fe-piattaforma }}
       ms-ente: ${{ steps.modules.outputs.ms-ente }}
@@ -106,6 +107,7 @@ jobs:
     needs: CheckInputModules
     name: Dry-Run Release
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
     steps:
@@ -162,6 +164,7 @@ jobs:
     needs: [CheckInputModules, DryRunRelease]
     name: FE Build
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     defaults:
       run:
         shell: bash
@@ -227,6 +230,7 @@ jobs:
     needs: [CheckInputModules, DryRunRelease]
     name: BE Build
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     steps:
       - uses: actions/checkout@v3.0.2
         with:
@@ -410,6 +414,7 @@ jobs:
       && (needs.buildBE.result == 'success' || needs.buildBE.result == 'skipped')
     name: Deploy
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     defaults:
       run:
         shell: bash
