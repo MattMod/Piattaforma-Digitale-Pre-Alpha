@@ -40,7 +40,7 @@ jobs:
       - name: Set modules required
         id: modules
         run: |
-          in=${{ github.event.inputs.modules }}
+          in="${{ github.event.inputs.modules }}"
           in=${in// /}
           if [ "$in" != "" ]; then
             echo "::set-output name=fe-piattaforma::false"
