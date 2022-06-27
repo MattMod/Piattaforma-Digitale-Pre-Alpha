@@ -9,6 +9,9 @@ on:
       forced-version:
         description: 'Forced Version'
         required: false
+      modules:
+        description: 'Modules you want to deploy (*Names separated by comma; *Blank to deploy every modules)'
+        required: false
 
 permissions:
   contents: write
@@ -18,7 +21,85 @@ env:
   BOT_MAIL: <>
 
 jobs:
+  CheckInputModules:
+    name: Check Input Modules
+    runs-on: ubuntu-latest
+    outputs:
+      fe-piattaforma: ${{ steps.modules.outputs.fe-piattaforma }}
+      ms-ente: ${{ steps.modules.outputs.ms-ente }}
+      ms-gestione-utente: ${{ steps.modules.outputs.ms-gestione-utente }}
+      ms-notifiche-integration: ${{ steps.modules.outputs.ms-notifiche-integration }}
+      ms-open-data: ${{ steps.modules.outputs.ms-open-data }}
+      ms-propgramma-progetto: ${{ steps.modules.outputs.ms-propgramma-progetto }}
+      ms-questionario-cittadino: ${{ steps.modules.outputs.ms-questionario-cittadino }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Set modules required
+        id: modules
+        run: |
+          in=${{ github.event.inputs.modules }}
+          in=${in// /}
+          if [ "$in" != "" ]; then
+            echo "::set-output name=fe-piattaforma::false"
+            echo "::set-output name=ms-ente::false"
+            echo "::set-output name=ms-gestione-utente::false"
+            echo "::set-output name=ms-notifiche-integration::false"
+            echo "::set-output name=ms-open-data::false"
+            echo "::set-output name=ms-propgramma-progetto::false"
+            echo "::set-output name=ms-questionario-cittadino::false"
+            arrIN=(${in//,/ })
+            for i in "${arrIN[@]}"; do
+            	case $i in
+            
+            		fe-piattaforma)
+            			echo "::set-output name=fe-piattaforma::true"
+            			;;
+            		
+            		ms-ente)
+            			echo "::set-output name=ms-ente::true"
+            			;;
+                  
+                ms-gestione-utente)
+            			echo "::set-output name=ms-gestione-utente::true"
+            			;;
+                  
+                ms-notifiche-integration)
+            			echo "::set-output name=ms-notifiche-integration::true"
+            			;;
+                  
+                ms-open-data)
+            			echo "::set-output name=ms-open-data::true"
+            			;;
+                  
+                ms-propgramma-progetto)
+            			echo "::set-output name=ms-propgramma-progetto::true"
+            			;;
+                  
+                ms-questionario-cittadino)
+            			echo "::set-output name=ms-questionario-cittadino::true"
+            			;;
+            		
+            		*)
+            			echo "Unknown $i"
+                  exit 1
+            			;;
+            	esac
+            done
+          else
+            echo "::set-output name=fe-piattaforma::true"
+            echo "::set-output name=ms-ente::true"
+            echo "::set-output name=ms-gestione-utente::true"
+            echo "::set-output name=ms-notifiche-integration::true"
+            echo "::set-output name=ms-open-data::true"
+            echo "::set-output name=ms-propgramma-progetto::true"
+            echo "::set-output name=ms-questionario-cittadino::true"
+          fi
+
   DryRunRelease:
+    needs: CheckInputModules
     name: Dry-Run Release
     runs-on: ubuntu-latest
     outputs:
@@ -73,8 +154,8 @@ jobs:
           fi
 
   buildFE:
-    if: ${{ github.event.inputs.version == '' }}
-    needs: DryRunRelease
+    if: ${{ github.event.inputs.version == '' && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.fe-piattaforma == 'true' )) }}
+    needs: [CheckInputModules, DryRunRelease]
     name: FE Build
     runs-on: ubuntu-latest
     defaults:
@@ -139,7 +220,7 @@ jobs:
 
   buildBE:
     if: ${{ github.event.inputs.version == '' }}
-    needs: DryRunRelease
+    needs: [CheckInputModules, DryRunRelease]
     name: BE Build
     runs-on: ubuntu-latest
     steps:
@@ -174,7 +255,7 @@ jobs:
 
       - name: ms-ente Build & Push Image to Amazon ECR
         id: ms-ente
-        if: ${{ success() }}
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-ente == 'true' )) }}
         working-directory: ${{ github.workspace }}/ms-ente
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -197,7 +278,7 @@ jobs:
 
       - name: ms-gestione-utente Build & Push Image to Amazon ECR
         id: ms-gestione-utente
-        if: ${{ success() }}
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-gestione-utente == 'true' )) }}
         working-directory: ${{ github.workspace }}/ms-gestione-utente
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -220,7 +301,7 @@ jobs:
 
       - name: ms-notifiche-integration Build & Push Image to Amazon ECR
         id: ms-notifiche-integration
-        if: ${{ success() }}
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-notifiche-integration == 'true' )) }}
         working-directory: ${{ github.workspace }}/ms-notifiche-integration
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -243,7 +324,7 @@ jobs:
 
       - name: ms-open-data Build & Push Image to Amazon ECR
         id: ms-open-data
-        if: ${{ success() }}
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-open-data == 'true' )) }}
         working-directory: ${{ github.workspace }}/ms-open-data
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -266,7 +347,7 @@ jobs:
 
       - name: ms-programma-progetto Build & Push Image to Amazon ECR
         id: ms-programma-progetto
-        if: ${{ success() }}
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-programma-progetto == 'true' )) }}
         working-directory: ${{ github.workspace }}/ms-programma-progetto
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -289,7 +370,7 @@ jobs:
 
       - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
         id: ms-questionario-cittadino
-        if: ${{ success() }}
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-questionario-cittadino == 'true' )) }}
         working-directory: ${{ github.workspace }}/ms-questionario-cittadino
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
