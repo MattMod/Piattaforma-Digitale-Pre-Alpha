@@ -476,6 +476,7 @@ jobs:
           fi
 
       - name: Setup 'fe-piattaforma' deployment.tmp.yaml
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.fe-piattaforma == 'true' )) }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: fe-piattaforma
@@ -489,6 +490,7 @@ jobs:
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-ente' deployment.tmp.yaml
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-ente == 'true' )) }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-ente
@@ -501,6 +503,7 @@ jobs:
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-gestione-utente == 'true' )) }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-gestione-utente
@@ -513,6 +516,7 @@ jobs:
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-notifiche-integration' deployment.tmp.yaml
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-notifiche-integration == 'true' )) }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-notifiche-integration
@@ -525,6 +529,7 @@ jobs:
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-open-data' deployment.tmp.yaml
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-open-data == 'true' )) }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-open-data
@@ -538,6 +543,7 @@ jobs:
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-programma-progetto' deployment.tmp.yaml
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-programma-progetto == 'true' )) }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-programma-progetto
@@ -550,6 +556,7 @@ jobs:
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-questionario-cittadino' deployment.tmp.yaml
+        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-questionario-cittadino == 'true' )) }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ms-questionario-cittadino
