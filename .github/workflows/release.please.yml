@@ -12,6 +12,10 @@ on:
       modules:
         description: 'Modules you want to deploy (*Names separated by comma; *Blank to deploy every modules)'
         required: false
+      environment:
+        description: 'The target environment for deployment'
+        type: environment
+        required: true
 
 permissions:
   contents: write
@@ -480,6 +484,7 @@ jobs:
           cd ${{ github.workspace }}/fe-piattaforma/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
+          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
           export K8S_INGRESS_CERTIFICATE=${{ secrets.K8S_INGRESS_CERTIFICATE }}
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
@@ -492,6 +497,7 @@ jobs:
           cd ${{ github.workspace }}/ms-ente/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
+          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
@@ -503,6 +509,7 @@ jobs:
           cd ${{ github.workspace }}/ms-gestione-utente/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
+          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-notifiche-integration' deployment.tmp.yaml
@@ -514,6 +521,7 @@ jobs:
           cd ${{ github.workspace }}/ms-notifiche-integration/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
+          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-open-data' deployment.tmp.yaml
@@ -525,6 +533,8 @@ jobs:
           cd ${{ github.workspace }}/ms-open-data/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
+          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+          export K8S_SERVICEACCOUNT=${{ secrets.K8S_SERVICEACCOUNT }}
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-programma-progetto' deployment.tmp.yaml
@@ -536,6 +546,7 @@ jobs:
           cd ${{ github.workspace }}/ms-programma-progetto/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
+          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Setup 'ms-questionario-cittadino' deployment.tmp.yaml
@@ -547,6 +558,7 @@ jobs:
           cd ${{ github.workspace }}/ms-questionario-cittadino/k8s
           export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
           export IMAGE_TAG=$IMAGE_TAG
+          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
           envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
 
       - name: Deploy

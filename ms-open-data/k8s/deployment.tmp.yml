@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: dev
+  namespace: ${K8S_NAMESPACE}
   name: ms-open-data-deployment
 spec:
   selector:
@@ -16,6 +16,7 @@ spec:
       labels:
         app.kubernetes.io/name: ms-open-data
     spec:
+      serviceAccountName: ${K8S_SERVICEACCOUNT}
       containers:
         - name: ms-open-data
           image: ${ECR_REPOSITORY}:${IMAGE_TAG}
@@ -26,79 +27,79 @@ spec:
             - name: urlDB
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: urlDB
             - name: usernameDB
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: usernameDB
             - name: passwordDB
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: passwordDB
             - name: awsAppId
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: awsAppId
             - name: awsPinpointAccessKey
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: awsPinpointAccessKey
             - name: awsPinpointSecretKey
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: awsPinpointSecretKey
             - name: MONGODB_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: MONGODB_HOST
             - name: MONGODB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: MONGODB_NAME
             - name: MONGODB_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: MONGODB_PORT
             - name: DB_MONGO_USERNAME
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: DB_MONGO_USERNAME
             - name: DB_MONGO_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: DB_MONGO_PASSWORD
             - name: KEYSTORE_PATH
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: KEYSTORE_PATH
             - name: KEYSTORE_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  name: env-dev-options
+                  name: env-${K8S_NAMESPACE}-options
                   key: KEYSTORE_PASSWORD
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: dev
-  name: service-ingress-ms-open-data-dev
+  namespace: ${K8S_NAMESPACE}
+  name: service-ingress-ms-open-data-${K8S_NAMESPACE}
   annotations:
     service.beta.kubernetes.io/aws-load-balancer-type: external
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
     service.beta.kubernetes.io/aws-load-balancer-scheme: internal
-    external-dns.alpha.kubernetes.io/hostname: opendata.backend-dev.mitd.technology
+    external-dns.alpha.kubernetes.io/hostname: opendata.backend-${K8S_NAMESPACE}.mitd.technology
 spec:
   type: LoadBalancer
   ports:
