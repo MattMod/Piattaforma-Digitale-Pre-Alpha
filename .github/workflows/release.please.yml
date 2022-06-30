@@ -161,7 +161,7 @@ jobs:
           fi
 
   buildFE:
-    if: ${{ github.event.inputs.version == '' && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.fe-piattaforma == 'true' )) }}
+    if: ${{ github.event.inputs.version == '' && needs.CheckInputModules.outputs.fe-piattaforma == 'true' }}
     needs: [CheckInputModules, DryRunRelease]
     name: FE Build
     runs-on: ubuntu-latest
@@ -173,7 +173,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.2
         with:
-          ref: main
           lfs: 'true'
 
       - name: Setup Node.js
@@ -235,7 +234,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.2
         with:
-          ref: main
           lfs: 'true'
 
       - name: Set up JDK 11
@@ -264,7 +262,7 @@ jobs:
 
       - name: ms-ente Build & Push Image to Amazon ECR
         id: ms-ente
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-ente == 'true' )) }}
+        if: ${{ success() && needs.CheckInputModules.outputs.ms-ente == 'true' }}
         working-directory: ${{ github.workspace }}/ms-ente
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -287,7 +285,7 @@ jobs:
 
       - name: ms-gestione-utente Build & Push Image to Amazon ECR
         id: ms-gestione-utente
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-gestione-utente == 'true' )) }}
+        if: ${{ success() && needs.CheckInputModules.outputs.ms-gestione-utente == 'true' }}
         working-directory: ${{ github.workspace }}/ms-gestione-utente
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -310,7 +308,7 @@ jobs:
 
       - name: ms-notifiche-integration Build & Push Image to Amazon ECR
         id: ms-notifiche-integration
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-notifiche-integration == 'true' )) }}
+        if: ${{ success() && needs.CheckInputModules.outputs.ms-notifiche-integration == 'true' }}
         working-directory: ${{ github.workspace }}/ms-notifiche-integration
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -333,7 +331,7 @@ jobs:
 
       - name: ms-open-data Build & Push Image to Amazon ECR
         id: ms-open-data
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-open-data == 'true' )) }}
+        if: ${{ success() && needs.CheckInputModules.outputs.ms-open-data == 'true' }}
         working-directory: ${{ github.workspace }}/ms-open-data
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -356,7 +354,7 @@ jobs:
 
       - name: ms-programma-progetto Build & Push Image to Amazon ECR
         id: ms-programma-progetto
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-programma-progetto == 'true' )) }}
+        if: ${{ success() && needs.CheckInputModules.outputs.ms-programma-progetto == 'true' }}
         working-directory: ${{ github.workspace }}/ms-programma-progetto
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -379,7 +377,7 @@ jobs:
 
       - name: ms-questionario-cittadino Build & Push Image to Amazon ECR
         id: ms-questionario-cittadino
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-questionario-cittadino == 'true' )) }}
+        if: ${{ success() && needs.CheckInputModules.outputs.ms-questionario-cittadino == 'true' }}
         working-directory: ${{ github.workspace }}/ms-questionario-cittadino
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -406,181 +404,180 @@ jobs:
 #          name: Build_cittadino_${{needs.DryRunRelease.outputs.version}}
 #          path: ${{ github.workspace }}/ms-questionario-cittadino/target/*
 
-  Deploy:
-    needs: [CheckInputModules, DryRunRelease, buildFE, buildBE]
-    if: |
-      always() &&
-      needs.DryRunRelease.result == 'success' &&
-      (needs.buildFE.result == 'success' || needs.buildFE.result == 'skipped')
-      && (needs.buildBE.result == 'success' || needs.buildBE.result == 'skipped')
-    name: Deploy
-    runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
-    defaults:
-      run:
-        shell: bash
-    outputs:
-      IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-    steps:
-      - uses: actions/checkout@v3.0.2
-        with:
-          ref: main
-          fetch-depth: '0'
-
-      - name: Check Input Version
-        if: ${{ github.event.inputs.version != '' }}
-        id: checkver
-        run: |
-          set -x
-          version="${{ github.event.inputs.version }}"
-          echo "==> Version: $version"
-          if [ $(git tag -l "$version" | wc -l) -gt 0 ]; then
-            echo "Version $version exists. Input accepted."
-          else
-            echo "Version $version doesn't exist. INVALID INPUT."
-            exit 1
-          fi
-          set +x
-
-      - uses: azure/setup-kubectl@v2.1
-        with:
-          version: 'v1.23.6' # default is latest stable
-        id: install
-
-      - name: Configure AWS credentials for ECR
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Configure AWS credentials for K8S
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-session-name: Git
-          role-duration-seconds: 3600
-
-      - name: Setup Kubeconfig
-        run: |
-          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.AWS_CLUSTER }}
-
-      - name: Setup Image TAG
-        id: imagetag
-        run: |
-          if [ "${{ github.event.inputs.version }}" = "" ]; then
-            echo "::set-output name=IMAGETAG::$(echo ${{needs.DryRunRelease.outputs.version}} )"
-          else
-            echo "::set-output name=IMAGETAG::$(echo ${{ github.event.inputs.version }} )"
-          fi
-
-      - name: Setup 'fe-piattaforma' deployment.tmp.yaml
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.fe-piattaforma == 'true' )) }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: fe-piattaforma
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/fe-piattaforma/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
-          export K8S_INGRESS_CERTIFICATE=${{ secrets.K8S_INGRESS_CERTIFICATE }}
-          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
-
-      - name: Setup 'ms-ente' deployment.tmp.yaml
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-ente == 'true' )) }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-ente
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/ms-ente/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
-          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
-
-      - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-gestione-utente == 'true' )) }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-gestione-utente
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/ms-gestione-utente/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
-          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
-
-      - name: Setup 'ms-notifiche-integration' deployment.tmp.yaml
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-notifiche-integration == 'true' )) }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-notifiche-integration
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/ms-notifiche-integration/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
-          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
-
-      - name: Setup 'ms-open-data' deployment.tmp.yaml
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-open-data == 'true' )) }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-open-data
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/ms-open-data/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
-          export K8S_SERVICEACCOUNT=${{ secrets.K8S_SERVICEACCOUNT }}
-          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
-
-      - name: Setup 'ms-programma-progetto' deployment.tmp.yaml
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-programma-progetto == 'true' )) }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-programma-progetto
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/ms-programma-progetto/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
-          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
-
-      - name: Setup 'ms-questionario-cittadino' deployment.tmp.yaml
-        if: ${{ success() && (github.event.inputs.modules == '' || (github.event.inputs.modules != '' && needs.CheckInputModules.outputs.ms-questionario-cittadino == 'true' )) }}
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ms-questionario-cittadino
-          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
-        run: |
-          cd ${{ github.workspace }}/ms-questionario-cittadino/k8s
-          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
-          export IMAGE_TAG=$IMAGE_TAG
-          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
-          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
-
-      - name: Deploy
-        run: |
-          cd ${{ github.workspace }}
-          echo "===DEPLOYMENT FILE==="
-          cat deployment.yml
-          echo "====================="
-          kubectl apply -f deployment.yml
+#  Deploy:
+#    needs: [CheckInputModules, DryRunRelease, buildFE, buildBE]
+#    if: |
+#      always() &&
+#      needs.DryRunRelease.result == 'success' &&
+#      (needs.buildFE.result == 'success' || needs.buildFE.result == 'skipped')
+#      && (needs.buildBE.result == 'success' || needs.buildBE.result == 'skipped')
+#    name: Deploy
+#    runs-on: ubuntu-latest
+#    environment: ${{ github.event.inputs.environment }}
+#    defaults:
+#      run:
+#        shell: bash
+#    outputs:
+#      IMAGETAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#    steps:
+#      - uses: actions/checkout@v3.0.2
+#        with:
+#          fetch-depth: '0'
+#
+#      - name: Check Input Version
+#        if: ${{ github.event.inputs.version != '' }}
+#        id: checkver
+#        run: |
+#          set -x
+#          version="${{ github.event.inputs.version }}"
+#          echo "==> Version: $version"
+#          if [ $(git tag -l "$version" | wc -l) -gt 0 ]; then
+#            echo "Version $version exists. Input accepted."
+#          else
+#            echo "Version $version doesn't exist. INVALID INPUT."
+#            exit 1
+#          fi
+#          set +x
+#
+#      - uses: azure/setup-kubectl@v2.1
+#        with:
+#          version: 'v1.23.6' # default is latest stable
+#        id: install
+#
+#      - name: Configure AWS credentials for ECR
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#
+#      - name: Login to Amazon ECR
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v1
+#
+#      - name: Configure AWS credentials for K8S
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ${{ secrets.AWS_REGION }}
+#          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+#          role-session-name: Git
+#          role-duration-seconds: 3600
+#
+#      - name: Setup Kubeconfig
+#        run: |
+#          aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name ${{ secrets.AWS_CLUSTER }}
+#
+#      - name: Setup Image TAG
+#        id: imagetag
+#        run: |
+#          if [ "${{ github.event.inputs.version }}" = "" ]; then
+#            echo "::set-output name=IMAGETAG::$(echo ${{needs.DryRunRelease.outputs.version}} )"
+#          else
+#            echo "::set-output name=IMAGETAG::$(echo ${{ github.event.inputs.version }} )"
+#          fi
+#
+#      - name: Setup 'fe-piattaforma' deployment.tmp.yaml
+#        if: ${{ success() && needs.CheckInputModules.outputs.fe-piattaforma == 'true' }}
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: fe-piattaforma
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/fe-piattaforma/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+#          export K8S_INGRESS_CERTIFICATE=${{ secrets.K8S_INGRESS_CERTIFICATE }}
+#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-ente' deployment.tmp.yaml
+#        if: ${{ success() && needs.CheckInputModules.outputs.ms-ente == 'true' }}
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-ente
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-ente/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-gestione-utente' deployment.tmp.yaml
+#        if: ${{ success() && needs.CheckInputModules.outputs.ms-gestione-utente == 'true' }}
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-gestione-utente
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-gestione-utente/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-notifiche-integration' deployment.tmp.yaml
+#        if: ${{ success() && needs.CheckInputModules.outputs.ms-notifiche-integration == 'true' }}
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-notifiche-integration
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-notifiche-integration/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-open-data' deployment.tmp.yaml
+#        if: ${{ success() && needs.CheckInputModules.outputs.ms-open-data == 'true' }}
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-open-data
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-open-data/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+#          export K8S_SERVICEACCOUNT=${{ secrets.K8S_SERVICEACCOUNT }}
+#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-programma-progetto' deployment.tmp.yaml
+#        if: ${{ success() && needs.CheckInputModules.outputs.ms-programma-progetto == 'true' }}
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-programma-progetto
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-programma-progetto/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Setup 'ms-questionario-cittadino' deployment.tmp.yaml
+#        if: ${{ success() && needs.CheckInputModules.outputs.ms-questionario-cittadino == 'true' }}
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          ECR_REPOSITORY: ms-questionario-cittadino
+#          IMAGE_TAG: ${{ steps.imagetag.outputs.IMAGETAG }}
+#        run: |
+#          cd ${{ github.workspace }}/ms-questionario-cittadino/k8s
+#          export ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY
+#          export IMAGE_TAG=$IMAGE_TAG
+#          export K8S_NAMESPACE=${{ secrets.K8S_NAMESPACE }}
+#          envsubst < deployment.tmp.yml >> ${{ github.workspace }}/deployment.yml
+#
+#      - name: Deploy
+#        run: |
+#          cd ${{ github.workspace }}
+#          echo "===DEPLOYMENT FILE==="
+#          cat deployment.yml
+#          echo "====================="
+#          kubectl apply -f deployment.yml
 
 ##      - name: Check fe-piattaforma Deploy
 ##        id: fe-piattaforma
@@ -606,98 +603,125 @@ jobs:
 ##            kubectl rollout undo deployment.apps/ms-gestione-utente-deployment
 ##            kubectl rollout status deployment.apps/ms-gestione-utente-deployment
 
-#  RepoUpdate:
-#    if: ${{ github.event.inputs.version == '' }}
-#    needs: [DryRunRelease] #, Deploy]
-#    name: Repo Update
-#    runs-on: ubuntu-latest
-#    defaults:
-#      run:
-#        shell: bash
-#        working-directory: ${{ github.workspace }}/fe-piattaforma
-#    steps:
-#      - uses: actions/checkout@v3.0.2
-#        with:
-#          ref: main
-#          lfs: 'true'
-#
-#      - name: File Package Update
-#        uses: mingjun97/file-regex-replace@v1
-#        with:
-#          # regex to apply(regex)
-#          regex: '"version":[\s\S]"[0-9].[0-9].[0-9]"'
-#          # flags of the regex
-#          flags: "gmi"
-#          # replacement string
-#          replacement: '"version": "${{needs.DryRunRelease.outputs.version}}"'
-#          # Files to be replaced(regex)
-#          include: "package.json"
+  RepoUpdate:
+    if: ${{ github.event.inputs.version == '' }}
+    needs: [DryRunRelease] #, Deploy]
+    name: Repo Update
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ github.workspace }}/fe-piattaforma
+    steps:
+      - uses: actions/checkout@v3.0.2
+        with:
+          lfs: 'true'
 
-#      - name: File POM Update
-#        if: ${{ success() }}
-#        run: |
-#          cd ${{ github.workspace }}/lib-repdgt-shared
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-gestione-utente
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-ente
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-notifiche-integration
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-open-data
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-programma-progetto
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
-#          cd ${{ github.workspace }}/ms-questionario-cittadino
-#          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+      - name: File Package Update
+        uses: mingjun97/file-regex-replace@v1
+        with:
+          # regex to apply(regex)
+          regex: '"version":[\s\S]"[0-9].[0-9].[0-9]"'
+          # flags of the regex
+          flags: "gmi"
+          # replacement string
+          replacement: '"version": "${{needs.DryRunRelease.outputs.version}}"'
+          # Files to be replaced(regex)
+          include: "package.json"
+      - name: File POM Update
+        if: ${{ success() }}
+        run: |
+          cd ${{ github.workspace }}/lib-repdgt-shared
+          mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          in="${{ needs.CheckInputModules.outputs.ms-ente }}"
+          if [ "$in" == "true" ]; then
+            cd ${{ github.workspace }}/ms-ente
+            mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          fi
+          in="${{ needs.CheckInputModules.outputs.ms-gestione-utente }}"
+          if [ "$in" == "true" ]; then
+            cd ${{ github.workspace }}/ms-gestione-utente
+            mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          fi
+          in="${{ needs.CheckInputModules.outputs.ms-notifiche-integration }}"
+          if [ "$in" == "true" ]; then
+            cd ${{ github.workspace }}/ms-notifiche-integration
+            mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          fi
+          in="${{ needs.CheckInputModules.outputs.ms-open-data }}"
+          if [ "$in" == "true" ]; then
+            cd ${{ github.workspace }}/ms-open-data
+            mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          fi
+          in="${{ needs.CheckInputModules.outputs.ms-programma-progetto }}"
+          if [ "$in" == "true" ]; then
+            cd ${{ github.workspace }}/ms-programma-progetto
+            mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          fi
+          in="${{ needs.CheckInputModules.outputs.ms-questionario-cittadino }}"
+          if [ "$in" == "true" ]; then
+            cd ${{ github.workspace }}/ms-questionario-cittadino
+            mvn versions:set -DnewVersion=${{needs.DryRunRelease.outputs.version}}
+          fi
+          
+      - name: Push files updated
+        run: |
+          cd ${{ github.workspace }}
+          git diff
+          git config user.email "$BOT_MAIL"
+          git config user.name "$BOT_USER"
+          git add -A
+          git commit -m "chore: update version ${{needs.DryRunRelease.outputs.version}}" || exit 0
+          git push
 
-#      - name: Push files updated
-#        run: |
-#          cd ${{ github.workspace }}
-#          git diff
-#          git config user.email "$BOT_MAIL"
-#          git config user.name "$BOT_USER"
-#          git add -A
-#          git commit -m "chore: update version ${{needs.DryRunRelease.outputs.version}}" || exit 0
-#          git push
-#
-#  Release:
-#    if: ${{ github.event.inputs.version == '' }}
-#    needs: [RepoUpdate]
-#    name: Release
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3.0.2
-#        with:
-#          token: ${{ secrets.SEMANTICRELEASE }}
-#          persist-credentials: 'true'
-#          fetch-depth: '0'
-#      - name: Setup Node.js environment
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version: 'lts/*'
-#      - name: Install semantic-release extra plugins
-#        run: |
-#              npm install --save-dev \
-#                semantic-release \
-#                @semantic-release/commit-analyzer \
-#                @semantic-release/changelog \
-#                @semantic-release/git \
-#                @semantic-release/release-notes-generator \
-#                @semantic-release/exec \
-#                conventional-changelog-conventionalcommits
-#      - name: Create .VERSION file
-#        run: echo "There are no relevant changes, so no new version is released" > .VERSION
-#      - name: Release
-#        env:
-#          # ad-hoc token (PAT) in order to permit the push on a protected branch
-#          # without protected branches can be use secrets.GITHUB_TOKEN
-#          GITHUB_TOKEN: ${{ secrets.SEMANTICRELEASE }}
-#        run: |
-#          npx semantic-release
-#      - name: Version
-#        id: version
-#        run: |
-#          nextversion=$(cat .VERSION)
-#          echo "::set-output name=VERSION::$nextversion"
-#          echo "### Release $nextversion created!" >> $GITHUB_STEP_SUMMARY
+  Release:
+    if: ${{ github.event.inputs.version == '' }}
+    needs: [RepoUpdate]
+    name: Release
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3.0.2
+        with:
+          token: ${{ secrets.SEMANTICRELEASE }}
+          persist-credentials: 'true'
+          fetch-depth: '0'
+          
+      - run: |
+          cd ${{ github.workspace }}
+          git pull
+          
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+          
+      - name: Install semantic-release extra plugins
+        run: |
+              npm install --save-dev \
+                semantic-release \
+                @semantic-release/commit-analyzer \
+                @semantic-release/changelog \
+                @semantic-release/git \
+                @semantic-release/release-notes-generator \
+                @semantic-release/exec \
+                conventional-changelog-conventionalcommits
+                
+      - name: Create .VERSION file
+        run: echo "There are no relevant changes, so no new version is released" > .VERSION
+        
+      - name: Release
+        env:
+          # ad-hoc token (PAT) in order to permit the push on a protected branch
+          # without protected branches can be use secrets.GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.SEMANTICRELEASE }}
+        run: |
+          npx semantic-release
+          
+      - name: Version
+        id: version
+        run: |
+          nextversion=$(cat .VERSION)
+          echo "::set-output name=VERSION::$nextversion"
+          echo "### Release $nextversion created!" >> $GITHUB_STEP_SUMMARY
